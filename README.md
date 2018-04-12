@@ -12,8 +12,6 @@
  - [Description](#description)
  - [Features](#features)
  - [Use Cases](#use-cases)
-   - [Actors](#actors)
-   - [Examples](#examples)
 </details>
 
 # Description
@@ -44,13 +42,6 @@ A fast, scalable and secure social networking service that can be easily configu
 7. [ ] Data Analyzation and Visualization ` - Analyzing the database and visualizing its data.`
 
 # Use Cases
-## Actors:
-- Dock Manager
-- Sea Member
-- Sea Editor
-- Sea Administrator
-- Universe Manager
-## Examples:
 1. ![Dock Managers](use-cases/dock-use-case.png?raw=true)
 2. ![Sea Members, Editors and Administrators](use-cases/sea-use-case.png?raw=true)
 3. ![Universe Managers](use-cases/universe-use-case.png?raw=true)
