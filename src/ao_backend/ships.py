@@ -12,12 +12,20 @@ class ContentType(enumerate):
     Video = 2
 
 
+class Reactions(enumerate):
+    Like = 0
+    Dislike = 1
+    Love = 2
+    Angry = 3
+    Haha = 4
+
+
 class ShipPrivacy(enumerate):
     Only_creator = 0
     Only_friends = 1
     Only_followers = 2
     Only_friends_and_followers = 3
-    Everyone = 3
+    Everyone = 4
 
 
 class Ship(amber.AmberObject):
@@ -40,22 +48,24 @@ class Ship(amber.AmberObject):
         self.txt_content = txt_content
         self.image_content = image_content
         self.video_content = video_content
+        self.privacy = privacy
+        self.reactions = {Reactions.Like: [], Reactions.Dislike: [], Reactions.Love: [], Reactions.Angry: [],
+                          Reactions.Haha: []}  # Add ids of personal docks in the list
         self.parent_ship = parent_ship
         self.creation_date = dt.datetime.utcnow().timetuple()
-        self.privacy = privacy
         self.child_ships = []
         self.edit_history = [(txt_content, image_content, video_content, self.creation_date)]  # Tuples of four elements (text content, image content, video content, creation date)
 
-    def export_to_file(self):
+    def add_reply(self, replayer_id, replay_text):
         pass
 
-    def add_reply(self):
+    def add_reaction(self, reactioner_id, reaction):
         pass
 
-    def commit_edit(self):
+    def commit_edit(self, edit_text, edit_image=None, edit_video=None):
         pass
 
-    def change_privacy(self):
+    def change_privacy(self, new_privacy):
         pass
 
     @staticmethod
@@ -66,3 +76,6 @@ class Ship(amber.AmberObject):
     def export_to_database(self):
         line = str()
         return line
+
+    def export_to_xml(self):
+        pass

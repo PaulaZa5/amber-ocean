@@ -24,51 +24,72 @@ class Sea(amber.AmberObject):
     """
 
     @staticmethod
-    def RegisterSea(creator, name, description):
-        new = Sea(creator, name, description)
+    def RegisterSea(creator, name, description, visibility_privacy=SeaVisibilityPrivacy.Everyone,
+                 sailing_privacy=SeaSailingPrivacy.Everyone):
+        new = Sea(creator, name, description, visibility_privacy, sailing_privacy)
         amber.database[new.id] = new
 
-    def __init__(self, creator, name, description):
+    def __init__(self, creator, name, description, visibility_privacy=SeaVisibilityPrivacy.Everyone,
+                 sailing_privacy=SeaSailingPrivacy.Everyone):
         super().__init__()
         self.creator = creator
         self.name = name
         self.description = description
+        self.visibility_privacy = visibility_privacy
+        self.sailing_privacy = sailing_privacy
+        self.active = True
         self.administrators = [creator]
         self.editors = []
         self.members = [creator]
-        self.visibility_privacy = SeaVisibilityPrivacy.Everyone
-        self.sailing_privacy = SeaSailingPrivacy.Everyone
-        self.creation_date = dt.datetime.utcnow().date()
         self.sailed_ships = []  # Tuples of two elements (ship id, initial sailing date)
+        self.creation_date = dt.datetime.utcnow().date()
 
-    def export_to_file(self):
+    def deactivate(self):
         pass
 
-    def add_administrator(self):
+    def change_name(self, name):
         pass
 
-    def remove_administrator(self):
+    def change_description(self, description):
         pass
 
-    def add_editor(self):
+    def is_administrator(self, id):
         pass
 
-    def remove_editor(self):
+    def add_administrator(self, new_administrator_id):
         pass
 
-    def add_member(self):
+    def remove_administrator(self, administrator_id):
         pass
 
-    def remove_member(self):
+    def is_editor(self, id):
         pass
 
-    def change_visibility_privacy(self):
+    def add_editor(self, new_editor_id):
         pass
 
-    def change_sailing_privacy(self):
+    def remove_editor(self, editor_id):
         pass
 
-    def add_to_sailed_ships(self):
+    def is_member(self, id):
+        pass
+
+    def add_member(self, new_member_id):
+        pass
+
+    def remove_member(self, member_id):
+        pass
+
+    def change_visibility_privacy(self, new_visibility_privacy):
+        pass
+
+    def change_sailing_privacy(self, new_sailing_privacy):
+        pass
+
+    def sail_ship_to_this_sea(self, ship_id):
+        pass
+
+    def sink_ship_from_this_sea(self, ship_id):
         pass
 
     @staticmethod
@@ -79,3 +100,6 @@ class Sea(amber.AmberObject):
     def export_to_database(self):
         line = str()
         return line
+
+    def export_to_xml(self):
+        pass

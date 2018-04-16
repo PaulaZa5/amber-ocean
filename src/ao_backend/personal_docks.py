@@ -7,18 +7,6 @@ import datetime as dt
 import hashlib
 
 
-class RelationshipStates(enumerate):
-    Single = 0
-    In_a_relationship = 1
-    Engaged = 2
-    Married = 3
-    Separated = 4
-    In_an_open_relationship = 5
-    Complicated = 6
-    Divorced = 7
-    Widowed = 8
-
-
 class FamilyRelationship(enumerate):
     Brother = 0
     Sister = 1
@@ -47,6 +35,24 @@ class FamilyRelationship(enumerate):
     Daughter_in_law = 24
 
 
+class Gender(enumerate):
+    Male = 0
+    Female = 1
+    Other = 2
+
+
+class RelationshipStates(enumerate):
+    Single = 0
+    In_a_relationship = 1
+    Engaged = 2
+    Married = 3
+    Separated = 4
+    In_an_open_relationship = 5
+    Complicated = 6
+    Divorced = 7
+    Widowed = 8
+
+
 class PersonalDock(amber.AmberObject):
 
     """
@@ -54,22 +60,24 @@ class PersonalDock(amber.AmberObject):
     """
 
     @staticmethod
-    def RegisterAccount(name, gender, birthday, email, password):
-        new = PersonalDock(name, gender, birthday, email, password)
+    def RegisterAccount(name, gender, birthday, password, email=None, phone_number=None):
+        new = PersonalDock(name, gender, birthday, password, email, phone_number)
         amber.database[new.id] = new
 
-    def __init__(self, name, gender, birthday, email, password):
+    def __init__(self, name, gender, birthday, password, email=None, phone_number=None):
         super().__init__()
         self.name = name
         self.gender = gender
-        self.birthday = birthday
+        self.birthday = birthday  # dt.datetime.date()
+        self.password = hashlib.sha224(password).hexdigest()  # Encrypted password
         self.master_email = email
         self.emails = [email]
-        self.password = hashlib.sha224(password).hexdigest()  # Encrypted password
-        self.join_date = dt.datetime.utcnow().date()
+        self.master_phone_number = phone_number
+        self.phone_numbers = [phone_number]
+        self.active = True
         self.friends = []
-        self.following = []
         self.followers = []
+        self.followees = []
         self.seas = []
         self.family = []  # Tuples of two elements (person id, family relationship type)
         self.education = []  # Tuples of four elements (major, place of education, starting date, finishing date)
@@ -79,62 +87,117 @@ class PersonalDock(amber.AmberObject):
         self.links = []  # Tuples of two elements (link string=>(facebook, linkedin..etc), link url)
         self.special_fields = []  # Tuples of two elements (field string=>(nickname, about..etc), field text)
         self.sailed_ships = []  # Tuples of two elements (ship id, initial sailing date)
+        self.join_date = dt.datetime.utcnow().date()
 
-    def export_to_file(self):
+    def deactivate_account(self):
         pass
 
-    def change_name(self):
+    def change_name(self, password, new_name):
         pass
 
-    def change_gender(self):
+    def change_gender(self, password, new_gender):
         pass
 
-    def change_birthday(self):
+    def change_birthday(self, password, new_birthday):
         pass
 
-    def change_master_email(self):
+    def change_password(self, password, new_password):
         pass
 
-    def change_password(self):
+    def change_master_email(self, password, new_email):
         pass
 
-    def add_email(self):
+    def add_email(self, new_email):
         pass
 
-    def add_friend(self):
+    def remove_email(self, email):
         pass
 
-    def remove_friend(self):
+    def change_master_phone_number(self, password, new_phone_number):
         pass
 
-    def add_follower(self):
+    def add_phone_number(self, new_phone_number):
         pass
 
-    def remove_follower(self):
+    def remove_phone_number(self, phone_number):
         pass
 
-    def add_following(self):
+    def add_friend(self, friend_id):
         pass
 
-    def remove_following(self):
+    def remove_friend(self, friend_id):
         pass
 
-    def add_family_member(self):
+    def add_follower(self, follower_id):
         pass
 
-    def add_education(self):
+    def remove_follower(self, follower_id):
         pass
 
-    def add_living_place(self):
+    def add_followee(self, followee_id):
         pass
 
-    def add_relationship(self):
+    def remove_followee(self, followee_id):
         pass
 
-    def add_link(self):
+    def add_family_member_relationship(self, family_member_id, family_member_relation):
         pass
 
-    def sail_ship(self, where_to_id):  # where_to_id is some post's id, dock's id or sea's id
+    def edit_family_member_relationship(self, family_member_id, new_family_member_relation):
+        pass
+
+    def remove_family_member_relationship(self, family_member_id):
+        pass
+
+    def add_education(self, major, place_of_education, starting_date, finishing_date):
+        pass
+
+    def edit_education(self, major, place_of_education, new_starting_date, new_finishing_date):
+        pass
+
+    def remove_education(self, major, place_of_education):
+        pass
+
+    def add_living_place(self, location, starting_date, finishing_date):
+        pass
+
+    def edit_living_place(self, location, new_starting_date, new_finishing_date):
+        pass
+
+    def remove_living_place(self, location):
+        pass
+
+    def add_relationship(self, significant_other_id, type, starting_date, finishing_date):
+        pass
+
+    def edit_relationship(self, significant_other_id, new_type, new_starting_date, new_finishing_date):
+        pass
+
+    def remove_relationship(self, significant_other_id):
+        pass
+
+    def add_link(self, link_string, link_url):
+        pass
+
+    def edit_link_url(self, link_string, new_link_url):
+        pass
+
+    def remove_link(self, link_string):
+        pass
+
+    def add_special_field(self, special_field_string, special_field_text):
+        pass
+
+    def edit_special_field_text(self, special_field_string, new_special_field_text):
+        pass
+
+    def remove_special_field(self, special_field_string):
+        pass
+
+    def sail_ship_to_this_dock(self, ship_id):
+        pass
+
+    def sink_ship_from_this_dock(self, ship_id):
         pass
 
     @staticmethod
@@ -145,3 +208,6 @@ class PersonalDock(amber.AmberObject):
     def export_to_database(self):
         line = str()
         return line
+
+    def export_to_xml(self):
+        pass
