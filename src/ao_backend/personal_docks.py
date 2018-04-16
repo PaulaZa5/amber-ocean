@@ -63,6 +63,7 @@ class PersonalDock(amber.AmberObject):
     def RegisterAccount(name, gender, birthday, password, email=None, phone_number=None):
         new = PersonalDock(name, gender, birthday, password, email, phone_number)
         amber.database[new.id] = new
+        return new
 
     def __init__(self, name, gender, birthday, password, email=None, phone_number=None):
         super().__init__()

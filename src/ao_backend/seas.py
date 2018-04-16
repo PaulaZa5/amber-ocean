@@ -28,6 +28,7 @@ class Sea(amber.AmberObject):
                  sailing_privacy=SeaSailingPrivacy.Everyone):
         new = Sea(creator, name, description, visibility_privacy, sailing_privacy)
         amber.database[new.id] = new
+        return new
 
     def __init__(self, creator, name, description, visibility_privacy=SeaVisibilityPrivacy.Everyone,
                  sailing_privacy=SeaSailingPrivacy.Everyone):
