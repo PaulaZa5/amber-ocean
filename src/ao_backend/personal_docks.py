@@ -8,49 +8,49 @@ import hashlib
 
 
 class FamilyRelationship(enumerate):
-    Brother = 0
-    Sister = 1
-    Father = 2
-    Mother = 3
-    Son = 4
-    Daughter = 5
-    Uncle = 6
-    Aunt = 7
-    Nephew = 8
-    Niece = 9
-    Cousin = 10
-    Grandmother = 11
-    Granddaughter = 12
-    Stepbrother = 13
-    Stepsister = 14
-    Stepfather = 15
-    Stepmother = 16
-    Stepson = 17
-    Stepdaughter = 18
-    Brother_in_law = 19
-    Sister_in_law = 20
-    Father_in_law = 21
-    Mother_in_law = 22
-    Son_in_law = 23
-    Daughter_in_law = 24
+    Brother = 'brother'
+    Sister = 'sister'
+    Father = 'father'
+    Mother = 'mother'
+    Son = 'son'
+    Daughter = 'daughter'
+    Uncle = 'uncle'
+    Aunt = 'aunt'
+    Nephew = 'nephew'
+    Niece = 'niece'
+    Cousin = 'cousin'
+    Grandmother = 'grandmother'
+    Granddaughter = 'granddaughter'
+    Stepbrother = 'stepbrother'
+    Stepsister = 'stepsister'
+    Stepfather = 'stepfather'
+    Stepmother = 'stepmother'
+    Stepson = 'stepson'
+    Stepdaughter = 'stepdaughter'
+    Brother_in_law = 'brotherinlaw'
+    Sister_in_law = 'sisterinlaw'
+    Father_in_law = 'fatherinlaw'
+    Mother_in_law = 'motherinlaw'
+    Son_in_law = 'soninlaw'
+    Daughter_in_law = 'daughterinlaw'
 
 
 class Gender(enumerate):
-    Male = 0
-    Female = 1
-    Other = 2
+    Male = 'male'
+    Female = 'female'
+    Other = 'other'
 
 
 class RelationshipStates(enumerate):
-    Single = 0
-    In_a_relationship = 1
-    Engaged = 2
-    Married = 3
-    Separated = 4
-    In_an_open_relationship = 5
-    Complicated = 6
-    Divorced = 7
-    Widowed = 8
+    Single = 'single'
+    In_a_relationship = 'inarelationship'
+    Engaged = 'engaged'
+    Married = 'marriend'
+    Separated = 'separated'
+    In_an_open_relationship = 'inanopenrelationship'
+    Complicated = 'complicated'
+    Divorced = 'divorced'
+    Widowed = 'widowed'
 
 
 class PersonalDock(amber.AmberObject):
@@ -63,6 +63,7 @@ class PersonalDock(amber.AmberObject):
     def RegisterAccount(name, gender, birthday, password, email=None, phone_number=None):
         new = PersonalDock(name, gender, birthday, password, email, phone_number)
         amber.database[new.id] = new
+        return new
 
     def __init__(self, name, gender, birthday, password, email=None, phone_number=None):
         super().__init__()
