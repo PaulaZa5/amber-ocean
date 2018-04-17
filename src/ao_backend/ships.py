@@ -7,25 +7,25 @@ import datetime as dt
 
 
 class ContentType(enumerate):
-    Text = 0
-    Image = 1
-    Video = 2
+    Text = 'text'
+    Image = 'image'
+    Video = 'video'
 
 
 class Reactions(enumerate):
-    Like = 0
-    Dislike = 1
-    Love = 2
-    Angry = 3
-    Haha = 4
+    Like = 'like'
+    Dislike = 'dislike'
+    Love = 'love'
+    Angry = 'angry'
+    Haha = 'haha'
 
 
 class ShipPrivacy(enumerate):
-    Only_creator = 0
-    Only_friends = 1
-    Only_followers = 2
-    Only_friends_and_followers = 3
-    Everyone = 4
+    Only_creator = 'onlycreator'
+    Only_friends = 'onlyfriends'
+    Only_followers = 'onlyfollowers'
+    Only_friends_and_followers = 'onlyfriendsandfollowers'
+    Everyone = 'everyone'
 
 
 class Ship(amber.AmberObject):
@@ -79,6 +79,12 @@ class Ship(amber.AmberObject):
                     lst.remove(id)
                     return True
         return False
+
+    def change_reaction(self, reactioner_id, new_reaction):
+        pass
+
+    def remove_reaction(self, reactioner_id):
+        pass
 
     def commit_edit(self, edit_text, edit_image=None, edit_video=None):
         self.edit_history.append((self.txt_content, self.image_content, self.video_content, self.creation_date))

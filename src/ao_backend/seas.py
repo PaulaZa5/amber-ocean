@@ -7,14 +7,14 @@ import datetime as dt
 
 
 class SeaSailingPrivacy(enumerate):
-    Only_administrators = 0
-    Only_editors = 1
-    Everyone = 2
+    Only_administrators = 'onlyadministrators'
+    Only_editors = 'onlyeditors'
+    Everyone = 'everyone'
 
 
 class SeaVisibilityPrivacy(enumerate):
-    Only_Members = 0
-    Everyone = 1
+    Only_Members = 'onlymembers'
+    Everyone = 'everyone'
 
 
 class Sea(amber.AmberObject):
