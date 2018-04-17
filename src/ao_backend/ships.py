@@ -80,22 +80,32 @@ class Ship(amber.AmberObject):
                     return True
         return False
 
-    def change_reaction(self, reactioner_id, new_reaction):
-        pass
-
-    def remove_reaction(self, reactioner_id):
-        pass
-
     def commit_edit(self, edit_text, edit_image=None, edit_video=None):
         self.edit_history.append((self.txt_content, self.image_content, self.video_content, self.creation_date))
         self.txt_content = edit_text
         self.image_content = edit_image
         self.video_content = edit_video
         self.creation_date = dt.datetime.utcnow().timetuple()
+        return True
 
     def change_privacy(self, new_privacy):
         self.privacy = new_privacy
         return True
+
+    def comments_no(self):
+        return len(self.child_ships)
+
+    def __len__(self):
+        return len(self.child_ships)
+
+    def generate_comments(self):
+
+        """
+        Starts yielding comments on this ship
+        """
+
+        for ship in self.child_ships:
+            yield ship
 
     @staticmethod
     def import_from_database(line):

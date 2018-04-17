@@ -39,15 +39,15 @@ import ships
 
 
 def is_personal_dock(in_object):
-    return type(in_object) == personal_docks.PersonalDock
+    return type(in_object) is personal_docks.PersonalDock
 
 
 def is_sea(in_object):
-    return type(in_object) == seas.Sea
+    return type(in_object) is seas.Sea
 
 
 def is_ship(in_object):
-    return type(in_object) == ships.Ship
+    return type(in_object) is ships.Ship
 
 
 def export_database():

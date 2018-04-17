@@ -87,6 +87,14 @@ class Sea(amber.AmberObject):
     def change_sailing_privacy(self, new_sailing_privacy):
         pass
 
+    def generate_ships(self):
+
+        """
+        Starts yielding posts shared to this sea chronologically
+        """
+
+        pass
+
     def sail_ship_to_this_sea(self, ship_id):
         pass
 

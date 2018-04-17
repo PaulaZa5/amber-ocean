@@ -195,6 +195,14 @@ class PersonalDock(amber.AmberObject):
     def remove_special_field(self, special_field_string):
         pass
 
+    def generate_ships(self):
+
+        """
+        Starts yielding posts shared to this dock chronologically
+        """
+
+        pass
+
     def sail_ship_to_this_dock(self, ship_id):
         pass
 
