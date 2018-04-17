@@ -59,10 +59,26 @@ class Ship(amber.AmberObject):
         self.edit_history = []  # Tuples of four elements (text content, image content, video content, creation date)
 
     def add_reply(self, replayer_id, replay_type, replay_text, replay_image=None, replay_video=None):
-        pass
+        Ship.RegisterShip(replayer_id, self.where_is_it_created_id, replay_type, replay_text,
+                                   replay_image, replay_video, ShipPrivacy.Everyone, self.id)
+        return True
 
     def add_reaction(self, reactioner_id, reaction):
-        pass
+        if reaction in self.reactions.keys():
+            self.reactions[reaction].append(reactioner_id)
+            return True
+        return False
+
+    def change_reaction(self, reactioner_id, new_reaction):
+        return self.remove_reaction(reactioner_id) & self.add_reaction(reactioner_id, new_reaction)
+
+    def remove_reaction(self, reactioner_id):
+        for lst in self.reactions.values():
+            for id in lst:
+                if id == reactioner_id:
+                    lst.remove(id)
+                    return True
+        return False
 
     def change_reaction(self, reactioner_id, new_reaction):
         pass
@@ -71,10 +87,15 @@ class Ship(amber.AmberObject):
         pass
 
     def commit_edit(self, edit_text, edit_image=None, edit_video=None):
-        pass
+        self.edit_history.append((self.txt_content, self.image_content, self.video_content, self.creation_date))
+        self.txt_content = edit_text
+        self.image_content = edit_image
+        self.video_content = edit_video
+        self.creation_date = dt.datetime.utcnow().timetuple()
 
     def change_privacy(self, new_privacy):
-        pass
+        self.privacy = new_privacy
+        return True
 
     @staticmethod
     def import_from_database(line):
