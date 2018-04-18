@@ -1,74 +1,70 @@
 '''personalDock'''
-def import_from_database():
-    file = open('dataDock.xml','r')
-    lines =file.read().split('>\n')
-    file.close()
-    file = open('dataout.xml', 'w')
-    for line in lines:
-        line=line.replace('>','')
-        if not(line.find("</")==-1):
-             line=line.replace("</"+temp, '')
-        else:
-            line=line.replace('<', '')
-            temp=line
-        file.write(line)
-    file.close()
-    file = open('dataout.xml', 'r')
-    lines = iter(file.readlines())
-    loadedDock=PersonalDock("","","","")
-    for line in lines:
-        attribute = line[0:line.find("\t")]
-        attributeValue=line[line.find("\t")+1:line.find("\n")]
-        if attributeValue=="True":
-            loadedDock.attribute=True
-        elif attributeValue=="False":
-            loadedDock.attribute = False
-        elif not (attributeValue.find("(") == -1):
-            tuplesvalue=[tuple(i for i in element.strip('()').split(',')) for element in attributeValue.replace(' ','').split('),(')]
-            setattr(loadedDock, attribute, tuplesvalue)
-        elif not (attributeValue.find(",")==-1):
-            listvalue=attributeValue.split(',')
-            setattr(loadedDock, attribute, listvalue)
+def import_from_database(inData):
+        lines =inData.split('>\n')
+        file = open('dataout.xml', 'w')
+        for line in lines:
+            line=line.replace('>','')
+            if not(line.find("</")==-1):
+                 line=line.replace("</"+temp, '')
+            else:
+                line=line.replace('<', '')
+                temp=line
+            file.write(line)
+        file.close()
+        file = open('dataout.xml', 'r')
+        lines = iter(file.readlines())
+        loadedDock=PersonalDock("","","","")
+        for line in lines:
+            attribute = line[0:line.find("\t")]
+            attributeValue=line[line.find("\t")+1:line.find("\n")]
+            if attributeValue=="True":
+                loadedDock.attribute=True
+            elif attributeValue=="False":
+                loadedDock.attribute = False
+            elif not (attributeValue.find("(") == -1):
+                tuplesvalue=[tuple(i for i in element.strip('()').split(',')) for element in attributeValue.replace(' ','').split('),(')]
+                setattr(loadedDock, attribute, tuplesvalue)
+            elif not (attributeValue.find(",")==-1):
+                listvalue=attributeValue.split(',')
+                setattr(loadedDock, attribute, listvalue)
 
-        else:
-            setattr(loadedDock, attribute, attributeValue)
+            else:
+                setattr(loadedDock, attribute, attributeValue)
 
-    return loadedDock
+        return loadedDock
 
 def export_to_database(self):
     line = str()
     for attribute, attributeValue in vars(self).items():
-        if attribute == "id" or attributeValue == None:
+    if attribute == "id" or attributeValue == None:
+        continue
+    if not (isinstance(attributeValue, bool)) and not (isinstance(attributeValue, dt.date)):
+        if len(attributeValue) == 0:
             continue
-        if not (isinstance(attributeValue, bool)) and not (isinstance(attributeValue, dt.date)):
-            if len(attributeValue) == 0:
-                continue
-        line+="<"+attribute+">"
-        line += "\n" + "\t"
-        if type(attributeValue) is list:
-            for value in attributeValue:
-                if type(value) is tuple:
-                    line += "("
+    line+="<"+attribute+">"
+    line += "\n" + "\t"
+    if type(attributeValue) is list:
+        for value in attributeValue:
+            if type(value) is tuple:
+                line += "("
 
-                    for x in value:
-                        line += str(x) + ","
+                for x in value:
+                    line += str(x) + ","
 
-                    line = line[:-1]  # to remove the last "," in the line
-                    line += "),"
-                else:
-                    line += str(value) + ","
-            if line[len(line) - 1] == ",":
                 line = line[:-1]  # to remove the last "," in the line
-        else:
-            line+=str(attributeValue)
+                line += "),"
+            else:
+                line += str(value) + ","
+        if line[len(line) - 1] == ",":
+            line = line[:-1]  # to remove the last "," in the line
+    else:
+        line+=str(attributeValue)
 
-        line+="\n"+"</"+attribute+">"+"\n"
+    line+="\n"+"</"+attribute+">"+"\n"
     return line
 '''ship'''
-def import_from_database():
-    file = open('dataShip.xml', 'r')
-    lines = file.read().split('>\n')
-    file.close()
+def import_from_database(inData):
+    lines = inData.split('>\n')
     file = open('dataout.xml', 'w')
     for line in lines:
         line = line.replace('>', '')
@@ -154,10 +150,8 @@ def export_to_database(self):
         line += "\n" + "</" + attribute + ">" + "\n"
     return line
 '''sea'''
-def import_from_database():
-    file = open('dataSea.xml', 'r')
-    lines = file.read().split('>\n')
-    file.close()
+def import_from_database(inData):
+    lines = inData.split('>\n')
     file = open('dataout.xml', 'w')
     for line in lines:
         line = line.replace('>', '')
