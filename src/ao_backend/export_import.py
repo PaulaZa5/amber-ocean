@@ -1,6 +1,6 @@
 '''personalDock'''
 def import_from_database():
-    file = open('data.xml','r')
+    file = open('dataDock.xml','r')
     lines =file.read().split('>\n')
     file.close()
     #print(lines)
