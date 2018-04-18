@@ -46,60 +46,66 @@ class Sea(amber.AmberObject):
         self.creation_date = dt.datetime.utcnow().date()
 
     def deactivate(self):
-        pass
+        self.active = False
 
     def change_name(self, name):
-        pass
+        self.name = name
 
     def change_description(self, description):
-        pass
+        self.description = description
 
     def is_administrator(self, id):
-        pass
+        for admin in self.administrators :
+            if admin == id :
+                return True
+        else:
+            return False
 
     def add_administrator(self, new_administrator_id):
-        pass
+        self.administrators.append(new_administrator_id)
 
     def remove_administrator(self, administrator_id):
-        pass
+        self.administrators.remove(administrator_id)
 
     def is_editor(self, id):
-        pass
+        for editor in self.editors:
+            if editor == id :
+                return True
+        else:
+            return False
 
     def add_editor(self, new_editor_id):
-        pass
+        self.editors.append(new_editor_id)
 
     def remove_editor(self, editor_id):
-        pass
+        self.editors.remove(editor_id)
 
     def is_member(self, id):
-        pass
+        for member in self.members :
+            if member == id :
+                return True
+        else:
+            return False
 
     def add_member(self, new_member_id):
-        pass
+        self.members.append(new_member_id)
 
     def remove_member(self, member_id):
-        pass
+        self.members.remove(member_id)
 
     def change_visibility_privacy(self, new_visibility_privacy):
-        pass
+        self.visibility_privacy = new_visibility_privacy
 
     def change_sailing_privacy(self, new_sailing_privacy):
-        pass
-
-    def generate_ships(self):
-
-        """
-        Starts yielding posts shared to this sea chronologically
-        """
-
-        pass
+        self.sailing_privacy = new_sailing_privacy
 
     def sail_ship_to_this_sea(self, ship_id):
-        pass
+        self.sailed_ships.append((ship_id , dt.datetime.utcnow().date()))
 
     def sink_ship_from_this_sea(self, ship_id):
-        pass
+        for ship in self.sailed_ships:
+            if ship[0] == ship_id:
+                self.sailed_ships.remove(ship)
 
     @staticmethod
     def import_from_database(line):
