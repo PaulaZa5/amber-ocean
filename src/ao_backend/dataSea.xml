@@ -1,0 +1,33 @@
+<creator>
+	0
+</creator>
+<name>
+	vhdl
+</name>
+<description>
+	HW descrption language
+</description>
+<visibility_privacy>
+	everyone
+</visibility_privacy>
+<sailing_privacy>
+	everyone
+</sailing_privacy>
+<active>
+	True
+</active>
+<administrators>
+	 0 2
+</administrators>
+<editors>
+	 2 3
+</editors>
+<members>
+	 6 9 2 3 0
+</members>
+<sailed_ships>
+	 (15,19/10),(19,25/11)
+</sailed_ships>
+<creation_date>
+	2018-04-17
+</creation_date>

@@ -1,0 +1,60 @@
+<name>
+	beshoy
+</name>
+<gender>
+	male
+</gender>
+<birthday>
+	25/6/1996
+</birthday>
+<password>
+	2345
+</password>
+<master_email>
+	beshoy199690@yahoo.com
+</master_email>
+<emails>
+	 beshoyanwar71@gmail.com beshoy991@gmail.com
+</emails>
+<master_phone_number>
+	01273008943
+</master_phone_number>
+<phone_numbers>
+	 01223321207 01258963436
+</phone_numbers>
+<active>
+	True
+</active>
+<friends>
+	 0 1 2 3
+</friends>
+<followers>
+	 2 3 6
+</followers>
+<followees>
+	 5 6 9
+</followees>
+<seas>
+	 12 3
+</seas>
+<family>
+	 (0,2),(12,15)
+</family>
+<education>
+	 (primary,modern,2010,2013),(secondary,tabary,2013,2016)
+</education>
+<living_in>
+	 (alex,1998,2000),(cairo,2000,2018)
+</living_in>
+<relationship_status>
+	single
+</relationship_status>
+<relationships>
+	 (4,2)
+</relationships>
+<sailed_ships>
+	 (5,17/4/2018)
+</sailed_ships>
+<join_date>
+	2018-04-17
+</join_date>
