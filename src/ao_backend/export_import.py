@@ -13,7 +13,7 @@ def import_from_database(inData):
         file.close()
         file = open('dataout.xml', 'r')
         lines = iter(file.readlines())
-        loadedDock=PersonalDock("","","","")
+        loadedDock=PersonalDock("","","","",new_object=False)
         for line in lines:
             attribute = line[0:line.find("\t")]
             attributeValue=line[line.find("\t")+1:line.find("\n")]
@@ -77,7 +77,7 @@ def import_from_database(inData):
     file.close()
     file = open('dataout.xml', 'r')
     lines = iter(file.readlines())
-    loadedShip = Ship("", "", "")
+    loadedShip = Ship("", "", "","",new_object=False)
     for line in lines:
         attribute = line[0:line.find("\t")]
         attributeValue = line[line.find("\t") + 1:line.find("\n")]
@@ -164,7 +164,7 @@ def import_from_database(inData):
     file.close()
     file = open('dataout.xml', 'r')
     lines = iter(file.readlines())
-    loadedSea = Sea("", "", "")
+    loadedSea = Sea("", "", "",new_object=False)
     for line in lines:
         attribute = line[0:line.find("\t")]
         attributeValue = line[line.find("\t") + 1:line.find("\n")]
