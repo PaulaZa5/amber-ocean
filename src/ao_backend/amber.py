@@ -18,10 +18,13 @@ class AmberObject(object):
         if id in database:
             return database[id]
 
-    def __init__(self):
-        self.id = AmberObject.current_available_id
-        AmberObject.current_available_id += 1
-        database[self.id] = self
+    def __init__(self, new_object):
+        if new_object:
+            self.id = AmberObject.current_available_id
+            AmberObject.current_available_id += 1
+            database[self.id] = self
+        else:
+            self.id = None
 
     @staticmethod
     def __getitem__(id):
@@ -69,15 +72,19 @@ def import_database():
     f_data = file.read().split('++|++')
     AmberObject.current_available_id = int(f_data[0])
     del f_data[0]
+    del f_data[len(f_data) - 1]
     for object in f_data:
         id, in_data, in_type = object.split('+|+')
         id = int(id)
-        if in_type == "<class '__main__.PersonalDock'>":
+        if in_type == "<class 'personal_docks.PersonalDock'>":
             database[id] = personal_docks.PersonalDock.import_from_database(in_data)
-        elif in_type == "<class '__main__.Sea'>":
+            database[id].id = id
+        elif in_type == "<class 'seas.Sea'>":
             database[id] = seas.Sea.import_from_database(in_data)
-        elif in_type == "<class '__main__.Ship'>":
+            database[id].id = id
+        elif in_type == "<class 'ships.Ship'>":
             database[id] = ships.Ship.import_from_database(in_data)
+            database[id].id = id
     file.close()
 
 

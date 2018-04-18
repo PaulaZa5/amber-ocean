@@ -35,15 +35,16 @@ class Ship(amber.AmberObject):
     """
 
     @staticmethod
-    def RegisterShip(creator_id, where_is_it_created_id, content_type, txt_content, image_content=None, video_content=None,
-                     privacy=ShipPrivacy.Everyone, parent_ship_id=None):
-        new = Ship(creator_id, where_is_it_created_id, content_type, txt_content, image_content, video_content, privacy, parent_ship_id)
+    def RegisterShip(creator_id, where_is_it_created_id, content_type, txt_content, image_content=None,
+                     video_content=None, privacy=ShipPrivacy.Everyone, parent_ship_id=None, new_object=True):
+        new = Ship(creator_id, where_is_it_created_id, content_type, txt_content, image_content, video_content,
+                   privacy, parent_ship_id, new_object)
         amber.database[new.id] = new
         return new
 
     def __init__(self, creator_id, where_is_it_created_id, content_type, txt_content, image_content=None, video_content=None,
-                 privacy=ShipPrivacy.Everyone, parent_ship_id=None):
-        super().__init__()
+                 privacy=ShipPrivacy.Everyone, parent_ship_id=None, new_object=True):
+        super().__init__(new_object)
         self.creator_id = creator_id
         self.where_is_it_created_id = where_is_it_created_id
         self.content_type = content_type

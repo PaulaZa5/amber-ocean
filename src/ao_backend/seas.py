@@ -25,14 +25,14 @@ class Sea(amber.AmberObject):
 
     @staticmethod
     def RegisterSea(creator, name, description, visibility_privacy=SeaVisibilityPrivacy.Everyone,
-                 sailing_privacy=SeaSailingPrivacy.Everyone):
-        new = Sea(creator, name, description, visibility_privacy, sailing_privacy)
+                 sailing_privacy=SeaSailingPrivacy.Everyone, new_object=True):
+        new = Sea(creator, name, description, visibility_privacy, sailing_privacy, new_object)
         amber.database[new.id] = new
         return new
 
     def __init__(self, creator, name, description, visibility_privacy=SeaVisibilityPrivacy.Everyone,
-                 sailing_privacy=SeaSailingPrivacy.Everyone):
-        super().__init__()
+                 sailing_privacy=SeaSailingPrivacy.Everyone, new_object=True):
+        super().__init__(new_object)
         self.creator = creator
         self.name = name
         self.description = description

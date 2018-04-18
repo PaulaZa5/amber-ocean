@@ -60,13 +60,13 @@ class PersonalDock(amber.AmberObject):
     """
 
     @staticmethod
-    def RegisterAccount(name, gender, birthday, password, email=None, phone_number=None):
-        new = PersonalDock(name, gender, birthday, password, email, phone_number)
+    def RegisterAccount(name, gender, birthday, password, email=None, phone_number=None, new_object=True):
+        new = PersonalDock(name, gender, birthday, password, email, phone_number, new_object)
         amber.database[new.id] = new
         return new
 
-    def __init__(self, name, gender, birthday, password, email=None, phone_number=None):
-        super().__init__()
+    def __init__(self, name, gender, birthday, password, email=None, phone_number=None, new_object=True):
+        super().__init__(new_object)
         self.name = name
         self.gender = gender
         self.birthday = birthday  # dt.datetime.date()
