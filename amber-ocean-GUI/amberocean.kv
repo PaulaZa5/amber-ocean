@@ -1,7 +1,16 @@
 #:kivy 1.9.1
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+####################### Screen Management ############################
 
-#Login
-<AmberOceanLogin>:
+ScreenManagement:
+	transition: FadeTransition()
+	LoginScreen:
+	RegisterationScreen:
+	ForgetPasswordScreen:
+	
+####################### Login Screen #######################
+<Login>:
+	
     size_hint: None, None
     canvas.before:
         Color:
@@ -12,10 +21,7 @@
 		
 
     BoxLayout:
-		
 		display: entry
-		
-	
 		canvas.before:
             Color:
                 rgba: 0,0, 1, 0.1  # black
@@ -35,7 +41,8 @@
 			Image:
 				source: 'logo.png'
 				size_hint: None, None
-				size: 200, 200
+				size: 120, 120
+		
 
         Label:
 			font_size: 20
@@ -67,19 +74,38 @@
 			hint_text_color: 0,0, 1, 0.3
             font_size: 15
             multiline: False
-			
 			font_name:'Arial'
+			password: True
+		Label:
+			font_size: 1
+			text: '  '
+			size_hint: (.1, .1)
 		Button:
-			size_hint: (.5, .5)
+			size_hint: (.5, .8)
 			pos: self.pos
 			font_size: 20
 			text: 'Submit'
 			background_color:0,0,1,0.7
 			pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            
 
+		BoxLayout:
+            orientation: 'horizontal'
+
+			Button:
+				on_release: app.root.current = 'ForgetPassword'
+				text: 'Forgetten Password'
+				font_size: 20 
+				background_color:0,0,1,0.7
+				size_hint: (.5, .6)
+			Button:
+				on_release: app.root.current = 'Registeration'
+				text: 'Registeration'
+				font_size: 20
+				background_color:0,0,1,0.7
+				size_hint: (.5, .6)
 # BackGround
-<AmberOceanUI>:
+<LoginScreen>:
+	name: "login"
     AnchorLayout:
         canvas.before:
             Color:
@@ -90,6 +116,223 @@
         size: self.parent.size
         anchor_x: 'center'
         anchor_y: 'center'
-        AmberOceanLogin:
+        Login:
+            size: 400,250
+ 
+
+			
+####################### Registeration Screen #######################			
+	
+<ForgetPassword>:		
+		
+	
+    size_hint: None, None
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1  # red
+        Rectangle:
+            pos: self.pos
+            size: self.size
+		
+
+    BoxLayout:
+		display: entry
+		canvas.before:
+            Color:
+                rgba: 0,0, 1, 0.1  # black
+            Ellipse:
+                pos: self.pos
+                size: 400,250
+				segments:8
+				
+
+        size: self.parent.size  
+        pos: self.parent.pos  
+        orientation: 'vertical'
+		
+		AnchorLayout:
+			anchor_x: 'center'
+			anchor_y: 'center'
+			Image:
+				source: 'logo.png'
+				size_hint: None, None
+				size: 120, 120
+		
+
+        Label:
+			font_size: 20
+            text: 'UserName'
+			text_size: self.size
+			color: 0,0,0,1
+			
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: entry
+			hint_text: 'Your Name / Email'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+        
+		# Space
+		
+		Label:
+			font_size: 1
+			text: '  '
+			size_hint: (.1, .1)
+		Button:
+			size_hint: (.5, .8)
+			pos: self.pos
+			font_size: 20
+			text: 'Send Email'
+			background_color:0,0,1,0.7
+			pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+		BoxLayout:
+			Button:
+				on_release: app.root.current = 'login'
+				text: 'Back to Login'
+				font_size: 20 
+				background_color:0,0,1,0.7
+				size_hint: (.5, .6)
+
+
+<ForgetPasswordScreen>:
+	name: 'ForgetPassword'
+	AnchorLayout:
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1  # white
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        size: self.parent.size
+        anchor_x: 'center'
+        anchor_y: 'center'
+        ForgetPassword:
             size: 400,250
 
+		
+####################### Registeration Screen #######################
+<Registeration>:
+	
+    size_hint: None, None
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1  # red
+        Rectangle:
+            pos: self.pos
+            size: self.size
+		
+
+    BoxLayout:
+		display: entry
+		canvas.before:
+            Color:
+                rgba: 0,0, 1, 0.1  # black
+            Ellipse:
+                pos: self.pos
+                size: 400,250
+				segments:8
+				
+
+        size: self.parent.size  
+        pos: self.parent.pos  
+        orientation: 'vertical'
+		
+		AnchorLayout:
+			anchor_x: 'center'
+			anchor_y: 'center'
+			Image:
+				source: 'logo.png'
+				size_hint: None, None
+				size: 120, 120
+		
+
+        Label:
+			font_size: 20
+            text: 'UserName'
+			text_size: self.size
+			color: 0,0,0,1
+			
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: UserName
+			hint_text: 'Your Name'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+		
+		Label:
+			font_size: 20
+            text: 'Email'
+			text_size: self.size
+			color: 0,0,0,1
+			
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: entry
+			hint_text: 'Your Email'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+		
+        Label:
+			font_size: 20
+            text: 'Password'
+			hint_text: 'Your Password'
+			text_size: self.size
+			color: 0,0,0,1
+			hint_text_color: 0,0,0,1
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: entry
+			hint_text: 'Your Password'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+			password: True
+		Label:
+			font_size: 1
+			text: '  '
+			size_hint: (.1, .1)
+		Button:
+			size_hint: (.5, .8)
+			pos: self.pos
+			font_size: 20
+			text: 'Submit'
+			background_color:0,0,1,0.7
+			pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+		
+		BoxLayout:
+			Button:
+				on_release: app.root.current = 'login'
+				text: 'Back to Login'
+				font_size: 20 
+				background_color:0,0,1,0.7
+				size_hint: (.5, .7)
+# BackGround
+<RegisterationScreen>:
+	name: "Registeration"
+    AnchorLayout:
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1  # white
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        size: self.parent.size
+        anchor_x: 'center'
+        anchor_y: 'center'
+        Registeration:
+            size: 400,250
+ 
+		
+	
