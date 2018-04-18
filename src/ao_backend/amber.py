@@ -58,11 +58,11 @@ def export_database():
     file.write(str(AmberObject.current_available_id))
     file.write('++|++')
     for value in database.values():
-        file.write(value.id)
+        file.write(str(value.id))
         file.write('+|+')
         file.write(value.export_to_database())
         file.write('+|+')
-        file.write(type(value))
+        file.write(str(type(value)))
         file.write('++|++')
     file.close()
 
