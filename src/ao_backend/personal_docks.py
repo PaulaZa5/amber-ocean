@@ -70,7 +70,7 @@ class PersonalDock(amber.AmberObject):
         self.name = name
         self.gender = gender
         self.birthday = birthday  # dt.datetime.date()
-        self.password = hashlib.sha224(password).hexdigest()  # Encrypted password
+        self.password = hashlib.sha224(password.encode('utf-8')).hexdigest()  # Encrypted password
         self.master_email = email
         self.emails = [email]
         self.master_phone_number = phone_number
@@ -91,7 +91,7 @@ class PersonalDock(amber.AmberObject):
         self.join_date = dt.datetime.utcnow().date()
 
     def check_password(self, password):
-        password = hashlib.sha224(password).hexdigest()
+        password = hashlib.sha224(password.encode('utf-8')).hexdigest()
         return self.password is password
 
     def deactivate_account(self):
@@ -111,7 +111,7 @@ class PersonalDock(amber.AmberObject):
         return True
 
     def change_password(self, new_password):
-        self.password = hashlib.sha224(new_password).hexdigest()
+        self.password = hashlib.sha224(new_password.encode('utf-8')).hexdigest()
         return True
 
     def change_master_email(self, new_email):
