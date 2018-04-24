@@ -1,0 +1,124 @@
+3++|++0+|+<name>
+	beshoy
+</name>
+<gender>
+	male
+</gender>
+<birthday>
+	25/6/1996
+</birthday>
+<password>
+	2345
+</password>
+<master_email>
+	beshoy199690@yahoo.com
+</master_email>
+<emails>
+	beshoyanwar71@gmail.com,beshoy991@gmail.com
+</emails>
+<master_phone_number>
+	01273008943
+</master_phone_number>
+<phone_numbers>
+	01223321207,01258963436
+</phone_numbers>
+<active>
+	True
+</active>
+<friends>
+	0,1,2,3
+</friends>
+<followers>
+	2,3,6
+</followers>
+<followees>
+	5,6,9
+</followees>
+<seas>
+	12,3
+</seas>
+<family>
+	(0,2),(12,15)
+</family>
+<education>
+	(primary,modern,2010,2013),(secondary,tabary,2013,2016)
+</education>
+<living_in>
+	(alex,1998,2000),(cairo,2000,2018)
+</living_in>
+<relationship_status>
+	single
+</relationship_status>
+<relationships>
+	(4,2)
+</relationships>
+<sailed_ships>
+	(5,17/4/2018)
+</sailed_ships>
+<join_date>
+	2018-04-18
+</join_date>
++|+<class 'personal_docks.PersonalDock'>++|++2+|+<creator>
+	0
+</creator>
+<name>
+	vhdl
+</name>
+<description>
+	HW descrption language
+</description>
+<visibility_privacy>
+	everyone
+</visibility_privacy>
+<sailing_privacy>
+	everyone
+</sailing_privacy>
+<active>
+	True
+</active>
+<administrators>
+	0,2
+</administrators>
+<editors>
+	2,3
+</editors>
+<members>
+	6,9,2,3,0
+</members>
+<sailed_ships>
+	(15,19/10),(19,25/11)
+</sailed_ships>
+<creation_date>
+	2018-04-18
+</creation_date>
++|+<class 'seas.Sea'>++|++1+|+<creator_id>
+	0
+</creator_id>
+<content_type>
+	Text
+</content_type>
+<txt_content>
+	hello
+</txt_content>
+<video_content>
+	Tt
+</video_content>
+<privacy>
+	onlyfollowers
+</privacy>
+<reactions>
+	like:5,6,9;dislike:9,8,11;love:13,2;angry:5;haha:
+</reactions>
+<parent_ship>
+	2
+</parent_ship>
+<creation_date>
+	2018-04-18
+</creation_date>
+<child_ships>
+	1,2,3
+</child_ships>
+<edit_history>
+	(hi,tb,tn,15/5)
+</edit_history>
++|+<class 'ships.Ship'>++|++
