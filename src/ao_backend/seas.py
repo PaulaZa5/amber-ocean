@@ -1,7 +1,7 @@
 """
 This file contains all seas related operations
 """
-
+from amber import *
 import amber
 import datetime as dt
 
@@ -104,7 +104,8 @@ class Sea(amber.AmberObject):
         """
         Starts yielding posts shared to this sea chronologically
         """
-        pass
+        for shipid, shipdate in self.sailed_ships:
+            yield database[shipid]
 
     def sail_ship_to_this_sea(self, ship_id):
         self.sailed_ships.append((ship_id , dt.datetime.utcnow().date()))
@@ -115,6 +116,27 @@ class Sea(amber.AmberObject):
             if ship == ship_id:
                 self.sailed_ships.remove(ship)
         return True
+
+    def max_reactions_ship(self):
+        maxreactions=0
+        maxreactions_id=-1
+        for ship in self.generate_ships():
+            reactions=0
+            for key, dictlist in database[ship.id].reactions.items():
+                reactions+=len(dictlist)
+            if reactions>maxreactions:
+                maxreactions=reactions
+                maxreactions_id=ship.id
+        return maxreactions_id,maxreactions
+
+    def max_comments_ship(self):
+        maxcomments=0
+        maxcomments_id=-1
+        for ship in self.generate_ships():
+            if len(database[ship.id].child_ships)>maxcomments:
+                maxcomments=len(database[ship.id].child_ships)
+                maxcomments_id=ship.id
+        return maxcomments_id,maxcomments
 
     @staticmethod
     def import_from_database(line):

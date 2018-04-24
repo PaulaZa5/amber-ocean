@@ -1,8 +1,9 @@
 """
 This file contains all personal-docks related operations
 """
-
 import amber
+from amber import *
+from ships import *
 import datetime as dt
 import hashlib
 
@@ -279,8 +280,8 @@ class PersonalDock(amber.AmberObject):
         """
         Starts yielding posts shared to this dock chronologically
         """
-
-        pass
+        for shipid,shipdate in self.sailed_ships:
+            yield database[shipid]
 
     def sail_ship_to_this_dock(self, ship_id):
         self.sailed_ships.append((ship_id, dt.datetime.utcnow()))
@@ -292,6 +293,84 @@ class PersonalDock(amber.AmberObject):
                 self.sailed_ships.remove((ship, date_time))
                 return True
         return False
+
+
+    def max_reactions_ship(self):
+        maxreactions=0
+        maxreactions_id=-1
+        for ship in self.generate_ships():
+            reactions=0
+            for key, dictlist in database[ship.id].reactions.items():
+                reactions+=len(dictlist)
+            if reactions>maxreactions:
+                maxreactions=reactions
+                maxreactions_id=ship.id
+        return maxreactions_id,maxreactions
+
+    def max_comments_ship(self):
+        maxcomments=0
+        maxcomments_id=-1
+        for ship in self.generate_ships():
+            if len(database[ship.id].child_ships)>maxcomments:
+                maxcomments=len(database[ship.id].child_ships)
+                maxcomments_id=ship.id
+        return maxcomments_id,maxcomments
+
+    def docks_you_may_know(self):
+
+        """
+        Function that generates tuples of (id,matual_friends_no ) of other docks the input-dock doesn't know after
+        building a database of docks of friends of friends using graph breadth first traversal
+        """
+        recommendations = {}
+        for friend in self.friends:
+            for vertex in database[friend].friends:
+                if vertex in recommendations.keys():
+                    recommendations[vertex] += 1
+                else:
+                    recommendations[vertex] = 1
+
+        sorted_recommendations = sorted(recommendations.items(), key=lambda tup: tup[1], reverse=True)
+
+        for recommendation in sorted_recommendations:
+            yield recommendation
+
+    def seas_you_might_join(self):
+
+        """
+        Function that generates tuples of (id,friends_members_no ) of seas the input-dock hasn't joined after building
+        a database of friends's seas using graph breadth first traversal
+        """
+        recommendations = {}
+        for friend in self.friends:
+            for group in database[friend].groups:
+                if group in recommendations.keys():
+                    recommendations[group] += 1
+                else:
+                    recommendations[group] = 1
+
+        sorted_recommendations = sorted(recommendations.items(), key=lambda tup: tup[1], reverse=True)
+
+        for recommendation in sorted_recommendations:
+            yield recommendation
+
+    def newsfeed_ships(self):
+
+        """
+        Function that generates ids of ships that was posted to friends' docks and joined
+        seas chronologically
+        """
+        posts=[]
+        for friend in self.friends:
+            posts.extend(database[friend].sailed_ships)
+        for group in self.groups:
+            posts.extend(database[group].sailed_ships)
+
+        sorted_posts = sorted(posts, key=lambda tup: tup[1], reverse=True)
+
+        for post_id,post_date in sorted_posts:
+            yield post_id
+
 
     @staticmethod
     def import_from_database(line):
