@@ -1,7 +1,7 @@
 """
 This file contains all seas related operations
 """
-from amber import *
+from amber import database
 import amber
 import datetime as dt
 
@@ -105,7 +105,7 @@ class Sea(amber.AmberObject):
         Starts yielding posts shared to this sea chronologically
         """
         for shipid, shipdate in self.sailed_ships:
-            yield database[shipid]
+            yield shipid
 
     def sail_ship_to_this_sea(self, ship_id):
         self.sailed_ships.append((ship_id , dt.datetime.utcnow().date()))

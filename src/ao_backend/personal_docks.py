@@ -2,12 +2,10 @@
 This file contains all personal-docks related operations
 """
 import amber
-from amber import *
-from ships import *
+from amber import database
 import datetime as dt
 import hashlib
-
-
+import sortedcontainers
 class FamilyRelationship(enumerate):
     Brother = 'brother'
     Sister = 'sister'
@@ -46,7 +44,7 @@ class RelationshipStates(enumerate):
     Single = 'single'
     In_a_relationship = 'inarelationship'
     Engaged = 'engaged'
-    Married = 'marriend'
+    Married = 'married'
     Separated = 'separated'
     In_an_open_relationship = 'inanopenrelationship'
     Complicated = 'complicated'
@@ -281,7 +279,7 @@ class PersonalDock(amber.AmberObject):
         Starts yielding posts shared to this dock chronologically
         """
         for shipid,shipdate in self.sailed_ships:
-            yield database[shipid]
+            yield shipid
 
     def sail_ship_to_this_dock(self, ship_id):
         self.sailed_ships.append((ship_id, dt.datetime.utcnow()))
@@ -360,16 +358,29 @@ class PersonalDock(amber.AmberObject):
         Function that generates ids of ships that was posted to friends' docks and joined
         seas chronologically
         """
-        posts=[]
+        posts = []
+        # post is a list of tuples (post_id,post_no_in_sailedships_list)
         for friend in self.friends:
-            posts.extend(database[friend].sailed_ships)
+            friend_posts=database[friend].sailed_ships
+            no_of_posts=len(friend_posts)
+            newest_post_id=friend_posts[no_of_posts-1][0]
+            posts.add((newest_post_id,no_of_posts-1))
         for group in self.groups:
-            posts.extend(database[group].sailed_ships)
+            group_posts = database[group].sailed_ships
+            no_of_posts = len(group_posts)
+            newest_post_id = group_posts[no_of_posts - 1][0]
+            posts.add((newest_post_id, no_of_posts - 1))
 
-        sorted_posts = sorted(posts, key=lambda tup: tup[1], reverse=True)
+        sorted_posts = sortedcontainers.SortedListWithKey(posts, key=lambda tup: database[tup[0]].creation_date)
 
-        for post_id,post_date in sorted_posts:
+        for post_id, post_no in sorted_posts:
             yield post_id
+            sorted_posts.pop()
+            if post_no != 0:
+                post_creator_id=database[post_id].creator_id
+                posts = database[post_creator_id].sailed_ships
+                new_post_id=posts[post_no-1][0]
+                sorted_posts((new_post_id,post_no-1))
 
 
     @staticmethod
