@@ -1,11 +1,14 @@
 """
 This file contains all personal-docks related operations
 """
+
 import amber
 from amber import database
 import datetime as dt
 import hashlib
 import sortedcontainers
+
+
 class FamilyRelationship(enumerate):
     Brother = 'brother'
     Sister = 'sister'
@@ -62,7 +65,7 @@ class PersonalDock(amber.AmberObject):
     def RegisterAccount(name, gender, birthday, password, email=None, phone_number=None, new_object=True):
         new = PersonalDock(name, gender, birthday, password, email, phone_number, new_object)
         amber.database[new.id] = new
-        return new
+        return new.id
 
     def __init__(self, name, gender, birthday, password, email=None, phone_number=None, new_object=True):
         super().__init__(new_object)
@@ -87,13 +90,7 @@ class PersonalDock(amber.AmberObject):
         self.links = []  # Tuples of two elements (link string=>(facebook, linkedin..etc), link url)
         self.special_fields = []  # Tuples of two elements (field string=>(nickname, about..etc), field text)
         self.sailed_ships = []  # Tuples of two elements (ship id, initial sailing date)
-        self.join_date = dt.datetime.utcnow().now()
-        self.join_date = self.join_date.replace(microsecond=0)
-
-
-    def check_password(self, password):
-        password = hashlib.sha224(password.encode('utf-8')).hexdigest()
-        return self.password is password
+        self.join_date = dt.datetime.utcnow().replace(microsecond=0)
 
     def check_password(self, password):
         password = hashlib.sha224(password.encode('utf-8')).hexdigest()
@@ -469,5 +466,131 @@ class PersonalDock(amber.AmberObject):
             line += "\n" + "</" + attribute + ">" + "\n"
         return line
 
-    def export_to_xml(self):
-        pass
+    @staticmethod
+    def load_from_xml(location='personaldock.xml'):
+        import xml.etree.ElementTree as et
+        dock = et.parse(location)
+        dock_data = dock.getroot()
+        dock = PersonalDock.RegisterAccount(dock_data.attrib['Name'], dock_data.attrib['Gender'],
+                                            dt.datetime.strptime(dock_data.attrib['Birthday'], '%Y-%m-%d %H:%M:%S'),
+                                            '0', dock_data.attrib['Master-Email'],
+                                            dock_data.attrib['Master-Phone-Number'])
+        dock.join_date = dt.datetime.strptime(dock_data.attrib['Join-Date'], '%Y-%m-%d %H:%M:%S')
+        if dock_data.attrib['Active'] == 'False':
+            dock.active = False
+        dock.password = dock_data.attrib['Hashed-Password']
+        dock.relationship_status = dock_data.attrib['Relationship-Status']
+        dock.emails = []
+        dock.phone_numbers = []
+
+        for elem in dock_data:
+            if elem.tag == "Education":
+                for ed in elem:
+                    dock.add_education(ed.attrib['Major'], ed.attrib['Place'],
+                                       dt.datetime.strptime(ed.attrib['Start-Date'], '%Y-%m-%d %H:%M:%S'),
+                                       dt.datetime.strptime(ed.attrib['Finishing-Date'], '%Y-%m-%d %H:%M:%S'))
+            elif elem.tag == "Emails":
+                for email in elem:
+                    dock.add_email(email.attrib['Email'])
+            elif elem.tag == "Links":
+                for link in elem:
+                    link_s, url = tuple(list(link.attrib.items())[0])
+                    dock.add_link(link_s, url)
+            elif elem.tag == "Living-Places":
+                for place in elem:
+                    dock.add_living_place(place.attrib['Place'],
+                                          dt.datetime.strptime(ed.attrib['Start-Date'], '%Y-%m-%d %H:%M:%S'),
+                                          dt.datetime.strptime(ed.attrib['Finishing-Date'], '%Y-%m-%d %H:%M:%S'))
+            elif elem.tag == "Phone-Numbers":
+                for ph_n in elem:
+                    dock.add_phone_number(ph_n.attrib['Number'])
+            elif elem.tag == "Special-Fields":
+                for field in elem:
+                    field_s, field_d = tuple(list(field.attrib.items())[0])
+                    dock.add_special_field(field_s, field_d)
+
+        return dock.id
+
+    def export_to_xml(self, destination='personaldock.xml', to_file=True):
+        import xml.etree.ElementTree as et
+        data = et.Element('Personal-Dock')
+        data.set("Active", str(self.active))
+        data.set('Birthday', str(self.birthday))
+        data.set('Gender', self.gender)
+        data.set('Hashed-Password', self.password)
+        data.set('Join-Date', str(self.join_date))
+        data.set('Master-Email', self.master_email)
+        data.set('Master-Phone-Number', self.master_phone_number)
+        data.set('Name', self.name)
+        data.set("Relationship-Status", self.relationship_status)
+
+        educat = et.SubElement(data, 'Education')
+        for num, ed in enumerate(self.education):
+            major, place, start, end = ed
+            n_ed = et.SubElement(educat, "Education" + str(num + 1))
+            n_ed.set("Major", major)
+            n_ed.set("Place", place)
+            n_ed.set("Start-Date", str(start))
+            n_ed.set("Finishing-Date", str(end))
+        emails = et.SubElement(data, 'Emails')
+        for num, email in enumerate(self.emails):
+            n_email = et.SubElement(emails, "Email" + str(num + 1))
+            n_email.set("Email", email)
+        fam_mem = et.SubElement(data, 'Family-Members')
+        for num, rel in enumerate(self.family):
+            mem_id, relationship = rel
+            n_relationship = et.SubElement(fam_mem, "Relationship" + str(num + 1))
+            n_relationship.set("Family-Member", amber.database[mem_id].name)
+            n_relationship.set("Relationship", relationship)
+        followees = et.SubElement(data, 'Followees')
+        followees.text = ""
+        for followee in self.followees:
+            followees.text = followees.text + ", " + amber.database[followee].name
+        followers = et.SubElement(data, 'Followers')
+        followers.text = ""
+        for follower in self.followers:
+            followers.text = followers.text + ", " + amber.database[follower].name
+        friends = et.SubElement(data, 'Friends')
+        friends.text = ""
+        for friend in self.friends:
+            friends.text = friends.text + ", " + amber.database[friend].name
+        links = et.SubElement(data, 'Links')
+        for num, link in enumerate(self.links):
+            string, url = link
+            n_link = et.SubElement(links, "Link" + str(num + 1))
+            n_link.set(string, url)
+        liv_in = et.SubElement(data, 'Living-Places')
+        for num, place_data in enumerate(self.living_in):
+            place, start, end = place_data
+            n_li = et.SubElement(liv_in, "Living-Place" + str(num + 1))
+            n_li.set("Place", place)
+            n_li.set("Start-Date", str(start))
+            n_li.set("Finishing-Date", str(end))
+        phone_numbers = et.SubElement(data, 'Phone-Numbers')
+        for num, phone_no in enumerate(self.phone_numbers):
+            n_phone = et.SubElement(phone_numbers, "Phone-Number" + str(num + 1))
+            n_phone.set("Number", phone_no)
+        so_relationships = et.SubElement(data, 'Relationships')
+        for num, rel in enumerate(self.relationships):
+            mem_id, type, start, end = rel
+            n_relationship = et.SubElement(so_relationships, "Relationship" + str(num + 1))
+            n_relationship.set("Significant-Other", amber.database[mem_id].name)
+            n_relationship.set("Type", type)
+            n_relationship.set("Start", str(start))
+            n_relationship.set("End", str(end))
+        joined_seas = et.SubElement(data, 'Seas')
+        joined_seas.text = ""
+        for sea in self.seas:
+            joined_seas.text = joined_seas.text + ", " + amber.database[sea].name
+        sp_fields = et.SubElement(data, 'Special-Fields')
+        for num, field in enumerate(self.special_fields):
+            string, desc = field
+            n_field = et.SubElement(sp_fields, "Field" + str(num + 1))
+            n_field.set(string, desc)
+
+        if to_file:
+            xmlfile = open(destination, "w")
+            xmlfile.write(et.tostring(data).decode().replace('>, ', '>'))
+            xmlfile.close()
+
+        return True
