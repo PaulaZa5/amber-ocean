@@ -1,6 +1,7 @@
 """
 This file contains all seas related operations
 """
+
 from amber import database
 import amber
 import datetime as dt
@@ -28,7 +29,7 @@ class Sea(amber.AmberObject):
                  sailing_privacy=SeaSailingPrivacy.Everyone, new_object=True):
         new = Sea(creator, name, description, visibility_privacy, sailing_privacy, new_object)
         amber.database[new.id] = new
-        return new
+        return new.id
 
     def __init__(self, creator, name, description, visibility_privacy=SeaVisibilityPrivacy.Everyone,
                  sailing_privacy=SeaSailingPrivacy.Everyone, new_object=True):
@@ -43,7 +44,7 @@ class Sea(amber.AmberObject):
         self.editors = []
         self.members = [creator]
         self.sailed_ships = []  # Tuples of two elements (ship id, initial sailing date)
-        self.creation_date = dt.datetime.utcnow().date()
+        self.creation_date = dt.datetime.utcnow().replace(microsecond=0)
 
     def deactivate(self):
         self.active = False
@@ -70,7 +71,6 @@ class Sea(amber.AmberObject):
 
     def is_editor(self, id):
         return id in self.editors
-
 
     def add_editor(self, new_editor_id):
         self.editors.append(new_editor_id)
@@ -99,11 +99,11 @@ class Sea(amber.AmberObject):
         self.sailing_privacy = new_sailing_privacy
         return True
 
-
     def generate_ships(self):
         """
         Starts yielding posts shared to this sea chronologically
         """
+
         for shipid, shipdate in self.sailed_ships:
             yield shipid
 
@@ -116,6 +116,27 @@ class Sea(amber.AmberObject):
             if ship == ship_id:
                 self.sailed_ships.remove(ship)
         return True
+      
+    def max_reactions_ship(self):
+        maxreactions=0
+        maxreactions_id=-1
+        for ship in self.generate_ships():
+            reactions=0
+            for key, dictlist in database[ship.id].reactions.items():
+                reactions+=len(dictlist)
+            if reactions>maxreactions:
+                maxreactions=reactions
+                maxreactions_id=ship.id
+        return maxreactions_id,maxreactions
+
+    def max_comments_ship(self):
+        maxcomments=0
+        maxcomments_id=-1
+        for ship in self.generate_ships():
+            if len(database[ship.id].child_ships)>maxcomments:
+                maxcomments=len(database[ship.id].child_ships)
+                maxcomments_id=ship.id
+        return maxcomments_id,maxcomments
 
     def max_reactions_ship(self):
         maxreactions=0
@@ -139,13 +160,141 @@ class Sea(amber.AmberObject):
         return maxcomments_id,maxcomments
 
     @staticmethod
-    def import_from_database(line):
-        loaded_sea = Sea()
-        return loaded_sea
+    def import_from_database(inData):
+        f = "%Y-%m-%d %H:%M:%S"
+        lines = inData.split('>\n')
+        file = open('dataout.xml', 'w')
+        for line in lines:
+            line = line.replace('>', '')
+            if not (line.find("</") == -1):
+                line = line.replace("</" + temp, '')
+            else:
+                line = line.replace('<', '')
+                temp = line
+            file.write(line)
+        file.close()
+        file = open('dataout.xml', 'r')
+        lines = iter(file.readlines())
+        loadedSea = Sea("", "", "", new_object=False)
+        for line in lines:
+            attribute = line[0:line.find("\t")]
+            attributeValue = line[line.find("\t") + 1:line.find("\n")]
+            if attributeValue == "True":
+                loadedSea.attribute = True
+            elif attributeValue == "False":
+                loadedSea.attribute = False
+            elif not (attributeValue.find("(") == -1):
+                tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in
+                               attributeValue.split('),(')]
+                for i in range(len(tuplesvalue)):
+                    for j in range(len(tuplesvalue[i])):
+                        if "datetime.datetime" in tuplesvalue[i][j]:
+                            tupvalue = tuplesvalue[i][j].replace('datetime.datetime', '')
+                            date = dt.datetime.strptime(tupvalue, f)
+                            tuplesvalue[i] = list(tuplesvalue[i])
+                            tuplesvalue[i][j] = date
+                            tuplesvalue[i] = tuple(tuplesvalue[i])
+                setattr(loadedSea, attribute, tuplesvalue)
+            elif not (attributeValue.find(",") == -1):
+                listvalue = attributeValue.split(',')
+                setattr(loadedSea, attribute, listvalue)
+
+            else:
+                if "datetime.datetime" in attributeValue:
+                    attributeValue=attributeValue.replace('datetime.datetime','')
+                    date = dt.datetime.strptime(attributeValue, f)
+                    setattr(loadedSea, attribute, date)
+                else:
+                    setattr(loadedSea, attribute, attributeValue)
+
+        return loadedSea
 
     def export_to_database(self):
         line = str()
+        for attribute, attributeValue in vars(self).items():
+            if attribute == "id" or attributeValue == None:
+                continue
+            if not (isinstance(attributeValue, bool)) and not (isinstance(attributeValue, dt.date)):
+                if len(attributeValue) == 0:
+                    continue
+            line += "<" + attribute + ">"
+            line += "\n" + "\t"
+            if type(attributeValue) is list:
+                for value in attributeValue:
+                    if type(value) is tuple:
+                        line += "("
+
+                        for x in value:
+                            attrstring = str(x)
+                            if isinstance(x, dt.datetime):
+                                attrstring = "datetime.datetime" + attrstring
+                            line += attrstring +","
+
+                        line = line[:-1]  # to remove the last "," in the line
+                        line += "),"
+                    else:
+                        line += str(value) + ","
+                if line[len(line) - 1] == ",":
+                    line = line[:-1]  # to remove the last "," in the line
+            else:
+                attrstring = str(attributeValue)
+                if isinstance(attributeValue, dt.datetime):
+                    attrstring = "datetime.datetime" + attrstring
+                line += attrstring
+
+            line += "\n" + "</" + attribute + ">" + "\n"
         return line
 
-    def export_to_xml(self):
-        pass
+    @staticmethod
+    def load_from_xml(location='sea.xml', creator=""):
+        import xml.etree.ElementTree as et
+        sea = et.parse(location)
+        sea_data = sea.getroot()
+        sea = Sea.RegisterSea(creator, sea_data.attrib['Name'], sea_data[1].text,
+                              sea_data.attrib['Visibility'], sea_data.attrib['Sailing-Privacy'])
+        sea.creation_date = dt.datetime.strptime(sea_data.attrib['Creation-Time'], '%Y-%m-%d %H:%M:%S')
+        if sea_data.attrib['Active'] == 'False':
+            sea.active = False
+
+        return sea.id
+
+    def export_to_xml(self, destination='sea.xml', to_file=True):
+        import xml.etree.ElementTree as et
+        data = et.Element('Sea')
+        data.set('Active', str(self.active))
+        data.set('Creation-Time', str(self.creation_date))
+        try:
+            data.set('Creator', amber.database[self.creator].name)
+        except:
+            pass
+        data.set('Name', self.name)
+        data.set('Sailing-Privacy', self.sailing_privacy)
+        data.set('Visibility', self.visibility_privacy)
+
+        administrators = et.SubElement(data, 'Administrators')
+        administrators.text = ""
+        for administrator in self.administrators:
+            try:
+                administrators.text = administrators.text + ", " + amber.database[administrator].name
+            except:
+                pass
+        desc = et.SubElement(data, "Description")
+        desc.text = self.description
+        editors = et.SubElement(data, 'Editors')
+        editors.text = ""
+        for editor in self.editors:
+            editors.text = editors.text + ", " + amber.database[editor].name
+        members = et.SubElement(data, 'Members')
+        members.text = ""
+        for member in self.members:
+            try:
+                members.text = members.text + ", " + amber.database[member].name
+            except:
+                pass
+
+        if to_file:
+            xmlfile = open(destination, "w")
+            xmlfile.write(et.tostring(data).decode().replace('>, ', '>'))
+            xmlfile.close()
+
+        return data
