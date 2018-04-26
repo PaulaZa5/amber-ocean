@@ -38,8 +38,9 @@ A fast, scalable and secure social networking service that can be easily configu
 > - [ ] Sharing System
 > - [ ] Editing System
 > - [ ] Deletion
-6. [ ] Exporting Docks ` - Exporting all information about the exporting user's dock.`
-7. [ ] Data Analyzation and Visualization ` - Analyzing the database and visualizing its data.`
+6. [x] Exporting to and importing from .xml ` - Exporting/importing data about some dock/sea/ship.`
+7. [x] Data Analyzation ` - Analyzing the database.`
+8. [ ] Data Visualization ` -  Visualizing the database's data.`
 
 # Use Cases
 1. ![Dock Managers](use-cases/dock-use-case.png?raw=true)
