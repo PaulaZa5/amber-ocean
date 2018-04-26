@@ -103,7 +103,7 @@ class Sea(amber.AmberObject):
         """
         Starts yielding posts shared to this sea chronologically
         """
-        
+
         for shipid, shipdate in self.sailed_ships:
             yield shipid
 
@@ -117,6 +117,27 @@ class Sea(amber.AmberObject):
                 self.sailed_ships.remove(ship)
         return True
       
+    def max_reactions_ship(self):
+        maxreactions=0
+        maxreactions_id=-1
+        for ship in self.generate_ships():
+            reactions=0
+            for key, dictlist in database[ship.id].reactions.items():
+                reactions+=len(dictlist)
+            if reactions>maxreactions:
+                maxreactions=reactions
+                maxreactions_id=ship.id
+        return maxreactions_id,maxreactions
+
+    def max_comments_ship(self):
+        maxcomments=0
+        maxcomments_id=-1
+        for ship in self.generate_ships():
+            if len(database[ship.id].child_ships)>maxcomments:
+                maxcomments=len(database[ship.id].child_ships)
+                maxcomments_id=ship.id
+        return maxcomments_id,maxcomments
+
     def max_reactions_ship(self):
         maxreactions=0
         maxreactions_id=-1
