@@ -95,6 +95,10 @@ class PersonalDock(amber.AmberObject):
         password = hashlib.sha224(password.encode('utf-8')).hexdigest()
         return self.password is password
 
+    def check_password(self, password):
+        password = hashlib.sha224(password.encode('utf-8')).hexdigest()
+        return self.password is password
+
     def deactivate_account(self):
         self.active = False
         return True
@@ -270,6 +274,7 @@ class PersonalDock(amber.AmberObject):
         """
         Starts yielding posts shared to this dock chronologically
         """
+        
         for shipid,shipdate in self.sailed_ships:
             yield shipid
 
@@ -379,7 +384,6 @@ class PersonalDock(amber.AmberObject):
                 new_post_id=posts[post_no-1][0]
                 sorted_posts((new_post_id,post_no-1))
 
-
     @staticmethod
     def import_from_database(inData):
         f = "%Y-%m-%d %H:%M:%S"
@@ -428,7 +432,6 @@ class PersonalDock(amber.AmberObject):
                     setattr(loadedDock, attribute, attributeValue)
 
         return loadedDock
-
 
     def export_to_database(self):
         line = str()

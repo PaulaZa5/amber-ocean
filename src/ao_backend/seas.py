@@ -105,6 +105,7 @@ class Sea(amber.AmberObject):
         """
         Starts yielding posts shared to this sea chronologically
         """
+        
         for shipid, shipdate in self.sailed_ships:
             yield shipid
 
@@ -117,7 +118,7 @@ class Sea(amber.AmberObject):
             if ship == ship_id:
                 self.sailed_ships.remove(ship)
         return True
-
+      
     def max_reactions_ship(self):
         maxreactions=0
         maxreactions_id=-1
@@ -224,5 +225,6 @@ class Sea(amber.AmberObject):
 
             line += "\n" + "</" + attribute + ">" + "\n"
         return line
+      
     def export_to_xml(self):
         pass
