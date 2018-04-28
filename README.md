@@ -28,4 +28,4 @@
 
 
 # Registeration
-> - PersonalDock.Register()
+> - [ ] PersonalDock.Register()
