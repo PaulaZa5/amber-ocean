@@ -252,6 +252,7 @@ class Sea(amber.AmberObject):
         sea_data = sea.getroot()
         sea = Sea.RegisterSea(creator, sea_data.attrib['Name'], sea_data[1].text,
                               sea_data.attrib['Visibility'], sea_data.attrib['Sailing-Privacy'])
+        sea = amber.database[sea]
         sea.creation_date = dt.datetime.strptime(sea_data.attrib['Creation-Time'], '%Y-%m-%d %H:%M:%S')
         if sea_data.attrib['Active'] == 'False':
             sea.active = False

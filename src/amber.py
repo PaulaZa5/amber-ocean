@@ -20,7 +20,7 @@ class AmberObject(object):
 
     def __init__(self, new_object):
         if new_object:
-            self.id = AmberObject.current_available_id
+            self.id = str(AmberObject.current_available_id)
             AmberObject.current_available_id += 1
             database[self.id] = self
         else:

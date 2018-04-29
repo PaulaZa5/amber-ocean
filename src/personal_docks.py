@@ -474,6 +474,7 @@ class PersonalDock(amber.AmberObject):
                                             dt.datetime.strptime(dock_data.attrib['Birthday'], '%Y-%m-%d %H:%M:%S'),
                                             '0', dock_data.attrib['Master-Email'],
                                             dock_data.attrib['Master-Phone-Number'])
+        dock = amber.database[dock]
         dock.join_date = dt.datetime.strptime(dock_data.attrib['Join-Date'], '%Y-%m-%d %H:%M:%S')
         if dock_data.attrib['Active'] == 'False':
             dock.active = False

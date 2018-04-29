@@ -23,14 +23,15 @@ A fast, scalable and secure social networking service that can be easily configu
 > - [ ] Account Deletion
 > - [ ] Personal Info Editor ` - Birthday, Email, Gender, Education history, living in history, working in history, relationships history, personal links and bonus on-request-fields.`
 > - [ ] Life Graph ` - A page where all life events are mapped chronologically.`
-2. [ ] Friendship System
-3. [ ] Followship System
+2. [x] Friendship System
+3. [x] Followship System
 4. [ ] Seas ` - Social groups where people come in contact to sail related-to-the-sea kind of ships.`
 > - [ ] Creation System
-> - [ ] Membership System ` - Member, Editor or Administrator`
-> - [ ] Privacy System
-> - [ ] Settings Editor
-> - [ ] Deletion
+> - [x] Membership System ` - Member, Editor or Administrator`
+> - [x] Privacy System
+> - [x] Settings Editor
+> - [x] Deactivation
+> - [x] Deletion
 5. [ ] Ships ` - Thoughts that people sail for the world to see.`
 > - [ ] Creation Form
 > - [ ] Privacy System

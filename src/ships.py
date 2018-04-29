@@ -221,6 +221,7 @@ class Ship(amber.AmberObject):
         ship_data = ship.getroot()
         ship = Ship.RegisterShip(creator_id, destination_id, ship_data.attrib['Type'], None, None, None,
                                  ship_data.attrib['Privacy'])
+        ship = amber.database[ship]
         ship.creation_date = dt.datetime.strptime(ship_data.attrib['Creation-Time'], '%Y-%m-%d %H:%M:%S')
 
         for elem in ship_data:
