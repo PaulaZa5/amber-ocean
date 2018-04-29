@@ -58,17 +58,7 @@ class RegisterationScreen(Screen):
 
 
 ########### Home ###########
-class SuggestedUsers(ScrollView):
-     def __init__(self, user, screen_manager, **kwargs):
-          super(Page.GroupPage.SuggestedUsers, self).__init__(**kwargs)
-          self.do_scroll_x = False
-          self.size_hint_x = 0
-          self.users = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
-          self.users.bind(minimum_height=self.users.setter('height'))
-          for user in user.docks_you_may_know():
-               self.size_hint_x = 1
-               self.users.add_widget(screen_manager.profile_button(destination_id=user, size_hint_y=None))
-          self.add_widget(self.users)
+
                 
 class HomeScreen(Screen):
     pass
