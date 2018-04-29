@@ -24,8 +24,9 @@
 > - [ ] PersonalDock.Followers
 
 # Login
-> - [ ] Search Dictionary
+> - [x] Search Dictionary ( Call Function But not tested )
 
 
 # Registeration
+> - [ ] Registeration GUI ( Name , Gender ,Email ,birthday, password, email, phone_number )
 > - [ ] PersonalDock.Register()
