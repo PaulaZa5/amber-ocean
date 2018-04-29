@@ -16,7 +16,7 @@
 
 
 # Home
-> - [ ] GUI ( 5 Columns )
+> - [x] GUI ( 5 Columns )
 > - [ ] Suggested Profiles
 > - [ ] News Feed => ID => ContentManager.Post(ID)
 > - [ ] PersonalDock.Seas
