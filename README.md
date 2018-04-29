@@ -28,5 +28,5 @@
 
 
 # Registeration
-> - [x] Registeration GUI ( Name , Gender ,Email ,birthday, password, email, phone_number )
+> - [x] Registeration GUI ( Name , Gender ,Email ,birthday, password, phone_number )
 > - [x] PersonalDock.Register()
