@@ -2,6 +2,7 @@
 #:import kivy kivy
 #:import win kivy.core.window
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
 ####################### Screen Management ############################
 
 ScreenManagement:
@@ -9,9 +10,12 @@ ScreenManagement:
 	LoginScreen:
 	RegisterationScreen:
 	ForgetPasswordScreen:
+	HomeScreen:
 	
 ####################### Login Screen #######################
 <Login>:
+	login_name: login
+	login_password: password
 	
     size_hint: None, None
     canvas.before:
@@ -23,7 +27,7 @@ ScreenManagement:
 		
 
     BoxLayout:
-		display: entry
+		#display: entry
 		canvas.before:
             Color:
                 rgba: 0,0, 1, 0.1  # black
@@ -55,7 +59,7 @@ ScreenManagement:
 		TextInput:
 			size_hint: (1, None)
 			height: 30
-            id: entry
+            id: login
 			hint_text: 'Your Name'
 			hint_text_color: 0,0, 1, 0.3
             font_size: 15
@@ -71,7 +75,7 @@ ScreenManagement:
 		TextInput:
 			size_hint: (1, None)
 			height: 30
-            id: entry
+            id: password
 			hint_text: 'Your Password'
 			hint_text_color: 0,0, 1, 0.3
             font_size: 15
@@ -89,7 +93,10 @@ ScreenManagement:
 			text: 'Submit'
 			background_color:0,0,1,0.7
 			pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-
+			on_press: 
+				if root.submit_login() == True : app.root.current = 'Home'
+				 
+					
 		BoxLayout:
             orientation: 'horizontal'
 
@@ -123,7 +130,7 @@ ScreenManagement:
  
 
 			
-####################### Registeration Screen #######################			
+####################### Forgetten Screen #######################			
 	
 <ForgetPassword>:		
 		
@@ -138,7 +145,7 @@ ScreenManagement:
 		
 
     BoxLayout:
-		display: entry
+		#display: entry
 		canvas.before:
             Color:
                 rgba: 0,0, 1, 0.1  # black
@@ -160,7 +167,7 @@ ScreenManagement:
 				size_hint: None, None
 				size: 120, 120
 		
-
+		# Name
         Label:
 			font_size: 20
             text: 'UserName'
@@ -170,7 +177,7 @@ ScreenManagement:
 		TextInput:
 			size_hint: (1, None)
 			height: 30
-            id: entry
+            id: name
 			hint_text: 'Your Name / Email'
 			hint_text_color: 0,0, 1, 0.3
             font_size: 15
@@ -218,7 +225,8 @@ ScreenManagement:
 		
 ####################### Registeration Screen #######################
 <Registeration>:
-	
+	name: name
+
     size_hint: None, None
     canvas.before:
         Color:
@@ -228,6 +236,147 @@ ScreenManagement:
             size: self.size
 		
 
+    BoxLayout:
+		## display: entry
+		canvas.before:
+            Color:
+                rgba: 0,0, 1, 0.1  # black
+            Ellipse:
+                pos: self.pos
+                size: 400,250
+				segments:8
+				
+
+        size: self.parent.size  
+        pos: self.parent.pos  
+        orientation: 'vertical'
+		
+		AnchorLayout:
+			anchor_x: 'center'
+			anchor_y: 'center'
+			Image:
+				source: 'logo.png'
+				size_hint: None, None
+				size: 120, 120
+		#Name		
+        Label:
+			font_size: 20
+            text: 'UserName'
+			text_size: self.size
+			color: 0,0,0,1
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: name
+			hint_text: 'Your Name'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+			
+		#gender
+		Label:
+			font_size: 20
+            text: 'Gender'
+			text_size: self.size
+			color: 0,0,0,1
+		BoxLayout:
+			orientation:'horizontal'
+			ToggleButton:
+				text:'Male'
+				group:'sex'
+				on_release: root.ismale()
+			ToggleButton:
+				text:'Female'
+				group:'sex'
+				state:'down'
+				on_release: root.isfemale()
+		#birthday
+		Label:
+			font_size: 20
+            text: 'Email'
+			text_size: self.size
+			color: 0,0,0,1
+			
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: gender
+			hint_text: 'Your Email'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+			
+			
+		#Email
+		Label:
+			font_size: 20
+            text: 'Email'
+			text_size: self.size
+			color: 0,0,0,1
+			
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: email
+			hint_text: 'Your Email'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+        
+		Label:
+			font_size: 1
+			text: '  '
+			size_hint: (.1, .1)
+		Button:
+			size_hint: (.5, .8)
+			pos: self.pos
+			font_size: 20
+			text: 'Submit'
+			background_color:0,0,1,0.7
+			pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+			on_release: root.registerAccount()
+		BoxLayout:
+			Button:
+				on_release: app.root.current = 'login'
+				text: 'Back to Login'
+				font_size: 20 
+				background_color:0,0,1,0.7
+				size_hint: (.5, .7)
+# BackGround
+<RegisterationScreen>:
+	name: "Registeration"
+    AnchorLayout:
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1  # white
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        size: self.parent.size
+        anchor_x: 'center'
+        anchor_y: 'center'
+        Registeration:
+            size: 400,350
+ 
+		
+####################### Home Screen #######################	
+
+
+
+<Home>:
+	
+    size_hint: None, None
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1  # red
+        Rectangle:
+            pos: self.pos
+            size: self.size
+		
+	
     BoxLayout:
 		display: entry
 		canvas.before:
@@ -320,9 +469,10 @@ ScreenManagement:
 				font_size: 20 
 				background_color:0,0,1,0.7
 				size_hint: (.5, .7)
+			
 # BackGround
-<RegisterationScreen>:
-	name: "Registeration"
+<HomeScreen>:
+	name: "Home"
     AnchorLayout:
         canvas.before:
             Color:
@@ -333,8 +483,11 @@ ScreenManagement:
         size: self.parent.size
         anchor_x: 'center'
         anchor_y: 'center'
-        Registeration:
+        Home:
             size: 400,250
- 
+
+
+
+
 		
-	
+		
