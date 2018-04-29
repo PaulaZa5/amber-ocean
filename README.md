@@ -21,12 +21,12 @@
 > - [ ] News Feed => ID => ContentManager.Post(ID)
 > - [ ] PersonalDock.Seas
 > - [ ] PersonalDock.Friends
-> - [ ] PersonalDock.Followers
+> - [ ] PersonalDock.Followees
 
 # Login
 > - [x] Search Dictionary ( Call Function But not tested )
 
 
 # Registeration
-> - [ ] Registeration GUI ( Name , Gender ,Email ,birthday, password, email, phone_number )
-> - [ ] PersonalDock.Register()
+> - [x] Registeration GUI ( Name , Gender ,Email ,birthday, password, email, phone_number )
+> - [x] PersonalDock.Register()
