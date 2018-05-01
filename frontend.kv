@@ -316,9 +316,7 @@
 
 ###################### Home
 <HomePage>:
-	BoxLayout:
-		orientation:"vertical"
-		
+	BoxLayout:				
 		BoxLayout:
 			canvas.before:
 				Color:
@@ -327,169 +325,86 @@
 					pos: self.pos
 					size: self.size
 			orientation: "horizontal"		
-			
+			spacing: 5
 			########### Groups ############
 			BoxLayout:
 				orientation: "vertical"
-				width: 100
+				height:500
 				size_hint_x: None
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn1'
-					background_color:0,0, 1, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn2'
-					background_color:0,0, 1, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn3'
-					background_color:0,0, 1, 0.6
+				size:self.size
 				BoxLayout:
-					Label:
-						text:'Groups'
-						size_hint:(.1, .1)
-						pos_hint: {'left':1, 'top':1}
-						color: 0,0,0,1
+					size_hint_y: 0.3
+					orientation: "vertical"
+					id: groups_l
+				BoxLayout:
+					orientation: "vertical"
+					id: groups
 				Widget:	
 			########### Friends ############	
 			BoxLayout:
 				orientation: "vertical"
-				width: 100
+				height:500
 				size_hint_x: None
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn1'
-					background_color:0,1, 0, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn2'
-					background_color:0,1, 0, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn3'
-					background_color:0,1, 0, 0.6
+				size:self.size
 				BoxLayout:
-					Label:
-						text:'Friends'
-						size_hint:(.1, .1)
-						pos_hint: {'left':1, 'top':1}
-						color: 0,0,0,1
+					size_hint_y: 0.3
+					orientation: "vertical"
+					id: friends_l
+				BoxLayout:
+					orientation: "vertical"
+					id: friends
 				Widget:	
-				
 			########### Followees ############	
 			BoxLayout:
 				orientation: "vertical"
 				width: 100
 				size_hint_x: None
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn1'
-					background_color:1,0, 0, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn2'
-					background_color:1,0, 0, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn3'
-					background_color:1,0, 0, 0.6
+				size:self.size
 				BoxLayout:
-					Label:
-						text:'Followees'
-						size_hint:(.1, .1)
-						pos_hint: {'left':1, 'top':1}
-						color: 0,0,0,1
-				Widget:	
+					id: followees
+					orientation: "vertical"
+				
 				
 			########### Ships ############	
 			BoxLayout:
 				orientation: "vertical"
-				width: 250
+				width:300
 				size_hint_x: None
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn1'
-					background_color:0,1, 1, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn2'
-					background_color:0,1, 1, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn3'
-					background_color:0,1, 1, 0.6
+				size:self.size
 				BoxLayout:
-					Label:
-						text:'Ships'
-						size_hint:(.1, .1)
-						pos_hint: {'left':1, 'top':1}
-						color: 0,0,0,1
-				Widget:	
+					id: ships
+					orientation: "vertical"
+					
 
 			########### Suggessted Friends ############	
+			
 			BoxLayout:
 				orientation: "vertical"
 				width: 150
 				size_hint_x: None
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn1'
-					background_color:1,0, 1, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn2'
-					background_color:1,0, 1, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn3'
-					background_color:1,0, 1, 0.6
-				BoxLayout:
-					Label:
-						text:'Suggested Friends'
-						size_hint:(.1, .1)
-						pos_hint: {'left':1, 'top':1}
-						color: 0,0,0,1
-				Widget:	
+				size:self.size
+				ScrollView:	
+					do_scroll_y: True
+					BoxLayout:
+						height:600
+						orientation: "vertical"
+						id: sugg_friend
+					
+			
 
 			########### Suggested Groups ############
 			BoxLayout:
 				orientation: "vertical"
+				width: 150
+				size_hint_x: None
 				size:self.size
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn1'
-					background_color:1,1, 0, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn2'
-					background_color:1,1, 0, 0.6
-				Button:
-					size_hint_y: None
-					height: 30
-					text: 'btn3'
-					background_color:1,1, 0, 0.6
-				BoxLayout:
-					Label:
-						text:'Suggested Groups'
-						size_hint:(.1, .1)
-						pos_hint: {'left':1, 'top':1}
-						color: 0,0,0,1
-				Widget:	
+				ScrollView:	
+					do_scroll_y: True
+					BoxLayout:
+						height:600
+						orientation: "vertical"
+						id: sugg_group
+					
+				
+
+		

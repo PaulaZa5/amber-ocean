@@ -20,6 +20,8 @@ from amber import *
 Builder.load_file("frontend.kv")
 
 user_id_for_login = ""
+        
+
 ###################  Login 
 class LoginScreen(BoxLayout):
 
@@ -37,14 +39,13 @@ class Login(Widget):
     global user_id_for_login
     logname = self.login_name.text
     logpass= self.login_password.text
-    if logname == 'admin' and logpass == 'admin':
-        users_manager.current = 'home'
-    #for key, value in database.items():
-       # if is_personal_dock(value):
-          #if value.master_email == logname:
-              #  if value.check_password(logpass):
-                    #user_id_for_login = key
-                #    users_manager.current = 'home'
+    #if logname == 'admin' and logpass == 'admin':
+    users_manager.current = 'home'
+   # for key, value in database.items():
+      #  if value.master_email == logname:
+          #  if value.password==logpass:
+            #        user_id_for_login = key
+            #        users_manager.current = 'home'
         #else :
        #     popup = Popup(title='Test popup',
           #  content=Label(text='Wrong username or password'),
@@ -60,11 +61,23 @@ class Registeration(Widget):
      def isfemale(self):
         gender = "female" # print (gender)
      def registerAccount(self):
-        date = datetime.datetime(self.year.text, self.month.text, self.day.text)
+          if self.year.text.isdigit() and self.month.text.isdigit() and  self.day.text.isdigit():
+              date = datetime.datetime(self.year.text, self.month.text, self.day.text)
+          else:
+              popup = Popup(title='Test popup',
+              content=Label(text='Please enter a valid Birthday'),
+              size_hint=(None, None), size=self.size)
+              popup.open()
         #print(self.password.text+" "+self.email.text+" "+self.phone.text)
-        PersonalDock.RegisterAccount(self.name.text,self.gender,date,self.password.text,
-                                     self.email.text,self.phone.text)
-	
+          if self.name.text == "" or self.gender==""or date==""or self.password.text=="" or self.email.text == "" or self.phone.text== "" :
+                popup = Popup(title='Test popup',
+                content=Label(text='Please enter all your information'),
+                size_hint=(None, None), size=self.size)
+                popup.open()
+          else:
+                PersonalDock.RegisterAccount(self.name.text,self.gender,date,self.password.text,
+                                       self.email.text,self.phone.text)
+          
 class RegisterationScreen(Screen):
     pass
 
@@ -433,24 +446,69 @@ class Page(BoxLayout):
       else:
         self.size_hint = (0, 0)
 
+
   class HomePage(BoxLayout):
 
     def __init__(self, user_id, screen_manager, **kwargs):
       super(Page.HomePage, self).__init__(**kwargs)
       self.user_id = user_id
       self.screen_manager = screen_manager
+      ##### Groups
+      group_number = 7
+      group_label = Label(text='Groups',color=(0,0,0,1))
+      self.ids.groups_l.add_widget(group_label)
+      for i in range(group_number):
+          button = Button(text="Group " + str(i)
+                          ,background_color=(0,0, 1, 0.6)
+                          ,size_hint_y= None
+			  ,height= 30)
+          self.ids.groups.add_widget(button)
 
-    class SuggestedGroups(ScrollView):
-      def __init__(self, user, screen_manager, **kwargs):
-        super(Page.HomePage.SuggestedGroups, self).__init__(**kwargs)
-        self.do_scroll_x = False
-        self.size_hint_x = 0
-        self.groups = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
-        self.groups.bind(minimum_height=self.groups.setter('height'))
-        for group in user.seas_you_might_join():
-          self.size_hint_x = 1
-          self.groups.add_widget(screen_manager.group_button(group_id=group, size_hint_y=None))
-        self.add_widget(self.groups)
+      ##### Friends
+      friend_number =9
+      Friends_label = Label(text='Freinds',color=(0,0,0,1),size_hint_y=10)
+      self.ids.friends_l.add_widget(Friends_label)
+      for i in range(friend_number):
+          button = Button(text="Friend " + str(i)
+                          ,background_color=(0,1, 0, 0.6)
+			  ,height= 30)
+          self.ids.friends.add_widget(button)
+
+      ##### Followees
+      Followee_number = 5
+      Followess_label = Label(text='Followees',color=(0,0,0,1))
+      self.ids.followees.add_widget(Followess_label)
+      for i in range(friend_number):
+          button = Button(text="Followee " + str(i),background_color=(1,0, 0, 0.6))
+          self.ids.followees.add_widget(button)
+
+      ##### Ships
+      Ships_number = 3
+      Ships_label = Label(text='Ships',color=(0,0,0,1))
+      self.ids.ships.add_widget(Ships_label)
+      for i in range(Ships_number):
+          button = Button(text="Ship " + str(i)
+                          ,background_color=(0,1, 1, 0.6)
+			  ,height= 30)
+          self.ids.ships.add_widget(button)
+      ##### Suugested Friends
+      sugg_friend_number=5
+      sugg_friend_label = Label(text='Suggested Friends',color=(0,0,0,1))
+      self.ids.sugg_friend.add_widget(sugg_friend_label)
+      for i in range(sugg_friend_number):
+          button = Button(text="Friend " + str(i)
+                          ,background_color=(1,1, 0, 0.6)
+			  ,height= 30)
+          self.ids.sugg_friend.add_widget(button)
+      ##### Suugested Groups
+      sugg_groups_number=5
+      sugg_group_label = Label(text='Suggested Groups',color=(0,0,0,1))
+      self.ids.sugg_group.add_widget(sugg_group_label)
+      for i in range(sugg_groups_number):
+          button = Button(text="Group " + str(i)
+                          ,background_color=(1,0, 1, 0.6)
+			  ,height= 30)
+          self.ids.sugg_group.add_widget(button)
   class Post(BoxLayout):
 
     def __init__(self, user_id, post_id, destination_id, screen_manager, **kwargs):
