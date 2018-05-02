@@ -1,6 +1,7 @@
 """
 This file contains all personal-docks related operations
 """
+
 import amber
 from amber import database
 import datetime as dt
@@ -93,7 +94,7 @@ class PersonalDock(amber.AmberObject):
 
     def check_password(self, password):
         password = hashlib.sha224(password.encode('utf-8')).hexdigest()
-        return  self.password == password
+        return self.password == password
 
     def deactivate_account(self):
         self.active = False
@@ -116,9 +117,9 @@ class PersonalDock(amber.AmberObject):
         return True
 
     def change_master_email(self, new_email):
-        old_master_email=self.master_email
+        old_master_email = self.master_email
         self.master_email = new_email
-        check=self.remove_email( old_master_email)
+        check = self.remove_email(old_master_email)
         self.add_email(self.master_email)
         return check
 
@@ -128,7 +129,7 @@ class PersonalDock(amber.AmberObject):
 
     def remove_email(self, email):
         if email in self.emails:
-            if email!=self.master_email:
+            if email != self.master_email:
                 self.emails.remove(email)
                 return True
             else:
@@ -139,7 +140,7 @@ class PersonalDock(amber.AmberObject):
     def change_master_phone_number(self, new_phone_number):
         old_master_phone_number = self.master_phone_number
         self.master_phone_number = new_phone_number
-        self.add_phone_number( self.master_phone_number)
+        self.add_phone_number(self.master_phone_number)
         check = self.remove_phone_number(old_master_phone_number)
         return check
 
@@ -149,7 +150,7 @@ class PersonalDock(amber.AmberObject):
 
     def remove_phone_number(self, phone_number):
         if phone_number in self.phone_numbers:
-            if phone_number!=self.master_phone_number:
+            if phone_number != self.master_phone_number:
                 self.phone_numbers.remove(phone_number)
                 return True
             else:
@@ -194,9 +195,9 @@ class PersonalDock(amber.AmberObject):
         return True
 
     def edit_family_member_relationship(self, family_member_id, new_family_member_relation):
-        exist=self.remove_family_member_relationship( family_member_id)
+        exist = self.remove_family_member_relationship(family_member_id)
         if exist:
-            self.add_family_member_relationship( family_member_id, new_family_member_relation)
+            self.add_family_member_relationship(family_member_id, new_family_member_relation)
         return exist
 
     def remove_family_member_relationship(self, family_member_id):
@@ -211,9 +212,9 @@ class PersonalDock(amber.AmberObject):
         return True
 
     def edit_education(self, major, place_of_education, new_starting_date, new_finishing_date):
-        exist = self.remove_education( major, place_of_education)
+        exist = self.remove_education(major, place_of_education)
         if exist:
-            self.add_education( major, place_of_education, new_starting_date, new_finishing_date)
+            self.add_education(major, place_of_education, new_starting_date, new_finishing_date)
         return exist
 
     def remove_education(self, major, place_of_education):
@@ -228,9 +229,9 @@ class PersonalDock(amber.AmberObject):
         return True
 
     def edit_living_place(self, location, new_starting_date, new_finishing_date):
-        exist = self.remove_living_place( location)
+        exist = self.remove_living_place(location)
         if exist:
-            self.add_living_place( location, new_starting_date, new_finishing_date)
+            self.add_living_place(location, new_starting_date, new_finishing_date)
         return exist
 
     def remove_living_place(self, location):
@@ -245,9 +246,9 @@ class PersonalDock(amber.AmberObject):
         return True
 
     def edit_relationship(self, significant_other_id, new_type, new_starting_date, new_finishing_date):
-        exist = self.remove_relationship( significant_other_id)
+        exist = self.remove_relationship(significant_other_id)
         if exist:
-            self.add_relationship( significant_other_id, new_type, new_starting_date, new_finishing_date)
+            self.add_relationship(significant_other_id, new_type, new_starting_date, new_finishing_date)
         return exist
 
     def remove_relationship(self, significant_other_id):
@@ -262,9 +263,9 @@ class PersonalDock(amber.AmberObject):
         return True
 
     def edit_link_url(self, link_string, new_link_url):
-        exist = self.remove_link( new_link_url)
+        exist = self.remove_link(new_link_url)
         if exist:
-            self.add_link( link_string, new_link_url)
+            self.add_link(link_string, new_link_url)
         return exist
 
     def remove_link(self, link_string):
@@ -279,9 +280,9 @@ class PersonalDock(amber.AmberObject):
         return True
 
     def edit_special_field_text(self, special_field_string, new_special_field_text):
-        exist = self.remove_special_field( special_field_string)
+        exist = self.remove_special_field(special_field_string)
         if exist:
-            self.add_special_field( special_field_string, new_special_field_text)
+            self.add_special_field(special_field_string, new_special_field_text)
         return exist
 
     def remove_special_field(self, special_field_string):
@@ -297,8 +298,8 @@ class PersonalDock(amber.AmberObject):
         Starts yielding posts shared to this dock chronologically
         """
 
-        for shipid,shipdate in self.sailed_ships:
-            yield shipid
+        for ship_id, ship_date in self.sailed_ships:
+            yield ship_id
 
     def sail_ship_to_this_dock(self, ship_id):
         self.sailed_ships.append((ship_id, dt.datetime.utcnow()))
@@ -311,10 +312,10 @@ class PersonalDock(amber.AmberObject):
                 return True
         return False
 
-    def join_sea(self,sea_id):
+    def join_sea(self, sea_id):
         self.seas.append(sea_id)
 
-    def leave_sea(self,sea_id):
+    def leave_sea(self, sea_id):
         if sea_id in self.seas:
             self.seas.remove(sea_id)
             return True
@@ -322,25 +323,25 @@ class PersonalDock(amber.AmberObject):
             return False
 
     def max_reactions_ship(self):
-        maxreactions=0
-        maxreactions_id=-1
+        max_reactions = 0
+        max_reactions_id = -1
         for ship in self.generate_ships():
-            reactions=0
-            for key, dictlist in database[ship].reactions.items():
-                reactions+=len(dictlist)
-            if reactions>maxreactions:
-                maxreactions=reactions
-                maxreactions_id=ship
-        return maxreactions_id,maxreactions
+            reactions = 0
+            for key, dict_list in database[ship].reactions.items():
+                reactions += len(dict_list)
+            if reactions > max_reactions:
+                max_reactions = reactions
+                max_reactions_id = ship
+        return max_reactions_id, max_reactions
 
     def max_comments_ship(self):
-        maxcomments=0
-        maxcomments_id=-1
+        max_comments = 0
+        max_comments_id = -1
         for ship in self.generate_ships():
-            if len(database[ship].child_ships)>maxcomments:
-                maxcomments=len(database[ship].child_ships)
-                maxcomments_id=ship
-        return maxcomments_id,maxcomments
+            if len(database[ship].child_ships) > max_comments:
+                max_comments = len(database[ship].child_ships)
+                max_comments_id = ship
+        return max_comments_id, max_comments
 
     def docks_you_may_know(self):
 
@@ -351,7 +352,7 @@ class PersonalDock(amber.AmberObject):
         recommendations = {}
         for friend in self.friends:
             for vertex in database[friend].friends:
-                if vertex!=self.id and not( vertex in self.friends):
+                if vertex != self.id and not(vertex in self.friends):
                     if vertex in recommendations.keys():
                         recommendations[vertex] += 1
                     else:
@@ -368,6 +369,7 @@ class PersonalDock(amber.AmberObject):
         Function that generates tuples of (id,friends_members_no ) of seas the input-dock hasn't joined after building
         a database of friends's seas using graph breadth first traversal
         """
+
         recommendations = {}
         for friend in self.friends:
             for group in database[friend].seas:
@@ -392,10 +394,10 @@ class PersonalDock(amber.AmberObject):
         # post is a list of tuples (post_id,post_no_in_sailedships_list)
         for friend in self.friends:
             friend_posts=database[friend].sailed_ships
-            no_of_posts=len(friend_posts)
-            if no_of_posts!=0:
+            no_of_posts = len(friend_posts)
+            if no_of_posts != 0:
                 newest_post_id=friend_posts[no_of_posts-1][0]
-                posts.append((newest_post_id,no_of_posts-1))
+                posts.append((newest_post_id, no_of_posts-1))
         for group in self.seas:
             group_posts = database[group].sailed_ships
             no_of_posts = len(group_posts)
@@ -408,8 +410,8 @@ class PersonalDock(amber.AmberObject):
             if post_no != 0:
                 post_creator_id=database[post_id].creator_id
                 posts = database[post_creator_id].sailed_ships
-                new_post_id=posts[post_no-1][0]
-                sorted_posts.add((new_post_id,post_no-1))
+                new_post_id = posts[post_no-1][0]
+                sorted_posts.add((new_post_id, post_no-1))
 
     @staticmethod
     def import_from_database(inData):
@@ -501,10 +503,10 @@ class PersonalDock(amber.AmberObject):
         import xml.etree.ElementTree as et
         dock = et.parse(location)
         dock_data = dock.getroot()
-        dock = PersonalDock.RegisterAccount(dock_data.attrib['Name'], dock_data.attrib['Gender'],
-                                            dt.datetime.strptime(dock_data.attrib['Birthday'], '%Y-%m-%d %H:%M:%S'),
-                                            '0', dock_data.attrib['Master-Email'],
-                                            dock_data.attrib['Master-Phone-Number'])
+        dock = amber.database[PersonalDock.RegisterAccount(dock_data.attrib['Name'], dock_data.attrib['Gender'],
+                                                           dt.datetime.strptime(dock_data.attrib['Birthday'], '%Y-%m-%d %H:%M:%S'),
+                                                           '0', dock_data.attrib['Master-Email'],
+                                                           dock_data.attrib['Master-Phone-Number'])]
         dock.join_date = dt.datetime.strptime(dock_data.attrib['Join-Date'], '%Y-%m-%d %H:%M:%S')
         if dock_data.attrib['Active'] == 'False':
             dock.active = False

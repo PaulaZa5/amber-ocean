@@ -26,7 +26,7 @@ class Sea(amber.AmberObject):
 
     @staticmethod
     def RegisterSea(creator, name, description, visibility_privacy=SeaVisibilityPrivacy.Everyone,
-                 sailing_privacy=SeaSailingPrivacy.Everyone, new_object=True):
+                    sailing_privacy=SeaSailingPrivacy.Everyone, new_object=True):
         new = Sea(creator, name, description, visibility_privacy, sailing_privacy, new_object)
         amber.database[new.id] = new
         return new.id
@@ -100,43 +100,44 @@ class Sea(amber.AmberObject):
         return True
 
     def generate_ships(self):
+
         """
         Starts yielding posts shared to this sea chronologically
         """
 
-        for shipid, shipdate in self.sailed_ships:
-            yield shipid
+        for ship_id, ship_date in self.sailed_ships:
+            yield ship_id
 
     def sail_ship_to_this_sea(self, ship_id):
-        self.sailed_ships.append((ship_id , dt.datetime.utcnow().date()))
+        self.sailed_ships.append((ship_id, dt.datetime.utcnow().date()))
         return True
 
     def sink_ship_from_this_sea(self, ship_id):
-        for ship,date in self.sailed_ships:
+        for ship, date in self.sailed_ships:
             if ship == ship_id:
                 self.sailed_ships.remove(ship)
         return True
 
     def max_reactions_ship(self):
-        maxreactions=0
-        maxreactions_id=-1
+        max_reactions = 0
+        max_reactions_id = -1
         for ship in self.generate_ships():
-            reactions=0
-            for key, dictlist in database[ship].reactions.items():
-                reactions+=len(dictlist)
-            if reactions>maxreactions:
-                maxreactions=reactions
-                maxreactions_id=ship
-        return maxreactions_id,maxreactions
+            reactions = 0
+            for key, dict_list in database[ship].reactions.items():
+                reactions += len(dict_list)
+            if reactions > max_reactions:
+                max_reactions = reactions
+                max_reactions_id = ship
+        return max_reactions_id, max_reactions
 
     def max_comments_ship(self):
-        maxcomments=0
-        maxcomments_id=-1
+        max_comments = 0
+        max_comments_id = -1
         for ship in self.generate_ships():
-            if len(database[ship].child_ships)>maxcomments:
-                maxcomments=len(database[ship].child_ships)
-                maxcomments_id=ship
-        return maxcomments_id,maxcomments
+            if len(database[ship].child_ships) > max_comments:
+                max_comments = len(database[ship].child_ships)
+                max_comments_id = ship
+        return max_comments_id, max_comments
 
     @staticmethod
     def import_from_database(inData):
@@ -229,8 +230,8 @@ class Sea(amber.AmberObject):
         import xml.etree.ElementTree as et
         sea = et.parse(location)
         sea_data = sea.getroot()
-        sea = Sea.RegisterSea(creator, sea_data.attrib['Name'], sea_data[1].text,
-                              sea_data.attrib['Visibility'], sea_data.attrib['Sailing-Privacy'])
+        sea = amber.database[Sea.RegisterSea(creator, sea_data.attrib['Name'], sea_data[1].text,
+                                             sea_data.attrib['Visibility'], sea_data.attrib['Sailing-Privacy'])]
         sea.creation_date = dt.datetime.strptime(sea_data.attrib['Creation-Time'], '%Y-%m-%d %H:%M:%S')
         if sea_data.attrib['Active'] == 'False':
             sea.active = False

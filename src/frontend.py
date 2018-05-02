@@ -13,13 +13,11 @@ from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.spinner import Spinner
 from kivy.uix.textinput import TextInput
-import datetime as dt
 
 number_comments = ""
 def comment_clicked (cmt_btn):
     txt_splitted = number_comments.text.split()
     number_comments.text = str(int(txt_splitted[0]) + 1) + ' ' + txt_splitted[1]
-
 #function to calculate number of likes
 number_likes = ""
 number_haha = ""
@@ -27,8 +25,6 @@ number_sad= ""
 number_love= ""
 number_dislike = ""
 number_angry = ""
-
-
 
 
 class LoginScreen(BoxLayout):
@@ -79,6 +75,22 @@ class Page(BoxLayout):
                 self.screen_manager.transition.direction = 'left'
                 self.screen_manager.current = new_group_screen.name
 
+        class GroupCreationButton(Button):
+
+            def __init__(self, user_id, screen_manager, **kwargs):
+                super(Page.ContentManager.GroupCreationButton, self).__init__(**kwargs)
+                self.user_id = user_id
+                self.text = 'Create a new sea'
+                self.screen_manager = screen_manager
+
+            def on_release(self):
+                new_create_group_screen = Screen(name=str(self.screen_manager.screens_added_counter))
+                new_create_group_screen.add_widget(Page.GroupCreationPage(user_id=self.user_id,
+                                                                          screen_manager=self.screen_manager))
+                self.screen_manager.add_widget(new_create_group_screen)
+                self.screen_manager.transition.direction = 'left'
+                self.screen_manager.current = new_create_group_screen.name
+
         class HomeButton(Button):
 
             def __init__(self, user_id, screen_manager, **kwargs):
@@ -126,6 +138,9 @@ class Page(BoxLayout):
         def group_button(self, **kwargs):
             return Page.ContentManager.GroupButton(user_id=self.user_id, screen_manager=self, **kwargs)
 
+        def group_creation_button(self, **kwargs):
+            return Page.ContentManager.GroupCreationButton(user_id=self.user_id, screen_manager=self, **kwargs)
+
         def home_button(self, **kwargs):
             return Page.ContentManager.HomeButton(user_id=self.user_id, screen_manager=self, **kwargs)
 
@@ -137,6 +152,46 @@ class Page(BoxLayout):
 
         def profile_button(self, **kwargs):
             return Page.ContentManager.ProfileButton(user_id=self.user_id, screen_manager=self, **kwargs)
+
+    class GroupCreationPage(BoxLayout):
+
+        class CreateGroupButton(Button):
+
+            def __init__(self, user_id, screen_manager, name_tb, description_tb, **kwargs):
+                super(Page.GroupCreationPage.CreateGroupButton, self).__init__(**kwargs)
+                self.text = 'Create'
+                self.user_id = user_id
+                self.screen_manager = screen_manager
+                self.name_tb = name_tb
+                self.description_tb = description_tb
+
+            def on_release(self):
+                new_sea_id = seas.Sea.RegisterSea(creator=self.user_id, name=self.name_tb.text,
+                                                  description=self.description_tb.text)
+                amber.database[self.user_id].join_sea(new_sea_id)
+                self.screen_manager.back_button().on_release()
+                self.screen_manager.group_button(group_id=new_sea_id).on_release()
+
+        def __init__(self, user_id, screen_manager, **kwargs):
+            super(Page.GroupCreationPage, self).__init__(**kwargs)
+            self.orientation = 'vertical'
+            self.padding = 10
+            self.spacing = 5
+
+            name_box = BoxLayout(orientation='horizontal', padding=10, spacing=5)
+            name_box.add_widget(Label(text='Sea Name: '))
+            name_tb = TextInput(text='', size_hint_x=2, multiline=False)
+            name_box.add_widget(name_tb)
+            self.add_widget(name_box)
+
+            description_box = BoxLayout(orientation='horizontal', padding=10, spacing=5, size_hint_y=4)
+            description_box.add_widget(Label(text='Sea Description: '))
+            description_tb = TextInput(text='', size_hint_x=2)
+            description_box.add_widget(description_tb)
+            self.add_widget(description_box)
+
+            self.add_widget(Page.GroupCreationPage.CreateGroupButton(user_id=user_id, screen_manager=screen_manager,
+                                                                     name_tb=name_tb, description_tb=description_tb))
 
     class GroupPage(BoxLayout):
 
@@ -376,14 +431,15 @@ class Page(BoxLayout):
 
         class GroupPosts(ScrollView):
 
-            def __init__(self, group, screen_manager, **kwargs):
+            def __init__(self, user_id, group, screen_manager, **kwargs):
                 super(Page.GroupPage.GroupPosts, self).__init__(**kwargs)
                 self.do_scroll_x = False
                 self.screen_manager = screen_manager
                 self.group = group
                 self.posts = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
                 self.posts.bind(minimum_height=self.posts.setter('height'))
-                self.posts.add_widget(screen_manager.post_input(where_is_it_created=group.id))
+                if self.group.sailing_privacy == seas.SeaSailingPrivacy.Everyone or self.group.is_administrator(user_id) or (self.group.sailing_privacy == seas.SeaSailingPrivacy.Only_editors and self.group.is_editor(user_id)):
+                    self.posts.add_widget(screen_manager.post_input(where_is_it_created=group.id))
                 for post, date in group.sailed_ships:
                     self.posts.add_widget(self.screen_manager.post(post_id=post, destination_id=self.group.id))
                 self.add_widget(self.posts)
@@ -399,7 +455,7 @@ class Page(BoxLayout):
                 self.spacing = 5
                 self.add_widget(Page.GroupPage.TopBar(user_id=user_id, group=self.group, screen_manager=screen_manager))
                 grp_page = BoxLayout(orientation='horizontal', padding=10, spacing=5, size_hint_y=7)
-                grp_page.add_widget(Page.GroupPage.GroupPosts(group=self.group, screen_manager=screen_manager,
+                grp_page.add_widget(Page.GroupPage.GroupPosts(user_id=user_id, group=self.group, screen_manager=screen_manager,
                                                               size_hint_x=7))
                 grp_page.add_widget(Page.GroupPage.GroupUsers(group=self.group, screen_manager=screen_manager))
                 grp_page.add_widget(Page.GroupPage.SuggestedUsers(user=self.user, screen_manager=screen_manager))
@@ -775,9 +831,9 @@ class Page(BoxLayout):
         self.top_bar.add_widget(self.content.back_button(text="Back"))
         self.top_bar.add_widget(self.content.home_button(text="Home"))
         self.top_bar.add_widget(self.content.profile_button(destination_id=user_id, text=amber.database[user_id].name))
+        self.top_bar.add_widget(self.content.group_creation_button())
         self.top_bar.add_widget(Page.ContentManager.BackButton(size_hint_x=0.3, screen_manager=users_manager,
                                                                text='Logout', background_color=(1.0, 0.0, 0.0, 1.0)))
-        self.top_bar.add_widget(self.content.group_button(group_id='1'))
         self.add_widget(self.top_bar)
         self.add_widget(self.content)
 
