@@ -2,10 +2,11 @@ import amber
 import personal_docks
 import seas
 import ships
-
+import time
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.floatlayout import FloatLayout
 from kivy.properties import ObjectProperty, StringProperty,NumericProperty
 from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
@@ -16,41 +17,43 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.textinput import TextInput
 from kivy.uix.widget import *
 from kivy.uix.popup import *
+from kivy.clock import *
 from amber import *
+
 Builder.load_file("frontend.kv")
 
 user_id_for_login = ""
         
-
+returned_id=""
 ###################  Login 
 class LoginScreen(BoxLayout):
-
+  # define the constructor and access the class method and attributes
   def __init__(self, users_manager, **kwargs):
     super(LoginScreen, self).__init__(**kwargs)
+    #**kwargs allow you to pass a variable number of arguments to a function.
     self.users_manager = users_manager
+    # BaxLayout Orientation is vertical
     self.orientation = 'vertical'
-    #self.padding = 10
-    #self.spacing = 5
-    #self.add_widget(Label(text='Login Screen'))
-    #self.add_widget(Button(text='Login'))
 
 class Login(Widget):
   def submit_login(self):
     global user_id_for_login
+    # save textinput to a variables
     logname = self.login_name.text
     logpass= self.login_password.text
+    # test only
     #if logname == 'admin' and logpass == 'admin':
-    users_manager.current = 'home'
-   # for key, value in database.items():
-      #  if value.master_email == logname:
-          #  if value.password==logpass:
-            #        user_id_for_login = key
-            #        users_manager.current = 'home'
-        #else :
-       #     popup = Popup(title='Test popup',
-          #  content=Label(text='Wrong username or password'),
-          #  size_hint=(None, None), size=self.size)
-           # popup.open()
+    #users_manager.current = 'home'
+    for key, value in database.items():
+        if value.master_email == logname:
+            if value.check_password(logpass):
+                    user_id_for_login = key
+                    users_manager.current = 'home'
+            else :
+                popup = Popup(title='Test popup',
+                content=Label(text='Wrong username or password'),
+                size_hint=(None, None), size=self.size)
+                popup.open()
 
 ###################  Registeration
 class Registeration(Widget):
@@ -60,23 +63,56 @@ class Registeration(Widget):
         gender = "male"# print (gender)
      def isfemale(self):
         gender = "female" # print (gender)
+
      def registerAccount(self):
-          if self.year.text.isdigit() and self.month.text.isdigit() and  self.day.text.isdigit():
-              date = datetime.datetime(self.year.text, self.month.text, self.day.text)
-          else:
-              popup = Popup(title='Test popup',
-              content=Label(text='Please enter a valid Birthday'),
-              size_hint=(None, None), size=self.size)
-              popup.open()
+          flag=0;
+       # check input data
+          if self.name.text == "":
+            l=Label(text='Please enter Your Name',color=(1,0,0,1),markup=True)
+            self.ids.error.add_widget(l)
+            Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+          elif not self.year.text.isdigit() or not self.month.text.isdigit() or not  self.day.text.isdigit():
+            l=Label(text='Please enter a valid Birthday',color=(1,0,0,1),markup=True)
+            self.ids.error.add_widget(l)
+            Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+          elif self.year.text.isdigit() and self.month.text.isdigit() and  self.day.text.isdigit():
+             if  int(self.day.text) > 31 or int(self.day.text) < 0:
+              l=Label(text='Please enter a valid Birth Day',color=(1,0,0,1),markup=True)
+              self.ids.error.add_widget(l)
+              Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+             elif  int(self.month.text) > 12 or int(self.day.text) < 0 :
+              l=Label(text='Please enter a valid Birth Month',color=(1,0,0,1),markup=True)
+              self.ids.error.add_widget(l)
+              Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+             elif  int(self.year.text) > 2018 or int(self.year.text) < 1900:
+              l=Label(text='Please enter a valid Birth Year',color=(1,0,0,1),markup=True)
+              self.ids.error.add_widget(l)
+              Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+             elif not '@' in self.email.text or self.email.text==""  :
+              l=Label(text='Please enter a valid email',color=(1,0,0,1),markup=True)
+              self.ids.error.add_widget(l)
+              Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+             elif self.password.text=="" :
+              l=Label(text='Please enter your Password',color=(1,0,0,1),markup=True)
+              self.ids.error.add_widget(l)
+              Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+             else:
+              date = datetime.datetime(int(self.year.text), int(self.month.text), int(self.day.text))
+        #check valid date
+          
+          #else:
+              #popup = Popup(title='Test popup',
+              #content=Label(text='Please enter a valid Birthday'),
+              #size_hint=(None, None), size=self.size)
+              #popup.open()
         #print(self.password.text+" "+self.email.text+" "+self.phone.text)
-          if self.name.text == "" or self.gender==""or date==""or self.password.text=="" or self.email.text == "" or self.phone.text== "" :
-                popup = Popup(title='Test popup',
-                content=Label(text='Please enter all your information'),
-                size_hint=(None, None), size=self.size)
-                popup.open()
-          else:
-                PersonalDock.RegisterAccount(self.name.text,self.gender,date,self.password.text,
-                                       self.email.text,self.phone.text)
+        #  if self.name.text == "" or self.gender==""or date==""or self.password.text=="" or self.email.text == "" or self.phone.text== "" :
+        #         # label = Label(text='Please Write Your Name',color=(0,0,0,1))
+                  #self.ids.error.add_widget(label)
+         # else:
+              #  returned_id = personal_docks.PersonalDock.RegisterAccount(self.name.text,self.gender,date,self.password.text,
+              #                         self.email.text,self.phone.text)
+             #   print(returned_id)
           
 class RegisterationScreen(Screen):
     pass
@@ -453,29 +489,30 @@ class Page(BoxLayout):
       super(Page.HomePage, self).__init__(**kwargs)
       self.user_id = user_id
       self.screen_manager = screen_manager
+      user = amber.database[self.user_id]
       ##### Groups
-      group_number = 7
+      group_number = len(list(user.seas))
       group_label = Label(text='Groups',color=(0,0,0,1))
       self.ids.groups_l.add_widget(group_label)
       for i in range(group_number):
-          button = Button(text="Group " + str(i)
+          button = Button(text="Group " + i[0]
                           ,background_color=(0,0, 1, 0.6)
                           ,size_hint_y= None
 			  ,height= 30)
           self.ids.groups.add_widget(button)
 
       ##### Friends
-      friend_number =9
+      friend_number =len(list(user.friends))
       Friends_label = Label(text='Freinds',color=(0,0,0,1),size_hint_y=10)
       self.ids.friends_l.add_widget(Friends_label)
       for i in range(friend_number):
-          button = Button(text="Friend " + str(i)
+          button = Button(text="Friend " + i[0]
                           ,background_color=(0,1, 0, 0.6)
 			  ,height= 30)
           self.ids.friends.add_widget(button)
 
       ##### Followees
-      Followee_number = 5
+      Followee_number = len(list(user.followees))
       Followess_label = Label(text='Followees',color=(0,0,0,1))
       self.ids.followees.add_widget(Followess_label)
       for i in range(friend_number):
@@ -483,7 +520,7 @@ class Page(BoxLayout):
           self.ids.followees.add_widget(button)
 
       ##### Ships
-      Ships_number = 3
+      Ships_number = len(list(user.newsfeed_ships()))
       Ships_label = Label(text='Ships',color=(0,0,0,1))
       self.ids.ships.add_widget(Ships_label)
       for i in range(Ships_number):
@@ -492,20 +529,20 @@ class Page(BoxLayout):
 			  ,height= 30)
           self.ids.ships.add_widget(button)
       ##### Suugested Friends
-      sugg_friend_number=5
+      sugg_friend_number=len(list(user.docks_you_may_know()))
       sugg_friend_label = Label(text='Suggested Friends',color=(0,0,0,1))
       self.ids.sugg_friend.add_widget(sugg_friend_label)
       for i in range(sugg_friend_number):
-          button = Button(text="Friend " + str(i)
+          button = Button(text="Friend " + i[0]
                           ,background_color=(1,1, 0, 0.6)
 			  ,height= 30)
           self.ids.sugg_friend.add_widget(button)
       ##### Suugested Groups
-      sugg_groups_number=5
+      sugg_groups_number=len(list(user.seas_you_might_join()))
       sugg_group_label = Label(text='Suggested Groups',color=(0,0,0,1))
       self.ids.sugg_group.add_widget(sugg_group_label)
       for i in range(sugg_groups_number):
-          button = Button(text="Group " + str(i)
+          button = Button(text="Group " + i[0]
                           ,background_color=(1,0, 1, 0.6)
 			  ,height= 30)
           self.ids.sugg_group.add_widget(button)
@@ -583,6 +620,6 @@ if __name__ == "__main__":
   import datetime
   boula = personal_docks.PersonalDock.RegisterAccount(name="Boula", gender=personal_docks.Gender.Male,
                             birthday=datetime.datetime(1996, 9, 28),
-                            password="whoneedsapassword", email='email@yahoo.com',
+                            password="123", email='email@yahoo.com',
                             phone_number='01222222222')
   AmberOcean(user_id=boula).run()

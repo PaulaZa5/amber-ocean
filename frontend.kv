@@ -121,6 +121,7 @@
 
     BoxLayout:
 		## display: entry
+		id: reg
 		canvas.before:
             Color:
                 rgba: 0,0, 1, 0.1  # black
@@ -279,6 +280,9 @@
 				font_size: 20 
 				background_color:0,0,1,0.7
 				size_hint: (.5, .7)
+		BoxLayout:
+			id: error
+			
 # BackGround
 <RegisterationScreen>:
 	name: "Registeration"
