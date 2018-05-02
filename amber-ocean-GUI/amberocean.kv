@@ -1,0 +1,641 @@
+#:kivy 1.0
+#:import kivy kivy
+#:import win kivy.core.window
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
+####################### Screen Management ############################
+
+ScreenManagement:
+	transition: FadeTransition()
+	LoginScreen:
+	RegisterationScreen:
+	##ForgetPasswordScreen:
+	HomeScreen:
+	
+####################### Login Screen #######################
+<Login>:
+	login_name: login
+	login_password: password
+	
+    size_hint: None, None
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1  # red
+        Rectangle:
+            pos: self.pos
+            size: self.size
+		
+
+    BoxLayout:
+		#display: entry
+		canvas.before:
+            Color:
+                rgba: 0,0, 1, 0.1  # black
+            Ellipse:
+                pos: self.pos
+                size: 400,250
+				segments:8
+				
+
+        size: self.parent.size  
+        pos: self.parent.pos  
+        orientation: 'vertical'
+		
+		AnchorLayout:
+			anchor_x: 'center'
+			anchor_y: 'center'
+			Image:
+				source: 'logo.png'
+				size_hint: None, None
+				size: 120, 120
+		
+
+        Label:
+			font_size: 20
+            text: 'UserName'
+			text_size: self.size
+			color: 0,0,0,1
+			
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: login
+			hint_text: 'Your Name'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+        Label:
+			font_size: 20
+            text: 'Password'
+			hint_text: 'Your Password'
+			text_size: self.size
+			color: 0,0,0,1
+			hint_text_color: 0,0,0,1
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: password
+			hint_text: 'Your Password'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+			password: True
+		Label:
+			font_size: 1
+			text: '  '
+			size_hint: (.1, .1)
+		Button:
+			size_hint: (.5, .8)
+			pos: self.pos
+			font_size: 20
+			text: 'Submit'
+			background_color:0,0,1,0.7
+			pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+			on_press: 
+				if root.submit_login() == True : app.root.current = 'Home'
+				 
+					
+		BoxLayout:
+            orientation: 'horizontal'
+
+			## Button:
+				## on_release: app.root.current = 'ForgetPassword'
+				## text: 'Forgetten Password'
+				## font_size: 20 
+				## background_color:0,0,1,0.7
+				## size_hint: (.5, .6)
+			Button:
+				on_release: app.root.current = 'Registeration'
+				text: 'Registeration'
+				font_size: 20
+				background_color:0,0,1,0.7
+				size_hint: (.5, .6)
+# BackGround
+<LoginScreen>:
+	name: "login"
+    AnchorLayout:
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1  # white
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        size: self.parent.size
+        anchor_x: 'center'
+        anchor_y: 'center'
+        Login:
+            size: 400,250
+ 
+
+			
+##################### Forgetten Screen #######################			
+	
+## <ForgetPassword>:		
+		
+	
+    ## size_hint: None, None
+    ## canvas.before:
+        ## Color:
+            ## rgba: 1, 1, 1, 1  # red
+        ## Rectangle:
+            ## pos: self.pos
+            ## size: self.size
+		
+
+    ## BoxLayout:
+		## #display: entry
+		## canvas.before:
+            ## Color:
+                ## rgba: 0,0, 1, 0.1  # black
+            ## Ellipse:
+                ## pos: self.pos
+                ## size: 400,250
+				## segments:8
+				
+
+        ## size: self.parent.size  
+        ## pos: self.parent.pos  
+        ## orientation: 'vertical'
+		
+		## AnchorLayout:
+			## anchor_x: 'center'
+			## anchor_y: 'center'
+			## Image:
+				## source: 'logo.png'
+				## size_hint: None, None
+				## size: 120, 120
+		
+		## # Name
+        ## Label:
+			## font_size: 20
+            ## text: 'UserName'
+			## text_size: self.size
+			## color: 0,0,0,1
+			
+		## TextInput:
+			## size_hint: (1, None)
+			## height: 30
+            ## id: name
+			## hint_text: 'Your Name / Email'
+			## hint_text_color: 0,0, 1, 0.3
+            ## font_size: 15
+            ## multiline: False
+			## font_name:'Arial'
+        
+		## # Space
+		
+		## Label:
+			## font_size: 1
+			## text: '  '
+			## size_hint: (.1, .1)
+		## Button:
+			## size_hint: (.5, .8)
+			## pos: self.pos
+			## font_size: 20
+			## text: 'Send Email'
+			## background_color:0,0,1,0.7
+			## pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+		## BoxLayout:
+			## Button:
+				## on_release: app.root.current = 'login'
+				## text: 'Back to Login'
+				## font_size: 20 
+				## background_color:0,0,1,0.7
+				## size_hint: (.5, .6)
+
+
+## <ForgetPasswordScreen>:
+	## name: 'ForgetPassword'
+	## AnchorLayout:
+        ## canvas.before:
+            ## Color:
+                ## rgba: 1, 1, 1, 1  # white
+            ## Rectangle:
+                ## pos: self.pos
+                ## size: self.size
+        ## size: self.parent.size
+        ## anchor_x: 'center'
+        ## anchor_y: 'center'
+        ## ForgetPassword:
+            ## size: 400,250
+
+		
+####################### Registeration Screen #######################
+<Registeration>:
+	name: name
+	day: day
+	month: month
+	year: year
+	email: email
+	password: password
+	phone: phone
+	
+    size_hint: None, None
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1  # red
+        Rectangle:
+            pos: self.pos
+            size: self.size
+		
+
+    BoxLayout:
+		## display: entry
+		canvas.before:
+            Color:
+                rgba: 0,0, 1, 0.1  # black
+            Ellipse:
+                pos: self.pos
+                size: 400,450
+				segments:8
+				
+
+        size: self.parent.size  
+        pos: self.parent.pos  
+        orientation: 'vertical'
+		
+		AnchorLayout:
+			anchor_x: 'center'
+			anchor_y: 'center'
+			Image:
+				source: 'logo.png'
+				size_hint: None, None
+				size: 120, 120
+		#Name		
+        Label:
+			font_size: 20
+            text: 'UserName'
+			text_size: self.size
+			color: 0,0,0,1
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: name
+			hint_text: 'Your Name'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+			
+		#gender
+		Label:
+			font_size: 20
+            text: 'Gender'
+			text_size: self.size
+			color: 0,0,0,1
+		BoxLayout:
+			orientation:'horizontal'
+			ToggleButton:
+				text:'Male'
+				group:'sex'
+				on_release: root.ismale()
+			ToggleButton:
+				text:'Female'
+				group:'sex'
+				state:'down'
+				on_release: root.isfemale()
+		#birthday
+		Label:
+			font_size: 20
+            text: 'Birthday'
+			text_size: self.size
+			color: 0,0,0,1
+		BoxLayout:
+			orientation: "horizontal"
+			TextInput:
+				size_hint: (1, None)
+				height: 30
+				id: day
+				hint_text: 'Day'
+				hint_text_color: 0,0, 1, 0.3
+				font_size: 15
+				multiline: False
+				font_name:'Arial'
+			TextInput:
+				size_hint: (1, None)
+				height: 30
+				id: month
+				hint_text: 'Month'
+				hint_text_color: 0,0, 1, 0.3
+				font_size: 15
+				multiline: False
+				font_name:'Arial'
+			TextInput:
+				size_hint: (1, None)
+				height: 30
+				id: year
+				hint_text: 'Year'
+				hint_text_color: 0,0, 1, 0.3
+				font_size: 15
+				multiline: False
+				font_name:'Arial'			
+		#Email
+		Label:
+			font_size: 20
+            text: 'Email'
+			text_size: self.size
+			color: 0,0,0,1
+			
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: email
+			hint_text: 'Your Email'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+        
+		#password
+		Label:
+			font_size: 20
+            text: 'Password'
+			text_size: self.size
+			color: 0,0,0,1
+			
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: password
+			hint_text: 'Password'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+
+		#phone
+		Label:
+			font_size: 20
+            text: 'Phone'
+			text_size: self.size
+			color: 0,0,0,1
+			
+		TextInput:
+			size_hint: (1, None)
+			height: 30
+            id: phone
+			hint_text: 'Phone'
+			hint_text_color: 0,0, 1, 0.3
+            font_size: 15
+            multiline: False
+			font_name:'Arial'
+			
+		Label:
+			font_size: 1
+			text: '  '
+			size_hint: (.1, .1)
+		Button:
+			size_hint: (.5, .8)
+			pos: self.pos
+			font_size: 20
+			text: 'Submit'
+			background_color:0,0,1,0.7
+			pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+			on_release: root.registerAccount()
+		BoxLayout:
+			Button:
+				on_release: app.root.current = 'login'
+				text: 'Back to Login'
+				font_size: 20 
+				background_color:0,0,1,0.7
+				size_hint: (.5, .7)
+# BackGround
+<RegisterationScreen>:
+	name: "Registeration"
+    AnchorLayout:
+        canvas.before:
+            Color:
+                rgba: 1, 1, 1, 1  # white
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        size: self.parent.size
+        anchor_x: 'center'
+        anchor_y: 'center'
+        Registeration:
+            size: 400,450
+ 
+		
+####################### Home Screen #######################	
+
+
+
+
+# BackGround
+<HomeScreen>:
+	name: "Home"
+
+	BoxLayout:
+		orientation:"vertical"
+		######### ToolBar
+		BoxLayout:
+			size_hint_y: None
+			height: dp(30)
+			canvas.before:
+				Color:
+					rgba: 0, 0, 1, 0.8  
+				Rectangle:
+					pos: self.pos
+					size: self.size
+			orientation: "horizontal"
+			Button:
+				size_hint_y: None
+				height: 30
+				text: 'Profile'
+				background_color:0,0, 1, 0.6
+			Button:
+				size_hint_y: None
+				height: 30
+				text: 'Home'
+				background_color:0,0, 1, 0.6
+				on_release: app.root.current = 'Home'	
+			Button:
+				size_hint_y: None
+				height: 30
+				text: 'Setting'
+				background_color:0,0, 1, 0.6		
+				
+			Button:
+				size_hint_y: None
+				height:30
+				text:'Log out'
+				on_release: app.root.current = 'login'	
+
+		BoxLayout:
+			canvas.before:
+				Color:
+					rgba: 1, 1, 1, 1  # white
+				Rectangle:
+					pos: self.pos
+					size: self.size
+			orientation: "horizontal"		
+			
+			########### Groups ############
+			BoxLayout:
+				orientation: "vertical"
+				width: 100
+				size_hint_x: None
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn1'
+					background_color:0,0, 1, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn2'
+					background_color:0,0, 1, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn3'
+					background_color:0,0, 1, 0.6
+				BoxLayout:
+					Label:
+						text:'Groups'
+						size_hint:(.1, .1)
+						pos_hint: {'left':1, 'top':1}
+						color: 0,0,0,1
+				Widget:	
+			########### Friends ############	
+			BoxLayout:
+				orientation: "vertical"
+				width: 100
+				size_hint_x: None
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn1'
+					background_color:0,1, 0, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn2'
+					background_color:0,1, 0, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn3'
+					background_color:0,1, 0, 0.6
+				BoxLayout:
+					Label:
+						text:'Friends'
+						size_hint:(.1, .1)
+						pos_hint: {'left':1, 'top':1}
+						color: 0,0,0,1
+				Widget:	
+				
+			########### Followees ############	
+			BoxLayout:
+				orientation: "vertical"
+				width: 100
+				size_hint_x: None
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn1'
+					background_color:1,0, 0, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn2'
+					background_color:1,0, 0, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn3'
+					background_color:1,0, 0, 0.6
+				BoxLayout:
+					Label:
+						text:'Followees'
+						size_hint:(.1, .1)
+						pos_hint: {'left':1, 'top':1}
+						color: 0,0,0,1
+				Widget:	
+				
+			########### Ships ############	
+			BoxLayout:
+				orientation: "vertical"
+				width: 250
+				size_hint_x: None
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn1'
+					background_color:0,1, 1, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn2'
+					background_color:0,1, 1, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn3'
+					background_color:0,1, 1, 0.6
+				BoxLayout:
+					Label:
+						text:'Ships'
+						size_hint:(.1, .1)
+						pos_hint: {'left':1, 'top':1}
+						color: 0,0,0,1
+				Widget:	
+
+			########### Suggessted Friends ############	
+			BoxLayout:
+				orientation: "vertical"
+				width: 150
+				size_hint_x: None
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn1'
+					background_color:1,0, 1, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn2'
+					background_color:1,0, 1, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn3'
+					background_color:1,0, 1, 0.6
+				BoxLayout:
+					Label:
+						text:'Suggested Friends'
+						size_hint:(.1, .1)
+						pos_hint: {'left':1, 'top':1}
+						color: 0,0,0,1
+				Widget:	
+
+			########### Suggested Groups ############
+			BoxLayout:
+				orientation: "vertical"
+				size:self.size
+				
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn1'
+					background_color:1,1, 0, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn2'
+					background_color:1,1, 0, 0.6
+				Button:
+					size_hint_y: None
+					height: 30
+					text: 'btn3'
+					background_color:1,1, 0, 0.6
+				BoxLayout:
+					Label:
+						text:'Suggested Groups'
+						size_hint:(.1, .1)
+						pos_hint: {'left':1, 'top':1}
+						color: 0,0,0,1
+				Widget:	

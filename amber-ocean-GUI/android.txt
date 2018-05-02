@@ -1,0 +1,4 @@
+title=Amber
+author=Mourice
+orientation=all
+fullscreen=1
