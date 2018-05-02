@@ -116,47 +116,26 @@ class Sea(amber.AmberObject):
             if ship == ship_id:
                 self.sailed_ships.remove(ship)
         return True
-      
-    def max_reactions_ship(self):
-        maxreactions=0
-        maxreactions_id=-1
-        for ship in self.generate_ships():
-            reactions=0
-            for key, dictlist in database[ship.id].reactions.items():
-                reactions+=len(dictlist)
-            if reactions>maxreactions:
-                maxreactions=reactions
-                maxreactions_id=ship.id
-        return maxreactions_id,maxreactions
-
-    def max_comments_ship(self):
-        maxcomments=0
-        maxcomments_id=-1
-        for ship in self.generate_ships():
-            if len(database[ship.id].child_ships)>maxcomments:
-                maxcomments=len(database[ship.id].child_ships)
-                maxcomments_id=ship.id
-        return maxcomments_id,maxcomments
 
     def max_reactions_ship(self):
         maxreactions=0
         maxreactions_id=-1
         for ship in self.generate_ships():
             reactions=0
-            for key, dictlist in database[ship.id].reactions.items():
+            for key, dictlist in database[ship].reactions.items():
                 reactions+=len(dictlist)
             if reactions>maxreactions:
                 maxreactions=reactions
-                maxreactions_id=ship.id
+                maxreactions_id=ship
         return maxreactions_id,maxreactions
 
     def max_comments_ship(self):
         maxcomments=0
         maxcomments_id=-1
         for ship in self.generate_ships():
-            if len(database[ship.id].child_ships)>maxcomments:
-                maxcomments=len(database[ship.id].child_ships)
-                maxcomments_id=ship.id
+            if len(database[ship].child_ships)>maxcomments:
+                maxcomments=len(database[ship].child_ships)
+                maxcomments_id=ship
         return maxcomments_id,maxcomments
 
     @staticmethod
@@ -252,7 +231,6 @@ class Sea(amber.AmberObject):
         sea_data = sea.getroot()
         sea = Sea.RegisterSea(creator, sea_data.attrib['Name'], sea_data[1].text,
                               sea_data.attrib['Visibility'], sea_data.attrib['Sailing-Privacy'])
-        sea = amber.database[sea]
         sea.creation_date = dt.datetime.strptime(sea_data.attrib['Creation-Time'], '%Y-%m-%d %H:%M:%S')
         if sea_data.attrib['Active'] == 'False':
             sea.active = False

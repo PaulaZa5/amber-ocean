@@ -76,43 +76,6 @@ def max_comments_ship_for_each_member_generator():
        yield memberid,database[memberid].max_comments_ship()
 
 
-def generate_personal_docks():
-    for memberid,member in database.items():
-        if is_personal_dock(member):
-            yield memberid
-
-
-def most_friends_members_generator():
-    members_id=generate_personal_docks()
-    sortedmembers=sorted(members_id, key=lambda id: len(database[id].friends), reverse=True)
-    for member_id in sortedmembers:
-        yield member_id,len(database[member_id].friends)
-
-
-def most_followers_members_generator():
-    members_id = generate_personal_docks()
-    sortedmembers = sorted(members_id, key=lambda id: len(database[id].followers), reverse=True)
-    for member_id in sortedmembers:
-        yield member_id, len(database[member_id].followers)
-
-
-def most_posts_members_generator():
-    members_id = generate_personal_docks()
-    sortedmembers = sorted(members_id, key=lambda id: len(database[id].sailed_ships), reverse=True)
-    for member_id in sortedmembers:
-        yield member_id, len(database[member_id].sailed_ships)
-
-
-def max_reactions_ship_for_each_member_generator():
-    for memberid in generate_personal_docks():
-       yield memberid,database[memberid].max_reactions_ship()
-
-
-def max_comments_ship_for_each_member_generator():
-    for memberid in generate_personal_docks():
-       yield memberid,database[memberid].max_comments_ship()
-
-
 def is_sea(in_object):
     return type(in_object) is seas.Sea
 
@@ -122,40 +85,14 @@ def generate_seas():
             yield memberid
 
 def most_members_seas_generator():
-    groups_id = generate_personal_docks()
-    sortedgroups = sorted(groups_id, key=lambda id: len(database[id].members), reverse=True)
-    for group_id in sortedgroups:
-        yield group_id, len(database[group_id].members)
-
-def most_posts_seas_generator():
-    groups_id = generate_personal_docks()
-    sortedgroups = sorted(groups_id, key=lambda id: len(database[id].sailed_ships), reverse=True)
-    for group_id in sortedgroups:
-        yield group_id, len(database[group_id].sailed_ships)
-
-def max_reactions_ship_for_each_sea_generator():
-    for groupid in generate_seas():
-       yield groupid,database[groupid].max_reactions_ship()
-
-def max_comments_ship_for_each_sea_generator():
-    for groupid in generate_seas():
-       yield groupid,database[groupid].max_comments_ship()
-
-def generate_seas():
-    for memberid,member in database.items():
-        if is_sea(member):
-            yield memberid
-
-
-def most_members_seas_generator():
-    groups_id = generate_personal_docks()
+    groups_id = generate_seas()
     sortedgroups = sorted(groups_id, key=lambda id: len(database[id].members), reverse=True)
     for group_id in sortedgroups:
         yield group_id, len(database[group_id].members)
 
 
 def most_posts_seas_generator():
-    groups_id = generate_personal_docks()
+    groups_id = generate_seas()
     sortedgroups = sorted(groups_id, key=lambda id: len(database[id].sailed_ships), reverse=True)
     for group_id in sortedgroups:
         yield group_id, len(database[group_id].sailed_ships)
@@ -173,12 +110,6 @@ def max_comments_ship_for_each_sea_generator():
 
 def is_ship(in_object):
     return type(in_object) is ships.Ship
-
-def generate_ships():
-    for memberid,member in database.items():
-        if is_ship(member):
-            yield memberid
-
 
 def generate_ships():
     for memberid,member in database.items():
@@ -208,7 +139,7 @@ def import_database():
     del f_data[len(f_data) - 1]
     for object in f_data:
         id, in_data, in_type = object.split('+|+')
-        id = int(id)
+        #id = int(id)
         if in_type == "<class 'personal_docks.PersonalDock'>":
             database[id] = personal_docks.PersonalDock.import_from_database(in_data)
             database[id].id = id

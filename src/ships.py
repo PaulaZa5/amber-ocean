@@ -3,6 +3,7 @@ This file contains all ships related operations
 """
 
 import amber
+from amber import AmberObject
 import datetime as dt
 import math
 
@@ -61,6 +62,7 @@ class Ship(amber.AmberObject):
     def add_reply(self, replayer_id, replay_type, replay_text, replay_image=None, replay_video=None):
         Ship.RegisterShip(replayer_id, self.where_is_it_created_id, replay_type, replay_text,
                                    replay_image, replay_video, ShipPrivacy.Everyone, self.id)
+        self.child_ships.append(str(AmberObject.current_available_id-1))
         return True
 
     def change_reaction(self, reactioner_id, new_reaction):
@@ -83,7 +85,7 @@ class Ship(amber.AmberObject):
         self.txt_content = edit_text
         self.image_content = edit_image
         self.video_content = edit_video
-        self.creation_date = dt.datetime.utcnow().timetuple()
+        self.creation_date = dt.datetime.utcnow().replace(microsecond=0)
         return True
 
     def change_privacy(self, new_privacy):
@@ -218,7 +220,6 @@ class Ship(amber.AmberObject):
         ship_data = ship.getroot()
         ship = Ship.RegisterShip(creator_id, destination_id, ship_data.attrib['Type'], None, None, None,
                                  ship_data.attrib['Privacy'])
-        ship = amber.database[ship]
         ship.creation_date = dt.datetime.strptime(ship_data.attrib['Creation-Time'], '%Y-%m-%d %H:%M:%S')
 
         for elem in ship_data:

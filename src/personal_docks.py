@@ -93,7 +93,7 @@ class PersonalDock(amber.AmberObject):
 
     def check_password(self, password):
         password = hashlib.sha224(password.encode('utf-8')).hexdigest()
-        return self.password is password
+        return  self.password == password
 
     def deactivate_account(self):
         self.active = False
@@ -116,52 +116,78 @@ class PersonalDock(amber.AmberObject):
         return True
 
     def change_master_email(self, new_email):
+        old_master_email=self.master_email
         self.master_email = new_email
-        return True
+        check=self.remove_email( old_master_email)
+        self.add_email(self.master_email)
+        return check
 
     def add_email(self, new_email):
         self.emails.append(new_email)
         return True
 
     def remove_email(self, email):
-        self.emails.remove(email)
-        return True
+        if email in self.emails:
+            if email!=self.master_email:
+                self.emails.remove(email)
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def change_master_phone_number(self, new_phone_number):
+        old_master_phone_number = self.master_phone_number
         self.master_phone_number = new_phone_number
-        return True
+        self.add_phone_number( self.master_phone_number)
+        check = self.remove_phone_number(old_master_phone_number)
+        return check
 
     def add_phone_number(self, new_phone_number):
         self.phone_numbers.append(new_phone_number)
         return True
 
     def remove_phone_number(self, phone_number):
-        self.phone_numbers.remove(phone_number)
-        return True
+        if phone_number in self.phone_numbers:
+            if phone_number!=self.master_phone_number:
+                self.phone_numbers.remove(phone_number)
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def add_friend(self, friend_id):
         self.friends.append(friend_id)
         return True
 
     def remove_friend(self, friend_id):
-        self.friends.remove(friend_id)
-        return True
+        if friend_id in self.friends:
+            self.friends.remove(friend_id)
+            return True
+        return False
 
     def add_follower(self, follower_id):
         self.followers.append(follower_id)
         return True
 
     def remove_follower(self, follower_id):
-        self.followers.remove(follower_id)
-        return True
+        if follower_id in self.followers:
+            self.followers.remove(follower_id)
+            return True
+        else:
+            return False
 
     def add_followee(self, followee_id):
         self.followees.append(followee_id)
         return True
 
     def remove_followee(self, followee_id):
-        self.followees.remove(followee_id)
-        return True
+        if followee_id in self.followees:
+            self.followees.remove(followee_id)
+            return True
+        else:
+            return False
 
     def add_family_member_relationship(self, family_member_id, family_member_relation):
         self.family.append((family_member_id, family_member_relation))
@@ -270,7 +296,7 @@ class PersonalDock(amber.AmberObject):
         """
         Starts yielding posts shared to this dock chronologically
         """
-        
+
         for shipid,shipdate in self.sailed_ships:
             yield shipid
 
@@ -289,27 +315,31 @@ class PersonalDock(amber.AmberObject):
         self.seas.append(sea_id)
 
     def leave_sea(self,sea_id):
-        self.seas.remove(sea_id)
+        if sea_id in self.seas:
+            self.seas.remove(sea_id)
+            return True
+        else:
+            return False
 
     def max_reactions_ship(self):
         maxreactions=0
         maxreactions_id=-1
         for ship in self.generate_ships():
             reactions=0
-            for key, dictlist in database[ship.id].reactions.items():
+            for key, dictlist in database[ship].reactions.items():
                 reactions+=len(dictlist)
             if reactions>maxreactions:
                 maxreactions=reactions
-                maxreactions_id=ship.id
+                maxreactions_id=ship
         return maxreactions_id,maxreactions
 
     def max_comments_ship(self):
         maxcomments=0
         maxcomments_id=-1
         for ship in self.generate_ships():
-            if len(database[ship.id].child_ships)>maxcomments:
-                maxcomments=len(database[ship.id].child_ships)
-                maxcomments_id=ship.id
+            if len(database[ship].child_ships)>maxcomments:
+                maxcomments=len(database[ship].child_ships)
+                maxcomments_id=ship
         return maxcomments_id,maxcomments
 
     def docks_you_may_know(self):
@@ -321,10 +351,11 @@ class PersonalDock(amber.AmberObject):
         recommendations = {}
         for friend in self.friends:
             for vertex in database[friend].friends:
-                if vertex in recommendations.keys():
-                    recommendations[vertex] += 1
-                else:
-                    recommendations[vertex] = 1
+                if vertex!=self.id and not( vertex in self.friends):
+                    if vertex in recommendations.keys():
+                        recommendations[vertex] += 1
+                    else:
+                        recommendations[vertex] = 1
 
         sorted_recommendations = sorted(recommendations.items(), key=lambda tup: tup[1], reverse=True)
 
@@ -339,11 +370,12 @@ class PersonalDock(amber.AmberObject):
         """
         recommendations = {}
         for friend in self.friends:
-            for group in database[friend].groups:
-                if group in recommendations.keys():
-                    recommendations[group] += 1
-                else:
-                    recommendations[group] = 1
+            for group in database[friend].seas:
+                if not (group in self.seas):
+                    if group in recommendations.keys():
+                        recommendations[group] += 1
+                    else:
+                        recommendations[group] = 1
 
         sorted_recommendations = sorted(recommendations.items(), key=lambda tup: tup[1], reverse=True)
 
@@ -361,24 +393,23 @@ class PersonalDock(amber.AmberObject):
         for friend in self.friends:
             friend_posts=database[friend].sailed_ships
             no_of_posts=len(friend_posts)
-            newest_post_id=friend_posts[no_of_posts-1][0]
-            posts.add((newest_post_id,no_of_posts-1))
-        for group in self.groups:
+            if no_of_posts!=0:
+                newest_post_id=friend_posts[no_of_posts-1][0]
+                posts.append((newest_post_id,no_of_posts-1))
+        for group in self.seas:
             group_posts = database[group].sailed_ships
             no_of_posts = len(group_posts)
-            newest_post_id = group_posts[no_of_posts - 1][0]
-            posts.add((newest_post_id, no_of_posts - 1))
-
+            if no_of_posts != 0:
+                newest_post_id = group_posts[no_of_posts - 1][0]
+                posts.append((newest_post_id, no_of_posts - 1))
         sorted_posts = sortedcontainers.SortedListWithKey(posts, key=lambda tup: database[tup[0]].creation_date)
-
         for post_id, post_no in sorted_posts:
             yield post_id
-            sorted_posts.pop()
             if post_no != 0:
                 post_creator_id=database[post_id].creator_id
                 posts = database[post_creator_id].sailed_ships
                 new_post_id=posts[post_no-1][0]
-                sorted_posts((new_post_id,post_no-1))
+                sorted_posts.add((new_post_id,post_no-1))
 
     @staticmethod
     def import_from_database(inData):
@@ -474,7 +505,6 @@ class PersonalDock(amber.AmberObject):
                                             dt.datetime.strptime(dock_data.attrib['Birthday'], '%Y-%m-%d %H:%M:%S'),
                                             '0', dock_data.attrib['Master-Email'],
                                             dock_data.attrib['Master-Phone-Number'])
-        dock = amber.database[dock]
         dock.join_date = dt.datetime.strptime(dock_data.attrib['Join-Date'], '%Y-%m-%d %H:%M:%S')
         if dock_data.attrib['Active'] == 'False':
             dock.active = False
