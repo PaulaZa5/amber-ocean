@@ -52,8 +52,7 @@ class Ship(amber.AmberObject):
         self.image_content = image_content
         self.video_content = video_content
         self.privacy = privacy
-        self.reactions = {Reactions.Like: [], Reactions.Dislike: [], Reactions.Love: [], Reactions.Angry: [],
-                          Reactions.Haha: []}  # Add ids of personal docks in the list
+        self.reactions = {}  # id: reaction
         self.parent_ship_id = parent_ship_id
         self.creation_date = dt.datetime.utcnow().replace(microsecond=0)
         self.child_ships = []
@@ -64,22 +63,20 @@ class Ship(amber.AmberObject):
                                    replay_image, replay_video, ShipPrivacy.Everyone, self.id)
         return True
 
-    def add_reaction(self, reactioner_id, reaction):
-        if reaction in self.reactions.keys():
-            self.reactions[reaction].append(reactioner_id)
-            return True
-        return False
-
     def change_reaction(self, reactioner_id, new_reaction):
-        return self.remove_reaction(reactioner_id) & self.add_reaction(reactioner_id, new_reaction)
+        self.reactions[reactioner_id] = new_reaction
+        return True
 
     def remove_reaction(self, reactioner_id):
-        for lst in self.reactions.values():
-            for id in lst:
-                if id == reactioner_id:
-                    lst.remove(id)
-                    return True
-        return False
+        del self.reactions[reactioner_id]
+        return True
+
+    def count_of_reaction(self, reaction):
+        result = 0
+        for user_id, saved_reaction in self.reactions.items():
+            if saved_reaction == reaction:
+                result = result + 1
+        return result
 
     def commit_edit(self, edit_text, edit_image=None, edit_video=None):
         self.edit_history.append((self.txt_content, self.image_content, self.video_content, self.creation_date))

@@ -11,7 +11,24 @@ from kivy.uix.dropdown import DropDown
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen, SwapTransition
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.spinner import Spinner
 from kivy.uix.textinput import TextInput
+import datetime as dt
+
+number_comments = ""
+def comment_clicked (cmt_btn):
+    txt_splitted = number_comments.text.split()
+    number_comments.text = str(int(txt_splitted[0]) + 1) + ' ' + txt_splitted[1]
+
+#function to calculate number of likes
+number_likes = ""
+number_haha = ""
+number_sad= ""
+number_love= ""
+number_dislike = ""
+number_angry = ""
+
+
 
 
 class LoginScreen(BoxLayout):
@@ -111,6 +128,9 @@ class Page(BoxLayout):
 
         def home_button(self, **kwargs):
             return Page.ContentManager.HomeButton(user_id=self.user_id, screen_manager=self, **kwargs)
+
+        def post_input(self, **kwargs):
+            return Page.PostInput(user_id=self.user_id, screen_manager=self, **kwargs)
 
         def post(self, **kwargs):
             return Page.Post(user_id=self.user_id, screen_manager=self, **kwargs)
@@ -363,9 +383,8 @@ class Page(BoxLayout):
                 self.group = group
                 self.posts = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
                 self.posts.bind(minimum_height=self.posts.setter('height'))
-                # self.posts_generator = group.generate_ships
-                for post in group.sailed_ships:
-                    self.size_hint_x = 1
+                self.posts.add_widget(screen_manager.post_input(where_is_it_created=group.id))
+                for post, date in group.sailed_ships:
                     self.posts.add_widget(self.screen_manager.post(post_id=post, destination_id=self.group.id))
                 self.add_widget(self.posts)
 
@@ -397,15 +416,343 @@ class Page(BoxLayout):
             self.screen_manager = screen_manager
             self.add_widget(Label(text='Home'))
 
+    class PostInput(BoxLayout):
+
+        def __init__(self, user_id, where_is_it_created, screen_manager, **kwargs):
+            super(Page.PostInput, self).__init__(**kwargs)
+            self.user_id = user_id
+            self.where_is_it_created = where_is_it_created
+            self.orientation = 'vertical'
+            self.size_hint_y = None
+            self.height = 500
+
+            Privacy = BoxLayout(orientation='vertical', padding=10)
+            Box = BoxLayout(orientation='vertical', size_hint=(1, 5), padding=10)
+            Share = BoxLayout(orientation='vertical', padding=10)
+            self.add_widget(Privacy)
+            self.add_widget(Box)
+            self.add_widget(Share)
+
+            def post(instance):
+                if box.text != "" and box.text != "What's on your mind?":
+                    post_privacy = ships.ShipPrivacy.Everyone
+                    if spin_privacy.text == "Everyone":
+                        post_privacy = ships.ShipPrivacy.Everyone
+                    elif spin_privacy.text == "Friends and Followers":
+                        post_privacy = ships.ShipPrivacy.Only_friends_and_followers
+                    elif spin_privacy.text == "Only Followers":
+                        post_privacy = ships.ShipPrivacy.Only_followers
+                    elif spin_privacy.text == "Only Friends":
+                        post_privacy = ships.ShipPrivacy.Only_friends
+                    elif spin_privacy.text == "Only Me":
+                        post_privacy = ships.ShipPrivacy.Only_creator
+                    new_ship = ships.Ship.RegisterShip(creator_id=user_id, where_is_it_created_id=where_is_it_created,
+                                                       content_type=ships.ContentType.Text, txt_content=box.text,
+                                                       privacy=post_privacy)
+                    amber.database[where_is_it_created].sailed_ships.append((new_ship, amber.database[new_ship].creation_date))
+                    box.text = ""
+
+            spin_privacy = Spinner(
+                text="Everyone",
+                size_hint=(0.3, 1),
+                values=("Everyone",
+                        "Friends and Followers",
+                        "Only Followers",
+                        "Only Friends",
+                        "Only Me")
+            )
+            Privacy.add_widget(spin_privacy)
+
+            def show_selected_value(spin_privacy, values):
+                return values
+
+            spin_privacy.bind(text=show_selected_value)
+
+            share = Button(
+                text="Share",
+                size_hint=(0.1, 1),
+                disabled=True,
+                on_release=post
+            )
+            Share.add_widget(share)
+
+            def remove(instance, touch):
+                if instance.text == "What's on your mind?":
+                    instance.text = ""
+
+            def write(instance, touch):
+                if instance.text == "":
+                    share.disabled = True
+                    instance.text = "What's on your mind?"
+                else:
+                    share.disabled = False
+
+            box = TextInput(
+                text="What's on your mind?",
+                multiline=True,
+                size_hint=(1, 5),
+                on_touch_down=remove,
+                on_touch_up=write
+            )
+            Box.add_widget(box)
+
     class Post(BoxLayout):
 
         def __init__(self, user_id, post_id, destination_id, screen_manager, **kwargs):
             super(Page.Post, self).__init__(**kwargs)
             self.user_id = user_id
-            self.post_id = post_id
+            self.ship_id = post_id
+            ship_id = post_id
             self.destination_id = destination_id
             self.screen_manager = screen_manager
-            self.add_widget(Label(text='Post'))
+            is_able_to_see = False
+            # print(self.ship_id, self.user_id, amber.database[ship_id].creator_id)
+            if amber.is_personal_dock(amber.database[amber.database[ship_id].where_is_it_created_id]):
+                # Everyone
+                if amber.database[ship_id].privacy == ships.ShipPrivacy.Everyone:
+                    is_able_to_see = True
+                # Friends and Followers
+                elif (user_id in amber.database[amber.database[ship_id].creator_id].friends \
+                      or user_id in amber.database[amber.database[ship_id].creator_id].followers) \
+                        and amber.database[ship_id].privacy == ships.ShipPrivacy.Only_friends_and_followers:
+                    is_able_to_see = True
+                # Friends
+                elif user_id in amber.database[amber.database[ship_id].creator_id].friends \
+                        and amber.database[ship_id].privacy == ships.ShipPrivacy.Only_friends:
+                    is_able_to_see = True
+                # Followers
+                elif user_id in amber.database[amber.database[ship_id].creator_id].followers \
+                        and amber.database[ship_id].privacy == ships.ShipPrivacy.Only_followers:
+                    is_able_to_see = True
+                # Only me
+                elif user_id == amber.database[ship_id].creator_id:
+                    is_able_to_see = True
+            else:
+                if amber.database[amber.database[
+                    ship_id].where_is_it_created_id].visibility_privacy == seas.SeaVisibilityPrivacy.Everyone:
+                    is_able_to_see = True
+                elif user_id in amber.database[amber.database[ship_id].where_is_it_created_id].members:
+                    is_able_to_see = True
+
+            if is_able_to_see:
+                self.orientation = 'vertical'
+                self.spacing = 10
+                self.padding = 20
+                self.size_hint = (1, None)
+                self.height = 600
+
+                Header = BoxLayout(orientation='vertical', spacing=0, padding=20, size_hint=(1, 1))
+                Delete = BoxLayout(orientation='horizontal', size_hint=(1, 1), spacing=0, padding=20)
+                Center = BoxLayout(orientation='vertical', spacing=10, padding=20, size_hint=(1, 1))
+                Footer = BoxLayout(orientation='horizontal', spacing=10, padding=20, size_hint=(1, 1))
+                Likes = BoxLayout(orientation='horizontal', spacing=10, padding=10, size_hint=(1, 1))
+                Comments = BoxLayout(orientation='vertical', spacing=10, padding=10, size_hint=(1, 1))
+
+                self.add_widget(Delete)
+                self.add_widget(Header)
+                self.add_widget(Center)
+                Footer.add_widget(Likes)
+                Footer.add_widget(Comments)
+                self.add_widget(Footer)
+
+                # Button for user name
+                name = Button(text=amber.database[amber.database[self.ship_id].creator_id].name,
+                              size_hint=(1, 1),
+                              bold=True
+                              )
+                Delete.add_widget(name)
+                Delete.add_widget(Label(size_hint_x=3))
+
+                def delete_ship(instance):
+                    try:
+                        if amber.is_sea(amber.database[amber.database[ship_id].where_is_it_created_id]):
+                            amber.database[amber.database[ship_id].where_is_it_created_id].sink_ship_from_this_sea(ship_id)
+                        elif amber.is_personal_dock(amber.database[amber.database[ship_id].where_is_it_created_id]):
+                            amber.database[amber.database[ship_id].where_is_it_created_id].sink_ship_from_this_dock(ship_id)
+                        # elif amber.is_ship(amber.database[amber.database[ship_id].where_is_it_created_id]):
+                        #     amber.database[amber.database[ship_id].where_is_it_created_id].child_ships.remove(ship_id)
+                        del amber.database[ship_id]
+                    except:
+                        pass
+
+                delete = Button(text=" Remove this ship ", size_hint=(1, 1),
+                                on_release=delete_ship)
+                Delete.add_widget(delete)
+
+                def like_clicked(like_btn, touch):
+                    if (like_btn.text is "Like"):
+                        amber.database[ship_id].change_reaction(user_id, ships.Reactions.Like)
+                    elif (like_btn.text is "Haha"):
+                        amber.database[ship_id].change_reaction(user_id, ships.Reactions.Haha)
+                    elif (like_btn.text is "Love"):
+                        amber.database[ship_id].change_reaction(user_id, ships.Reactions.Love)
+                    elif (like_btn.text is "Dislike"):
+                        amber.database[ship_id].change_reaction(user_id, ships.Reactions.Dislike)
+                    elif (like_btn.text is "Angry"):
+                        amber.database[ship_id].change_reaction(user_id, ships.Reactions.Angry)
+                    elif (like_btn.text is "None"):
+                        try:
+                            amber.database[ship_id].remove_reaction(user_id)
+                        except:
+                            pass
+                    number_likes.text = str(amber.database[ship_id].count_of_reaction(ships.Reactions.Like)) + ' like'
+                    number_haha.text = str(amber.database[ship_id].count_of_reaction(ships.Reactions.Haha)) + ' Haha'
+                    number_love.text = str(amber.database[ship_id].count_of_reaction(ships.Reactions.Love)) + ' Love'
+                    number_dislike.text = str(amber.database[ship_id].count_of_reaction(ships.Reactions.Dislike)) + ' Dislike'
+                    number_angry.text = str(amber.database[ship_id].count_of_reaction(ships.Reactions.Angry)) + ' angry'
+
+                # label for date
+                current_date = Label(
+                    text=str(amber.database[ship_id].creation_date.date()),
+                    size_hint=(0, 1)
+                )
+                Header.add_widget(current_date)
+
+                # label for time
+                current_time = Label(
+                    text=str(amber.database[ship_id].creation_date.time()),
+                    size_hint=(0, 1)
+                )
+                Header.add_widget(current_time)
+
+                # Button for Like
+                def trigger_fn(instance):
+                    like.is_open = True
+
+                like = Spinner(
+                    text="Reactions",
+                    values=("Like", "Haha", "Love", "Dislike", "Angry", "None"),
+                    size_hint=(0, 1)
+                )
+                like.bind(text=like_clicked)
+                Likes.add_widget(like)
+
+                # Label for editing number of likes
+                global number_likes
+                number_likes = Label(
+                    text="0 likes",
+                    size_hint=(0, 1)
+                )
+                global number_haha
+                number_haha = Label(
+                    text="",
+                    size_hint=(0, 1)
+                )
+                global number_love
+                number_love = Label(
+                    text="",
+                    size_hint=(0, 1)
+                )
+                global number_dislike
+                number_dislike = Label(
+                    text="",
+                    size_hint=(0, 1)
+                )
+
+                global number_angry
+                number_angry = Label(
+                    text="",
+                    size_hint=(0, 1)
+                )
+                Likes.add_widget(number_likes)
+                Likes.add_widget(number_haha)
+                Likes.add_widget(number_love)
+                Likes.add_widget(number_dislike)
+                Likes.add_widget(number_angry)
+
+                vert_scr = ScrollView(size_hint=(1, None), height=120)
+                comments_box = BoxLayout(orientation='vertical', size_hint_y=None)
+                comments_box.bind(minimum_height=comments_box.setter('height'))
+                vert_scr.add_widget(comments_box)
+                self.add_widget(vert_scr)
+
+                def add_comment(comment_btn):
+
+                    def on_text(instance, touch):
+                        if (not new_post.text == ""):
+                            post.disabled = False
+
+                    box_l = BoxLayout(orientation='horizontal', size_hint_y=None, height=40)
+                    new_post = TextInput(size_hint_y=None, height=40, on_touch_up=on_text)
+
+                    def increase_likes(instance, touch):
+                        if "Like" in instance.text:
+                            instance.values[0] = "Like: " + str(int(instance.values[0].split()[1]) + 1)
+                        elif "Love" in instance.text:
+                            instance.values[2] = "Love: " + str(int(instance.values[0].split()[1]) + 1)
+                        elif "Haha" in instance.text:
+                            instance.values[1] = "Haha: " + str(int(instance.values[0].split()[1]) + 1)
+                        elif "Dislike" in instance.text:
+                            instance.values[3] = "Dislike: " + str(int(instance.values[0].split()[1]) + 1)
+                        elif "None" in instance.text:
+                            instance.values[5] = "None: " + str(int(instance.values[0].split()[1]) + 1)
+                        elif "Angry" in instance.text:
+                            instance.values[4] = "Angry: " + str(int(instance.values[0].split()[1]) + 1)
+
+                    def create_comment(post_btn):
+
+                        comment_btn.disabled = False
+                        written_text = new_post.text
+                        new_label = Label(text=written_text, size_hint_y=None, height=40)
+                        name_btn = Button(text=amber.database[user_id].name,
+                                          size_hint_x=0.2, size_hint_y=None, height=30, bold=True)
+                        like_cmt_btn = Spinner(text="Reactions",
+                                               values=(
+                                               "Like: 0", "Haha: 0", "Love: 0", "Dislike: 0", "Sad: 0", "Angry: 0"),
+                                               size_hint_y=None, height=30, size_hint_x=0.2)
+                        """
+                        reply_btn = Button(text="Reply",size_hint_y=None, height=30,
+                                             size_hint_x=0.2 )
+                        """
+                        like_cmt_btn.bind(text=increase_likes)
+
+                        box_l.remove_widget(new_post)
+                        box_l.remove_widget(post_btn)
+                        new_commen_box = BoxLayout(orientation='horizontal', size_hint_y=None, height=40)
+                        new_commen_box.add_widget(name_btn)
+                        new_commen_box.add_widget(new_label)
+                        new_commen_box.add_widget(like_cmt_btn)
+                        # new_commen_box.add_widget(reply_btn)
+                        comments_box.add_widget(new_commen_box)
+                        self.remove_widget(box_l)
+
+                    comment_btn.disabled = True
+
+                    post = Button(text="Post", size_hint_x=0.2, size_hint_y=None, height=40,
+                                  on_release=create_comment, disabled=True, on_press=comment_clicked)
+
+                    box_l.add_widget(new_post)
+                    box_l.add_widget(post)
+                    self.add_widget(box_l)
+
+                # Button for Comment
+                comment = Button(
+                    text="Comment",
+                    size_hint=(0, 1),
+                    disabled=False,
+                    pos_hint={'center_x': 0.9, 'center_y': 1},
+                    on_release=add_comment
+                )
+                Comments.add_widget(comment)
+
+                # Label for editing number of comments
+                global number_comments
+                number_comments = Label(
+                    text="0 Comments",
+                    # color=(0, 0, 0, 1),
+                    size_hint=(0, 1),
+                    pos_hint={'center_x': 0.9, 'center_y': 1}
+                )
+                Comments.add_widget(number_comments)
+
+                # After writing post
+                text_input = Label(
+                    text=amber.database[ship_id].txt_content,
+                    size_hint=(1, 2),
+                )
+                Center.add_widget(text_input)
+            else:
+                self.add_widget(Label(size_hint=(0, 0), size=(0, 0)))
 
     class ProfilePage(BoxLayout):
 
@@ -430,7 +777,7 @@ class Page(BoxLayout):
         self.top_bar.add_widget(self.content.profile_button(destination_id=user_id, text=amber.database[user_id].name))
         self.top_bar.add_widget(Page.ContentManager.BackButton(size_hint_x=0.3, screen_manager=users_manager,
                                                                text='Logout', background_color=(1.0, 0.0, 0.0, 1.0)))
-
+        self.top_bar.add_widget(self.content.group_button(group_id='1'))
         self.add_widget(self.top_bar)
         self.add_widget(self.content)
 
