@@ -461,14 +461,13 @@ class PersonalDock(amber.AmberObject):
                     else:
                         setattr(loadedDock, attribute, attributeValue)
 
-            if 'attribute' in vars(loadedDock):
-                del vars(loadedDock)[attribute]
+        if 'attribute' in vars(loadedDock):
+            del vars(loadedDock)['attribute']
 
 
         return loadedDock
 
     def export_to_database(self):
-        print(vars(self))
         line = str()
         for attribute, attributeValue in vars(self).items():
             if not attribute == 'attribute':
