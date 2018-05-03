@@ -432,70 +432,77 @@ class PersonalDock(amber.AmberObject):
         loadedDock = PersonalDock("", "", "", "", new_object=False)
         for line in lines:
             attribute = line[0:line.find("\t")]
-            attributeValue = line[line.find("\t") + 1:line.find("\n")]
-            if attributeValue == "True":
-                loadedDock.attribute = True
-            elif attributeValue == "False":
-                loadedDock.attribute = False
-            elif not (attributeValue.find("(") == -1):
-                tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in attributeValue.split('),(')]
-                for i in range(len(tuplesvalue)):
-                    for j in range(len(tuplesvalue[i])):
-                        if  "datetime.datetime" in tuplesvalue[i][j]:
-                            tupvalue=tuplesvalue[i][j].replace('datetime.datetime','')
-                            date=dt.datetime.strptime(tupvalue, f)
-                            tuplesvalue[i]=list(tuplesvalue[i])
-                            tuplesvalue[i][j]=date
-                            tuplesvalue[i]=tuple(tuplesvalue[i])
-                setattr(loadedDock, attribute, tuplesvalue)
-            elif not (attributeValue.find(",") == -1):
-                listvalue = attributeValue.split(',')
-                setattr(loadedDock, attribute, listvalue)
+            if not attribute == 'attribute' and not attribute == "":
+                attributeValue = line[line.find("\t") + 1:line.find("\n")]
+                if attributeValue == "True":
+                    loadedDock.attribute = True
+                elif attributeValue == "False":
+                    loadedDock.attribute = False
+                elif not (attributeValue.find("(") == -1):
+                    tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in attributeValue.split('),(')]
+                    for i in range(len(tuplesvalue)):
+                        for j in range(len(tuplesvalue[i])):
+                            if  "datetime.datetime" in tuplesvalue[i][j]:
+                                tupvalue=tuplesvalue[i][j].replace('datetime.datetime','')
+                                date=dt.datetime.strptime(tupvalue, f)
+                                tuplesvalue[i]=list(tuplesvalue[i])
+                                tuplesvalue[i][j]=date
+                                tuplesvalue[i]=tuple(tuplesvalue[i])
+                    setattr(loadedDock, attribute, tuplesvalue)
+                elif not (attributeValue.find(",") == -1):
+                    listvalue = attributeValue.split(',')
+                    setattr(loadedDock, attribute, listvalue)
 
-            else:
-                if "datetime.datetime" in attributeValue:
-                    attributeValue=attributeValue.replace('datetime.datetime','')
-                    date = dt.datetime.strptime(attributeValue, f)
-                    setattr(loadedDock, attribute, date)
                 else:
-                    setattr(loadedDock, attribute, attributeValue)
+                    if "datetime.datetime" in attributeValue:
+                        attributeValue=attributeValue.replace('datetime.datetime','')
+                        date = dt.datetime.strptime(attributeValue, f)
+                        setattr(loadedDock, attribute, date)
+                    else:
+                        setattr(loadedDock, attribute, attributeValue)
+
+            if 'attribute' in vars(loadedDock):
+                del vars(loadedDock)[attribute]
+
 
         return loadedDock
 
     def export_to_database(self):
+        print(vars(self))
         line = str()
         for attribute, attributeValue in vars(self).items():
-            if attribute == "id" or attributeValue == None:
-                continue
-            if not (isinstance(attributeValue, bool)) and not (isinstance(attributeValue, dt.date)):
-                if len(attributeValue) == 0:
+            if not attribute == 'attribute':
+                if attribute == "id" or attributeValue == None:
                     continue
-            line += "<" + attribute + ">"
-            line += "\n" + "\t"
-            if type(attributeValue) is list:
-                for value in attributeValue:
-                    if type(value) is tuple:
-                        line += "("
+                if not (isinstance(attributeValue, bool)) and not (isinstance(attributeValue, dt.date)):
+                    if len(attributeValue) == 0:
+                        continue
+                line += "<" + attribute + ">"
+                line += "\n" + "\t"
+                if type(attributeValue) is list:
+                    for value in attributeValue:
+                        if type(value) is tuple:
+                            line += "("
 
-                        for x in value:
-                            attrstring = str(x)
-                            if isinstance(x, dt.datetime):
-                                attrstring = "datetime.datetime" + attrstring
-                            line += attrstring +","
+                            for x in value:
+                                attrstring = str(x)
+                                if isinstance(x, dt.datetime):
+                                    attrstring = "datetime.datetime" + attrstring
+                                line += attrstring +","
 
+                            line = line[:-1]  # to remove the last "," in the line
+                            line += "),"
+                        else:
+                            line += str(value) + ","
+                    if line[len(line) - 1] == ",":
                         line = line[:-1]  # to remove the last "," in the line
-                        line += "),"
-                    else:
-                        line += str(value) + ","
-                if line[len(line) - 1] == ",":
-                    line = line[:-1]  # to remove the last "," in the line
-            else:
-                attrstring=str(attributeValue)
-                if isinstance(attributeValue, dt.datetime):
-                    attrstring="datetime.datetime"+attrstring
-                line += attrstring
+                else:
+                    attrstring=str(attributeValue)
+                    if isinstance(attributeValue, dt.datetime):
+                        attrstring="datetime.datetime"+attrstring
+                    line += attrstring
 
-            line += "\n" + "</" + attribute + ">" + "\n"
+                line += "\n" + "</" + attribute + ">" + "\n"
         return line
 
     @staticmethod

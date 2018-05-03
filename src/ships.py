@@ -60,10 +60,10 @@ class Ship(amber.AmberObject):
         self.edit_history = []  # Tuples of four elements (text content, image content, video content, creation date)
 
     def add_reply(self, replyer_id, reply_type, reply_text, reply_image=None, reply_video=None):
-        Ship.RegisterShip(replyer_id, self.where_is_it_created_id, reply_type, reply_text,
+        reply_id = Ship.RegisterShip(replyer_id, self.where_is_it_created_id, reply_type, reply_text,
                           reply_image, reply_video, ShipPrivacy.Everyone, self.id)
         self.child_ships.append(str(AmberObject.current_available_id-1))
-        return True
+        return reply_id
 
     def change_reaction(self, reactioner_id, new_reaction):
         self.reactions[reactioner_id] = new_reaction
