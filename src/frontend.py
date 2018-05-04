@@ -1073,9 +1073,12 @@ class Page(BoxLayout):
                     except:
                         pass
 
-                delete = Button(text="Remove ship", size_hint=(1, 1),
-                                on_release=delete_ship)
-                Delete.add_widget(delete)
+                if user_id == amber.database[ship_id].creator_id:
+                    delete = Button(text="Remove ship", size_hint=(1, 1),
+                                    on_release=delete_ship)
+                    Delete.add_widget(delete)
+                else:
+                    Delete.add_widget(Label())
 
 
                 def like_clicked(like_btn, touch):
@@ -1479,7 +1482,6 @@ class Page(BoxLayout):
             return Page.ProfilePage.FollowersButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
         def Followees_button(self, **kwargs):
             return Page.ProfilePage.FolloweesButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
-
 
     class EditProfilePage(BoxLayout):
         class EditAboutButton(Button):
@@ -3597,26 +3599,6 @@ class Page(BoxLayout):
                                                        FolloweenameWidget=FolloweenameWidget,
                                                        FolloweeID=FolloweeID, **kwargs)
 
-    def __init__(self, users_manager, user_id, **kwargs):
-        super(Page, self).__init__(**kwargs)
-        self.orientation = 'vertical'
-        self.padding = 10
-        self.spacing = 5
-        self.top_bar = BoxLayout(size_hint_y=1, orientation='horizontal', padding=10, spacing=5)
-        self.content = Page.ContentManager(size_hint_y=9, user_id=user_id)
-        self.content.home_button().on_release()
-
-        self.top_bar.add_widget(self.content.back_button(text="Back"))
-        self.top_bar.add_widget(self.content.home_button(text="Home"))
-        self.top_bar.add_widget(
-            self.content.profile_button(destination_id=user_id, text=amber.database[user_id].name))
-        self.top_bar.add_widget(self.content.group_creation_button())
-        self.top_bar.add_widget(Page.ContentManager.BackButton(size_hint_x=0.3, screen_manager=users_manager,
-                                                               text='Logout',
-                                                               background_color=(1.0, 0.0, 0.0, 1.0)))
-        self.add_widget(self.top_bar)
-        self.add_widget(self.content)
-
     class SearchButton(Button):
 
         def __init__(self, search_tb, screen_manager, **kwargs):
@@ -3689,7 +3671,6 @@ class AmberOcean(App):
     return True
 
 if __name__ == "__main__":
-    amber.import_database()
     try:
         AmberOcean(user_id=user_id_for_login).run()
     except:

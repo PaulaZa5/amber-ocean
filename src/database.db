@@ -1,4 +1,4 @@
-5++|++0+|+<name>
+4++|++0+|+<name>
 	Boula
 </name>
 <gender>
@@ -8,153 +8,96 @@
 	datetime.datetime1996-09-28 00:00:00
 </birthday>
 <password>
-	54b0da58902e27a15003837773bbb3709448ba94db0de8d1d2d379fc
-</password>
-<master_email>
-	boulaza5@gmail.com
-</master_email>
-<emails>
-	boulaza5@gmail.com
-</emails>
-<master_phone_number>
-	98
-</master_phone_number>
-<phone_numbers>
-	98
-</phone_numbers>
-+|+<class 'personal_docks.PersonalDock'>++|++1+|+<name>
-	Mina
-</name>
-<gender>
-	Male
-</gender>
-<birthday>
-	datetime.datetime1996-06-21 00:00:00
-</birthday>
-<password>
 	78d8045d684abd2eece923758f3cd781489df3a48e1278982466017f
 </password>
 <master_email>
-	minamourice2@gmail.com
+	boulaza5@yahoo.com
 </master_email>
 <emails>
-	minamourice2@gmail.com
+	boulaza5@yahoo.com
 </emails>
 <master_phone_number>
-	12321
+	98
 </master_phone_number>
 <phone_numbers>
-	12321
-</phone_numbers>
-+|+<class 'personal_docks.PersonalDock'>++|++2+|+<name>
-	Menna
-</name>
-<gender>
-	Female
-</gender>
-<birthday>
-	datetime.datetime1995-05-07 00:00:00
-</birthday>
-<password>
-	7fc2ed4284075f3c821d6087995584fcb6f75a20ddcc421558c50b10
-</password>
-<master_email>
-	menna.eid.95@gmail.com
-</master_email>
-<emails>
-	menna.eid.95@gmail.com
-</emails>
-<master_phone_number>
-	12345
-</master_phone_number>
-<phone_numbers>
-	12345
-</phone_numbers>
-+|+<class 'personal_docks.PersonalDock'>++|++3+|+<name>
-	Peter
-</name>
-<gender>
-	Male
-</gender>
-<birthday>
-	datetime.datetime1996-10-24 00:00:00
-</birthday>
-<password>
-	e7bedacebad77e3bc61d1e27db602019c6e0fc954d6c856bd2719968
-</password>
-<master_email>
-	peter.rateb@gmail.com
-</master_email>
-<emails>
-	peter.rateb@gmail.com
-</emails>
-<master_phone_number>
-	78
-</master_phone_number>
-<phone_numbers>
-	78
-</phone_numbers>
-+|+<class 'personal_docks.PersonalDock'>++|++4+|+<name>
-	Beshoy
-</name>
-<gender>
-	Male
-</gender>
-<birthday>
-	datetime.datetime1996-06-25 00:00:00
-</birthday>
-<password>
-	16383865bbad3918ad08ba3b847944cbb15aa90c6a9b76e9074f9209
-</password>
-<master_email>
-	beshoy@gmail.com
-</master_email>
-<emails>
-	beshoy@gmail.com
-</emails>
-<master_phone_number>
-	93
-</master_phone_number>
-<phone_numbers>
-	93
-</phone_numbers>
-+|+<class 'personal_docks.PersonalDock'>++|++elationship_status>
-	single
-</relationship_status>
-<join_date>
-	datetime.datetime2018-05-03 19:02:43
-</join_date>
-+|+<class 'personal_docks.PersonalDock'>++|++4+|+<name>
-	Beshoy
-</name>
-<gender>
-	Male
-</gender>
-<birthday>
-	datetime.datetime1996-06-25 00:00:00
-</birthday>
-<password>
-	16383865bbad3918ad08ba3b847944cbb15aa90c6a9b76e9074f9209
-</password>
-<master_email>
-	beshoy@gmail.com
-</master_email>
-<emails>
-	beshoy@gmail.com
-</emails>
-<master_phone_number>
-	93
-</master_phone_number>
-<phone_numbers>
-	93
+	98
 </phone_numbers>
 <active>
 	True
 </active>
+<seas>
+	1
+</seas>
 <relationship_status>
 	single
 </relationship_status>
+<sailed_ships>
+	(3,datetime.datetime2018-05-04 20:37:20)
+</sailed_ships>
 <join_date>
-	datetime.datetime2018-05-03 19:02:43
+	datetime.datetime2018-05-04 20:35:20
 </join_date>
-+|+<class 'personal_docks.PersonalDock'>++|++
++|+<class 'personal_docks.PersonalDock'>++|++1+|+<creator>
+	0
+</creator>
+<name>
+	Plasma Lovers
+</name>
+<visibility_privacy>
+	everyone
+</visibility_privacy>
+<sailing_privacy>
+	everyone
+</sailing_privacy>
+<active>
+	True
+</active>
+<administrators>
+	0
+</administrators>
+<members>
+	0
+</members>
+<sailed_ships>
+	(2,datetime.datetime2018-05-04 20:35:53)
+</sailed_ships>
+<creation_date>
+	datetime.datetime2018-05-04 20:35:36
+</creation_date>
++|+<class 'seas.Sea'>++|++2+|+<creator_id>
+	0
+</creator_id>
+<where_is_it_created_id>
+	1
+</where_is_it_created_id>
+<content_type>
+	text
+</content_type>
+<txt_content>
+	Welcome everybody, hope you like it!
+</txt_content>
+<privacy>
+	everyone
+</privacy>
+<creation_date>
+	datetime.datetime2018-05-04 20:35:53
+</creation_date>
++|+<class 'ships.Ship'>++|++3+|+<creator_id>
+	0
+</creator_id>
+<where_is_it_created_id>
+	0
+</where_is_it_created_id>
+<content_type>
+	text
+</content_type>
+<txt_content>
+	Dada!!
+</txt_content>
+<privacy>
+	everyone
+</privacy>
+<creation_date>
+	datetime.datetime2018-05-04 20:37:20
+</creation_date>
++|+<class 'ships.Ship'>++|++
