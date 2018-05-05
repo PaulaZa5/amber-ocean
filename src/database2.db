@@ -1,0 +1,295 @@
+11++|++0+|+<name>
+	"Boula"
+</name>
+<gender>
+	"Male"
+</gender>
+<birthday>
+	datetime.datetime1996-09-28 00:00:00
+</birthday>
+<password>
+	"78d8045d684abd2eece923758f3cd781489df3a48e1278982466017f"
+</password>
+<master_email>
+	"boulaza5@yahoo.com"
+</master_email>
+<emails>
+	"boulaza5@yahoo.com"
+</emails>
+<master_phone_number>
+	"98"
+</master_phone_number>
+<phone_numbers>
+	"98"
+</phone_numbers>
++|+<class 'personal_docks.PersonalDock'>++|++1+|+<creator>
+	"0"
+</creator>
+<name>
+	"Plasma Lovers"
+</name>
+<visibility_privacy>
+	"everyone"
+</visibility_privacy>
+<sailing_privacy>
+	"everyone"
+</sailing_privacy>
+<active>
+	True
+</active>
+<administrators>
+	"0"
+</administrators>
+<members>
+	"0"
+</members>
+<sailed_ships>
+	(2,datetime.datetime2018-05-04 20:35:53,),,),,),,),,),
+</sailed_ships>
+<creation_date>
+	datetime.datetime2018-05-04 20:35:36
+</creation_date>
+<attribute>
+	True
+</attribute>
++|+<class 'seas.Sea'>++|++2+|+<creator_id>
+	"0"
+</creator_id>
+<where_is_it_created_id>
+	"1"
+</where_is_it_created_id>
+<content_type>
+	"text"
+</content_type>
+<txt_content>
+	Welcome everybody, hope you like it!,
+</txt_content>
+<privacy>
+	"everyone"
+</privacy>
+<creation_date>
+	datetime.datetime2018-05-04 20:35:53
+</creation_date>
++|+<class 'ships.Ship'>++|++3+|+<creator_id>
+	"0"
+</creator_id>
+<where_is_it_created_id>
+	"0"
+</where_is_it_created_id>
+<content_type>
+	"text"
+</content_type>
+<txt_content>
+	"Dada!!"
+</txt_content>
+<privacy>
+	"everyone"
+</privacy>
+<creation_date>
+	datetime.datetime2018-05-04 20:37:20
+</creation_date>
++|+<class 'ships.Ship'>++|++4+|+<name>
+	"Menna"
+</name>
+<gender>
+	"Female"
+</gender>
+<birthday>
+	datetime.datetime1995-05-07 00:00:00
+</birthday>
+<password>
+	"7fc2ed4284075f3c821d6087995584fcb6f75a20ddcc421558c50b10"
+</password>
+<master_email>
+	"menna.eid.95@gmail.com"
+</master_email>
+<emails>
+	menna.eid.95@gmail.com,
+</emails>
+<master_phone_number>
+	"12345"
+</master_phone_number>
+<phone_numbers>
+	12345,
+</phone_numbers>
+<active>
+	True
+</active>
+<relationship_status>
+	"single"
+</relationship_status>
+<join_date>
+	datetime.datetime2018-05-05 09:40:46
+</join_date>
++|+<class 'personal_docks.PersonalDock'>++|++5+|+<name>
+	"Boula"
+</name>
+<gender>
+	"Male"
+</gender>
+<birthday>
+	datetime.datetime1996-09-28 00:00:00
+</birthday>
+<password>
+	"54b0da58902e27a15003837773bbb3709448ba94db0de8d1d2d379fc"
+</password>
+<master_email>
+	"boulaZa5@gmail.com"
+</master_email>
+<emails>
+	boulaZa5@gmail.com,
+</emails>
+<master_phone_number>
+	"98"
+</master_phone_number>
+<phone_numbers>
+	98,
+</phone_numbers>
+<active>
+	True
+</active>
+<relationship_status>
+	"single"
+</relationship_status>
+<join_date>
+	datetime.datetime2018-05-05 09:40:46
+</join_date>
++|+<class 'personal_docks.PersonalDock'>++|++6+|+<name>
+	"Peter"
+</name>
+<gender>
+	"Male"
+</gender>
+<birthday>
+	datetime.datetime1996-10-24 00:00:00
+</birthday>
+<password>
+	"e7bedacebad77e3bc61d1e27db602019c6e0fc954d6c856bd2719968"
+</password>
+<master_email>
+	"peter.rateb@gmail.com"
+</master_email>
+<emails>
+	peter.rateb@gmail.com,
+</emails>
+<master_phone_number>
+	"78"
+</master_phone_number>
+<phone_numbers>
+	78,
+</phone_numbers>
+<active>
+	True
+</active>
+<relationship_status>
+	"single"
+</relationship_status>
+<join_date>
+	datetime.datetime2018-05-05 09:40:46
+</join_date>
++|+<class 'personal_docks.PersonalDock'>++|++7+|+<name>
+	"Beshoy"
+</name>
+<gender>
+	"Male"
+</gender>
+<birthday>
+	datetime.datetime1996-06-25 00:00:00
+</birthday>
+<password>
+	"16383865bbad3918ad08ba3b847944cbb15aa90c6a9b76e9074f9209"
+</password>
+<master_email>
+	"beshoy@gmail.com"
+</master_email>
+<emails>
+	beshoy@gmail.com,
+</emails>
+<master_phone_number>
+	"43"
+</master_phone_number>
+<phone_numbers>
+	43,
+</phone_numbers>
+<active>
+	True
+</active>
+<relationship_status>
+	"single"
+</relationship_status>
+<sailed_ships>
+	(10,datetime.datetime2018-05-05 09:41:57,),
+</sailed_ships>
+<join_date>
+	datetime.datetime2018-05-05 09:40:46
+</join_date>
++|+<class 'personal_docks.PersonalDock'>++|++8+|+<creator_id>
+	"7"
+</creator_id>
+<where_is_it_created_id>
+	"7"
+</where_is_it_created_id>
+<content_type>
+	"text"
+</content_type>
+<txt_content>
+	"Hi,Welcome"
+</txt_content>
+<privacy>
+	"everyone"
+</privacy>
+<reactions>
+	7:like
+</reactions>
+<creation_date>
+	datetime.datetime2018-05-05 09:33:39
+</creation_date>
++|+<class 'ships.Ship'>++|++9+|+<creator>
+	"7"
+</creator>
+<name>
+	"Sea,name"
+</name>
+<description>
+	"welcome,sea"
+</description>
+<visibility_privacy>
+	"everyone"
+</visibility_privacy>
+<sailing_privacy>
+	"everyone"
+</sailing_privacy>
+<active>
+	True
+</active>
+<administrators>
+	7,
+</administrators>
+<members>
+	7,
+</members>
+<creation_date>
+	datetime.datetime2018-05-05 09:34:03
+</creation_date>
+<attribute>
+	True
+</attribute>
++|+<class 'seas.Sea'>++|++10+|+<creator_id>
+	"7"
+</creator_id>
+<where_is_it_created_id>
+	"7"
+</where_is_it_created_id>
+<content_type>
+	"text"
+</content_type>
+<txt_content>
+	"gfhfhgf"
+</txt_content>
+<privacy>
+	"everyone"
+</privacy>
+<creation_date>
+	datetime.datetime2018-05-05 09:41:57
+</creation_date>
++|+<class 'ships.Ship'>++|++
