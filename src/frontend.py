@@ -647,6 +647,7 @@ class Page(BoxLayout):
                 super(Page.HomePage.Groups, self).__init__(**kwargs)
                 self.do_scroll_x = False
                 self.size_hint_x = 0
+                self.width = 0
                 self.groups = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
                 self.groups.bind(minimum_height=self.groups.setter('height'))
                 for num, group in enumerate(user.seas):
@@ -661,6 +662,7 @@ class Page(BoxLayout):
                 super(Page.HomePage.Friends, self).__init__(**kwargs)
                 self.do_scroll_x = False
                 self.size_hint_x = 0
+                self.width = 0
                 self.friends = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
                 self.friends.bind(minimum_height=self.friends.setter('height'))
                 for num, frnd in enumerate(user.friends):
@@ -675,6 +677,7 @@ class Page(BoxLayout):
                 super(Page.HomePage.Followees, self).__init__(**kwargs)
                 self.do_scroll_x = False
                 self.size_hint_x = 0
+                self.width = 0
                 self.followees = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
                 self.followees.bind(minimum_height=self.followees.setter('height'))
                 for num, follow in enumerate(user.followees):
@@ -702,6 +705,7 @@ class Page(BoxLayout):
                 super(Page.HomePage.Suggested_Friends, self).__init__(**kwargs)
                 self.do_scroll_x = False
                 self.size_hint_x = 0
+                self.width = 0
                 self.suggested_friends = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
                 self.suggested_friends.bind(minimum_height=self.suggested_friends.setter('height'))
                 new = user.docks_you_may_know()
@@ -718,6 +722,7 @@ class Page(BoxLayout):
                 super(Page.HomePage.Suggested_Groups, self).__init__(**kwargs)
                 self.do_scroll_x = False
                 self.size_hint_x = 0
+                self.width = 0
                 self.suggested_groups = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
                 self.suggested_groups.bind(minimum_height=self.suggested_groups.setter('height'))
                 new = user.seas_you_might_join()
@@ -1036,7 +1041,7 @@ class Page(BoxLayout):
                 Delete = BoxLayout(orientation='horizontal', size_hint=(1, 1), spacing=0, padding=20)
                 Center = BoxLayout(orientation='vertical', spacing=10, padding=20, size_hint=(1, 2))
                 Footer = BoxLayout(orientation='horizontal', spacing=10, padding=20, size_hint=(1, 1))
-                Likes = BoxLayout(orientation='horizontal', spacing=60, padding=0, size_hint=(1, 1))
+                Likes = BoxLayout(orientation='horizontal', spacing=55, padding=0, size_hint=(1, 1))
                 Comments = BoxLayout(orientation='vertical', spacing=10, padding=10, size_hint=(1, 2))
 
                 comments_box = BoxLayout(orientation='vertical', size_hint_y=None)
@@ -1278,55 +1283,67 @@ class Page(BoxLayout):
 
         '''
 
+        class AboutPageButton(Button):
+            def __init__(self, user_id, destination_id, screen_manager, **kwargs):
+                super(Page.ProfilePage.AboutPageButton, self).__init__(**kwargs)
+                self.user_id = user_id
+                self.destination_id = destination_id
+                self.screen_manager = screen_manager
+                self.text = 'About'
+
+            def on_release(self):
+                Edit_profile_screen = Screen(name='AboutPage')
+                Edit_profile_screen.add_widget(Page.AboutPage(user_id=self.user_id, destination_id=self.destination_id,
+                                                              screen_manager=self.screen_manager))
+                self.screen_manager.add_widget(Edit_profile_screen)
+                self.screen_manager.current = Edit_profile_screen.name
+
+
+
         class EditprofileButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, **kwargs):
                 super(Page.ProfilePage.EditprofileButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.text = 'Edit Profile'
-
+                self.text='Edit Profile'
             def on_release(self):
                 Edit_profile_screen = Screen(name='edit')
-                Edit_profile_screen.add_widget(
-                    Page.EditProfilePage(user_id=self.user_id, destination_id=self.destination_id,
-                                         screen_manager=self.screen_manager))
+                Edit_profile_screen.add_widget(Page.EditProfilePage( user_id=self.user_id, destination_id=self.destination_id, screen_manager=self.screen_manager))
                 self.screen_manager.add_widget(Edit_profile_screen)
                 self.screen_manager.current = Edit_profile_screen.name
 
         class AddFriendButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, FriendAndFollowBox, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,FriendAndFollowBox, **kwargs):
                 super(Page.ProfilePage.AddFriendButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.FriendAndFollowBox = FriendAndFollowBox
-                self.text = 'Add friend'
+                self.FriendAndFollowBox=FriendAndFollowBox
+                self.text='Add friend'
 
             def on_release(self):
-                personal_docks.PersonalDock.add_friend(amber.database[self.user_id], self.destination_id)
-                personal_docks.PersonalDock.add_friend(amber.database[self.destination_id], self.user_id)
+                personal_docks.PersonalDock.add_friend(amber.database[self.user_id],self.destination_id)
+                personal_docks.PersonalDock.add_friend(amber.database[ self.destination_id],self.user_id)
                 self.FriendAndFollowBox.clear_widgets()
-                self.FriendAndFollowBox.add_widget(Page.ProfilePage.RemoveFriend_button(self, self.FriendAndFollowBox))
+                self.FriendAndFollowBox.add_widget(Page.ProfilePage.RemoveFriend_button(self,self.FriendAndFollowBox))
                 if self.destination_id in amber.database[self.user_id].followees:
-                    self.FriendAndFollowBox.add_widget(
-                        Page.ProfilePage.UnFollowFriend_button(self, self.FriendAndFollowBox))
+                    self.FriendAndFollowBox.add_widget(Page.ProfilePage.UnFollowFriend_button(self,self.FriendAndFollowBox))
                 else:
-                    self.FriendAndFollowBox.add_widget(
-                        Page.ProfilePage.FollowFriend_button(self, self.FriendAndFollowBox))
+                    self.FriendAndFollowBox.add_widget(Page.ProfilePage.FollowFriend_button(self,self.FriendAndFollowBox))
                 # .add_widget(self.FriendAndFollowBox)
 
+
         class RemoveFriendButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, FriendAndFollowBox, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,FriendAndFollowBox, **kwargs):
                 super(Page.ProfilePage.RemoveFriendButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
                 self.FriendAndFollowBox = FriendAndFollowBox
-                self.text = 'Unfriend'
-
+                self.text='Unfriend'
             def on_release(self):
-                personal_docks.PersonalDock.remove_friend(amber.database[self.user_id], self.destination_id)
+                personal_docks.PersonalDock.remove_friend(amber.database[self.user_id],self.destination_id)
                 personal_docks.PersonalDock.remove_friend(amber.database[self.destination_id], self.user_id)
                 self.FriendAndFollowBox.clear_widgets()
                 self.FriendAndFollowBox.add_widget(Page.ProfilePage.AddFriend_button(self, self.FriendAndFollowBox))
@@ -1338,90 +1355,78 @@ class Page(BoxLayout):
                         Page.ProfilePage.FollowFriend_button(self, self.FriendAndFollowBox))
 
         class FollowFriendButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, FriendAndFollowBox, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,FriendAndFollowBox, **kwargs):
                 super(Page.ProfilePage.FollowFriendButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
                 self.FriendAndFollowBox = FriendAndFollowBox
-                self.text = 'Follow'
-
+                self.text='Follow'
             def on_release(self):
-                personal_docks.PersonalDock.add_followee(amber.database[self.user_id], self.destination_id)
-                personal_docks.PersonalDock.add_follower(amber.database[self.destination_id], self.user_id)
+                personal_docks.PersonalDock.add_followee(amber.database[self.user_id],self.destination_id)
+                personal_docks.PersonalDock.add_follower(amber.database[self.destination_id],self.user_id)
                 self.FriendAndFollowBox.clear_widgets()
                 if self.destination_id in amber.database[self.user_id].friends:
-                    self.FriendAndFollowBox.add_widget(
-                        Page.ProfilePage.RemoveFriend_button(self, self.FriendAndFollowBox))
+                    self.FriendAndFollowBox.add_widget(Page.ProfilePage.RemoveFriend_button(self,self.FriendAndFollowBox))
                 else:
-                    self.FriendAndFollowBox.add_widget(Page.ProfilePage.AddFriend_button(self, self.FriendAndFollowBox))
-                self.FriendAndFollowBox.add_widget(
-                    Page.ProfilePage.UnFollowFriend_button(self, self.FriendAndFollowBox))
-
+                    self.FriendAndFollowBox.add_widget(Page.ProfilePage.AddFriend_button(self,self.FriendAndFollowBox))
+                self.FriendAndFollowBox.add_widget(Page.ProfilePage.UnFollowFriend_button(self,self.FriendAndFollowBox))
         class UnFollowFriendButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, FriendAndFollowBox, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,FriendAndFollowBox, **kwargs):
                 super(Page.ProfilePage.UnFollowFriendButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
                 self.FriendAndFollowBox = FriendAndFollowBox
-                self.text = 'UnFollow'
-
+                self.text='UnFollow'
             def on_release(self):
-                personal_docks.PersonalDock.remove_followee(amber.database[self.user_id], self.destination_id)
-                personal_docks.PersonalDock.remove_follower(amber.database[self.destination_id], self.user_id)
+                personal_docks.PersonalDock.remove_followee(amber.database[self.user_id],self.destination_id)
+                personal_docks.PersonalDock.remove_follower(amber.database[self.destination_id],self.user_id)
                 self.FriendAndFollowBox.clear_widgets()
                 if self.destination_id in amber.database[self.user_id].friends:
-                    self.FriendAndFollowBox.add_widget(
-                        Page.ProfilePage.RemoveFriend_button(self, self.FriendAndFollowBox))
+                    self.FriendAndFollowBox.add_widget(Page.ProfilePage.RemoveFriend_button(self,self.FriendAndFollowBox))
                 else:
-                    self.FriendAndFollowBox.add_widget(Page.ProfilePage.AddFriend_button(self, self.FriendAndFollowBox))
-                self.FriendAndFollowBox.add_widget(Page.ProfilePage.FollowFriend_button(self, self.FriendAndFollowBox))
-
+                    self.FriendAndFollowBox.add_widget(Page.ProfilePage.AddFriend_button(self,self.FriendAndFollowBox))
+                self.FriendAndFollowBox.add_widget(Page.ProfilePage.FollowFriend_button(self,self.FriendAndFollowBox))
         class FriendsButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, **kwargs):
                 super(Page.ProfilePage.FriendsButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.text = 'Friends'
-
+                self.text='Friends'
             def on_release(self):
                 Friends_screen = Screen(name='Friends')
-                Friends_screen.add_widget(Page.FriendsPage(user_id=self.user_id, destination_id=self.destination_id,
-                                                           screen_manager=self.screen_manager))
+                Friends_screen.add_widget(Page.FriendsPage( user_id=self.user_id, destination_id=self.destination_id, screen_manager=self.screen_manager))
                 self.screen_manager.add_widget(Friends_screen)
                 self.screen_manager.current = Friends_screen.name
-
         class FollowersButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, **kwargs):
                 super(Page.ProfilePage.FollowersButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.text = 'Followers'
+                self.text='Followers'
 
             def on_release(self):
                 Followers_screen = Screen(name='Followers')
                 Followers_screen.add_widget(
                     Page.FollowersPage(user_id=self.user_id, destination_id=self.destination_id,
-                                       screen_manager=self.screen_manager))
+                                         screen_manager=self.screen_manager))
                 self.screen_manager.add_widget(Followers_screen)
                 self.screen_manager.current = Followers_screen.name
-
         class FolloweesButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, **kwargs):
                 super(Page.ProfilePage.FolloweesButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.text = 'Followees'
-
+                self.text='Followees'
             def on_release(self):
                 Followees_screen = Screen(name='Followees')
                 Followees_screen.add_widget(
                     Page.FolloweesPage(user_id=self.user_id, destination_id=self.destination_id,
-                                       screen_manager=self.screen_manager))
+                                         screen_manager=self.screen_manager))
                 self.screen_manager.add_widget(Followees_screen)
                 self.screen_manager.current = Followees_screen.name
 
@@ -1430,27 +1435,21 @@ class Page(BoxLayout):
             self.user_id = user_id
             self.destination_id = destination_id
             self.screen_manager = screen_manager
-            self.orientation = 'vertical'
-            self.add_widget(Label(text='Profile', size_hint_y=.05))
-            # EditButton = Button(text='Edit Profile',on_release=self.editProfilePopup().open)
+            self.orientation='vertical'
+            self.add_widget(Label(text='Profile',size_hint_y =.05))
+            #EditButton = Button(text='Edit Profile',on_release=self.editProfilePopup().open)
 
-            headerData = BoxLayout(orientation='vertical', padding=5, spacing=5)
-            headerData.add_widget(Button(text='Gender : ' + amber.database[self.destination_id].gender, font_size=14,
-                                         background_color=(0, 0, 0, 1)))
-            headerData.add_widget(
-                Button(text='E-mail : ' + str(amber.database[self.destination_id].master_email), font_size=14,
-                       background_color=(0, 0, 0, 1)))
-            headerData.add_widget(
-                Button(text='Phone Number : ' + str(amber.database[self.destination_id].master_phone_number),
-                       font_size=14, background_color=(0, 0, 0, 1)))
-            Profileheader = BoxLayout(orientation='horizontal', size_hint_y=0.2, padding=10, spacing=5)
-            Profileheader.add_widget(
-                Button(text=amber.database[self.destination_id].name, font_size=24, background_color=(0.7, 0.7, 1, 1)))
+            headerData = BoxLayout( orientation='vertical', padding=5, spacing=5)
+            headerData.add_widget(Button(text='Gender : '+amber.database[self.destination_id].gender, font_size=14,background_color=(0,0,0,1)))
+            headerData.add_widget(Button(text='E-mail : '+str(amber.database[self.destination_id].master_email), font_size=14,background_color=(0,0,0,1)))
+            headerData.add_widget(Button(text='Phone Number : '+str(amber.database[self.destination_id].master_phone_number), font_size=14,background_color=(0,0,0,1)))
+            Profileheader = BoxLayout(orientation='horizontal',size_hint_y=0.2, padding=10, spacing=5)
+            Profileheader.add_widget(Button(text=amber.database[self.destination_id].name,font_size=24,background_color=(0.7,0.7,1,1)))
             Profileheader.add_widget(headerData)
             self.FriendAndFollowBox = BoxLayout(orientation='horizontal', padding=5, spacing=5)
-            if self.user_id == self.destination_id:
+            if self.user_id==self.destination_id:
                 Profileheader.add_widget(self.editprofile_button())
-            else:
+            else :
                 if self.destination_id in amber.database[self.user_id].friends:
                     self.FriendAndFollowBox.add_widget(self.RemoveFriend_button(self.FriendAndFollowBox))
                 else:
@@ -1459,6 +1458,7 @@ class Page(BoxLayout):
                     self.FriendAndFollowBox.add_widget(self.UnFollowFriend_button(self.FriendAndFollowBox))
                 else:
                     self.FriendAndFollowBox.add_widget(self.FollowFriend_button(self.FriendAndFollowBox))
+                self.FriendAndFollowBox.add_widget(self.AboutPage_button())
                 Profileheader.add_widget(self.FriendAndFollowBox)
 
             self.add_widget(Profileheader)
@@ -1470,63 +1470,47 @@ class Page(BoxLayout):
                 self.Profileships.add_widget(self.screen_manager.post(post_id=post, destination_id=self.destination_id))
 
             Profileshipsview.add_widget(self.Profileships)
-            PersonalDatacol = BoxLayout(orientation='vertical', size_hint_x=.3, padding=10, spacing=5)
-            PersonalDatacol.add_widget(
-                Label(text='Gender: ' + amber.database[self.destination_id].gender, size_hint_y=0.2, font_size=14))
-            PersonalDatacol.add_widget(
-                Label(text='E-mail: ' + str(amber.database[self.destination_id].master_email), size_hint_y=0.2,
-                      font_size=14))
-            PersonalDatacol.add_widget(
-                Label(text='Phone Number: ' + str(amber.database[self.destination_id].master_phone_number),
-                      size_hint_y=0.2, font_size=14))
+            PersonalDatacol = BoxLayout( orientation='vertical',size_hint_x=.3 ,padding=10, spacing=5)
+            PersonalDatacol.add_widget(Label(text='Gender: ' + amber.database[self.destination_id].gender, size_hint_y=0.2,font_size=14))
+            PersonalDatacol.add_widget(Label(text='E-mail: ' + str(amber.database[self.destination_id].master_email),size_hint_y=0.2, font_size=14))
+            PersonalDatacol.add_widget(Label(text='Phone Number: ' + str(amber.database[self.destination_id].master_phone_number),size_hint_y=0.2, font_size=14))
             birthday = str(amber.database[self.destination_id].birthday).split(' ')
-            PersonalDatacol.add_widget(Label(text='birthday: ' + str(birthday[0]), size_hint_y=0.1, font_size=14))
+            PersonalDatacol.add_widget(Label(text='birthday: ' + str(birthday[0]),size_hint_y=0.1, font_size=14))
             PersonalDatacol.add_widget(Label(text='', font_size=14))
+
+
 
             PersonalDatacol.add_widget(self.Friends_button())
             PersonalDatacol.add_widget(self.Followers_button())
             PersonalDatacol.add_widget(self.Followees_button())
 
-            Profilecontents = BoxLayout(orientation='horizontal', padding=10, spacing=5)
+            Profilecontents = BoxLayout( orientation='horizontal', padding=10, spacing=5)
             Profilecontents.add_widget(PersonalDatacol)
             Profilecontents.add_widget(Profileshipsview)
             self.add_widget(Profilecontents)
 
+        def AboutPage_button(self, **kwargs):
+            return Page.ProfilePage.AboutPageButton(user_id=self.user_id, destination_id=self.destination_id,
+                                                    screen_manager=self.screen_manager, **kwargs)
+
         def editprofile_button(self, **kwargs):
-            return Page.ProfilePage.EditprofileButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                      screen_manager=self.screen_manager, **kwargs)
-
-        def AddFriend_button(self, FriendAndFollowBox, **kwargs):
-            return Page.ProfilePage.AddFriendButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                    screen_manager=self.screen_manager,
-                                                    FriendAndFollowBox=FriendAndFollowBox, **kwargs)
-
-        def RemoveFriend_button(self, FriendAndFollowBox, **kwargs):
-            return Page.ProfilePage.RemoveFriendButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                       screen_manager=self.screen_manager,
-                                                       FriendAndFollowBox=FriendAndFollowBox, **kwargs)
-
-        def FollowFriend_button(self, FriendAndFollowBox, **kwargs):
-            return Page.ProfilePage.FollowFriendButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                       screen_manager=self.screen_manager,
-                                                       FriendAndFollowBox=FriendAndFollowBox, **kwargs)
-
-        def UnFollowFriend_button(self, FriendAndFollowBox, **kwargs):
-            return Page.ProfilePage.UnFollowFriendButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                         screen_manager=self.screen_manager,
-                                                         FriendAndFollowBox=FriendAndFollowBox, **kwargs)
+            return Page.ProfilePage.EditprofileButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
+        def AddFriend_button(self,FriendAndFollowBox, **kwargs):
+            return Page.ProfilePage.AddFriendButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager,FriendAndFollowBox=FriendAndFollowBox, **kwargs)
+        def RemoveFriend_button(self,FriendAndFollowBox, **kwargs):
+            return Page.ProfilePage.RemoveFriendButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager,FriendAndFollowBox=FriendAndFollowBox, **kwargs)
+        def FollowFriend_button(self,FriendAndFollowBox, **kwargs):
+            return Page.ProfilePage.FollowFriendButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager,FriendAndFollowBox=FriendAndFollowBox, **kwargs)
+        def UnFollowFriend_button(self,FriendAndFollowBox, **kwargs):
+            return Page.ProfilePage.UnFollowFriendButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager,FriendAndFollowBox=FriendAndFollowBox, **kwargs)
 
         def Friends_button(self, **kwargs):
-            return Page.ProfilePage.FriendsButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                  screen_manager=self.screen_manager, **kwargs)
-
+            return Page.ProfilePage.FriendsButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
         def Followers_button(self, **kwargs):
-            return Page.ProfilePage.FollowersButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                    screen_manager=self.screen_manager, **kwargs)
-
+            return Page.ProfilePage.FollowersButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
         def Followees_button(self, **kwargs):
-            return Page.ProfilePage.FolloweesButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                    screen_manager=self.screen_manager, **kwargs)
+            return Page.ProfilePage.FolloweesButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
+
 
     class EditProfilePage(BoxLayout):
         class EditAboutButton(Button):
@@ -1535,48 +1519,38 @@ class Page(BoxLayout):
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.text = 'Edit About and BasicInfo'
-
+                self.text='Edit About and BasicInfo'
             def on_release(self):
                 Edit_About_screen = Screen(name='About')
-                Edit_About_screen.add_widget(
-                    Page.EditAboutPage(user_id=self.user_id, destination_id=self.destination_id,
-                                       screen_manager=self.screen_manager))
+                Edit_About_screen.add_widget(Page.EditAboutPage( user_id=self.user_id, destination_id=self.destination_id, screen_manager=self.screen_manager))
                 self.screen_manager.add_widget(Edit_About_screen)
                 self.screen_manager.current = Edit_About_screen.name
-
         class EditEducationAndPlacesButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, **kwargs):
                 super(Page.EditProfilePage.EditEducationAndPlacesButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.text = 'Edit Education & Living Places'
+                self.text='Edit Education & Living Places'
 
             def on_release(self):
                 Edit_Education_Places_screen = Screen(name='EduAndPlaces')
-                Edit_Education_Places_screen.add_widget(
-                    Page.EditEduPage(user_id=self.user_id, destination_id=self.destination_id,
-                                     screen_manager=self.screen_manager))
+                Edit_Education_Places_screen.add_widget(Page.EditEduPage( user_id=self.user_id, destination_id=self.destination_id, screen_manager=self.screen_manager))
                 self.screen_manager.add_widget(Edit_Education_Places_screen)
                 self.screen_manager.current = Edit_Education_Places_screen.name
-
         class EditContactButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, **kwargs):
                 super(Page.EditProfilePage.EditContactButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.text = 'Edit Contact Information'
+                self.text='Edit Contact Information'
 
             def on_release(self):
                 Edit_Contact_screen = Screen(name='contactinfo')
-                Edit_Contact_screen.add_widget(
-                    Page.EditContactPage(user_id=self.user_id, destination_id=self.destination_id,
-                                         screen_manager=self.screen_manager))
+                Edit_Contact_screen.add_widget(Page.EditContactPage( user_id=self.user_id, destination_id=self.destination_id, screen_manager=self.screen_manager))
                 self.screen_manager.add_widget(Edit_Contact_screen)
                 self.screen_manager.current = Edit_Contact_screen.name
-
         class EditRelationshipsButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, **kwargs):
                 super(Page.EditProfilePage.EditRelationshipsButton, self).__init__(**kwargs)
@@ -1589,9 +1563,10 @@ class Page(BoxLayout):
                 Edit_Relashionships_screen = Screen(name='Relashionships')
                 Edit_Relashionships_screen.add_widget(
                     Page.EditRelationsPage(user_id=self.user_id, destination_id=self.destination_id,
-                                           screen_manager=self.screen_manager))
+                                       screen_manager=self.screen_manager))
                 self.screen_manager.add_widget(Edit_Relashionships_screen)
                 self.screen_manager.current = Edit_Relashionships_screen.name
+
 
         def __init__(self, user_id, destination_id, screen_manager, **kwargs):
             super(Page.EditProfilePage, self).__init__(**kwargs)
@@ -1599,8 +1574,8 @@ class Page(BoxLayout):
             self.destination_id = destination_id
             self.screen_manager = screen_manager
             self.orientation = 'vertical'
-            self.add_widget(Label(text='Edit Profile', size_hint_y=.05))
-            self.edit_buttons = GridLayout(cols=2, padding=30, spacing=10)
+            self.add_widget(Label(text='Edit Profile',size_hint_y =.05))
+            self.edit_buttons = GridLayout(cols=2,padding=30,spacing=10)
             self.edit_buttons.add_widget(self.EditAbout_button())
             self.edit_buttons.add_widget(self.EditEducationAndPlaces_button())
             self.edit_buttons.add_widget(self.EditContact_button())
@@ -1630,24 +1605,14 @@ class Page(BoxLayout):
             self.add_widget(self.Save_button())
             #self.add_widget(self.Save_button())
             '''
-
         def EditAbout_button(self, **kwargs):
-            return Page.EditProfilePage.EditAboutButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                        screen_manager=self.screen_manager, **kwargs)
-
+            return Page.EditProfilePage.EditAboutButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
         def EditEducationAndPlaces_button(self, **kwargs):
-            return Page.EditProfilePage.EditEducationAndPlacesButton(user_id=self.user_id,
-                                                                     destination_id=self.destination_id,
-                                                                     screen_manager=self.screen_manager, **kwargs)
-
+            return Page.EditProfilePage.EditEducationAndPlacesButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
         def EditContact_button(self, **kwargs):
-            return Page.EditProfilePage.EditContactButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                          screen_manager=self.screen_manager, **kwargs)
-
+            return Page.EditProfilePage.EditContactButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
         def EditRelationships_button(self, **kwargs):
-            return Page.EditProfilePage.EditRelationshipsButton(user_id=self.user_id,
-                                                                destination_id=self.destination_id,
-                                                                screen_manager=self.screen_manager, **kwargs)
+            return Page.EditProfilePage.EditRelationshipsButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
 
     class EditAboutPage(BoxLayout):
         '''
@@ -1659,48 +1624,54 @@ class Page(BoxLayout):
                 password        :check & validation
                 special_fields  :X
         '''
-
         class SaveButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, deactivateInput, nameinput,
-                         genderinput, dateofbirth_year, dateofbirth_Month, dateofbirth_Day,
-                         oldpass, newpass, confirmnewpass, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,deactivateInput,nameinput,
+                         genderinput,dateofbirth_year,dateofbirth_Month,dateofbirth_Day,
+                         oldpass,newpass,confirmnewpass, **kwargs):
                 super(Page.EditAboutPage.SaveButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
                 self.size_hint_y = None
-                self.deactivateInput = deactivateInput
+                self.deactivateInput=deactivateInput
                 self.nameinput = nameinput
-                self.genderinput = genderinput
+                self.genderinput=genderinput
                 self.dateofbirth_year = dateofbirth_year
-                self.dateofbirth_Month = dateofbirth_Month
+                self.dateofbirth_Month=dateofbirth_Month
                 self.dateofbirth_Day = dateofbirth_Day
-                self.oldpass = oldpass
-                self.newpass = newpass
-                self.confirmnewpass = confirmnewpass
-                self.height = 50
+                self.oldpass=oldpass
+                self.newpass=newpass
+                self.confirmnewpass=confirmnewpass
+                self.height=50
                 self.text = 'Save changes'
-
             def on_release(self):
-                if self.deactivateInput.active == True:
-                    personal_docks.PersonalDock.deactivate_account(amber.database[self.user_id])
-                # else:
-                #     personal_docks.PersonalDock.activate_account(amber.database[self.user_id])
-                print(amber.database[self.user_id].active)
-                personal_docks.PersonalDock.change_name(amber.database[self.user_id], self.nameinput.text)
-                personal_docks.PersonalDock.change_gender(amber.database[self.user_id], self.genderinput.text)
-                birthday = datetime.datetime(int(self.dateofbirth_year.text), int(self.dateofbirth_Month.text),
-                                             int(self.dateofbirth_Day.text))
-                personal_docks.PersonalDock.change_birthday(amber.database[self.user_id], birthday)
-                if personal_docks.PersonalDock.check_password(amber.database[self.user_id],
-                                                              self.oldpass.text) and self.newpass.text == self.confirmnewpass.text:
-                    personal_docks.PersonalDock.change_password(amber.database[self.user_id], self.newpass.text)
-                edit_profile_screen = Screen(name='edit')
-                edit_profile_screen.add_widget(
-                    Page.EditProfilePage(user_id=self.user_id, destination_id=self.destination_id,
-                                         screen_manager=self.screen_manager))
-                self.screen_manager.add_widget(edit_profile_screen)
-                self.screen_manager.current = edit_profile_screen.name
+                saved=True
+                if self.confirmnewpass.text!='' or self.newpass.text!='':
+                    if personal_docks.PersonalDock.check_password(amber.database[self.user_id],self.oldpass.text) and self.newpass.text==self.confirmnewpass.text:
+                        personal_docks.PersonalDock.change_password(amber.database[self.user_id],self.newpass.text)
+                    else:
+                        popup = Popup(title='Password Error',
+                                      content=Label(text='!Wrong password'),
+                                      size_hint=(0.3, 0.3), size=self.size)
+                        popup.open()
+                        saved=False
+
+                if saved:
+                    if self.deactivateInput.active == True:
+                        personal_docks.PersonalDock.deactivate_account(amber.database[self.user_id])
+                        # else:
+                        #     personal_docks.PersonalDock.activate_account(amber.database[self.user_id])
+                        # print(amber.database[self.user_id].active)
+                    personal_docks.PersonalDock.change_name(amber.database[self.user_id], self.nameinput.text)
+                    personal_docks.PersonalDock.change_gender(amber.database[self.user_id], self.genderinput.text)
+                    birthday = datetime.datetime(int(self.dateofbirth_year.text), int(self.dateofbirth_Month.text),
+                                                 int(self.dateofbirth_Day.text))
+                    personal_docks.PersonalDock.change_birthday(amber.database[self.user_id], birthday)
+                    edit_profile_screen = Screen(name='edit')
+                    edit_profile_screen.add_widget(Page.EditProfilePage(user_id=self.user_id, destination_id=self.destination_id,
+                                                                   screen_manager=self.screen_manager))
+                    self.screen_manager.add_widget(edit_profile_screen)
+                    self.screen_manager.current = edit_profile_screen.name
 
         def __init__(self, user_id, destination_id, screen_manager, **kwargs):
             super(Page.EditAboutPage, self).__init__(**kwargs)
@@ -1708,13 +1679,13 @@ class Page(BoxLayout):
             self.destination_id = destination_id
             self.screen_manager = screen_manager
             self.orientation = 'vertical'
-            self.add_widget(Label(text='Edit About Information', size_hint_y=0.05))
+            self.add_widget(Label(text='Edit About Information',size_hint_y=0.05))
             self.profileData = GridLayout(cols=2, padding=30, spacing=10)
             self.profileData.height = 200
-            # activation
+            #activation
             self.profileData.add_widget(
                 Label(text='Deactivate account:', size_hint_y=None, size_hint_x=None, width=150, height=40))
-            self.deactivateInput = Switch(active=not (amber.database[user_id].active), size_hint_y=None, height=40)
+            self.deactivateInput = Switch(active=not(amber.database[user_id].active), size_hint_y=None, height=40)
             self.profileData.add_widget(self.deactivateInput)
             # name
             self.profileData.add_widget(
@@ -1724,13 +1695,13 @@ class Page(BoxLayout):
             ###newpassword
             self.profileData.add_widget(
                 Label(text='Create new password:', size_hint_y=None, size_hint_x=None, width=150, height=40))
-            self.newpassinput = TextInput(text=amber.database[user_id].password, password=True, size_hint_y=None,
+            self.newpassinput = TextInput(text='', password=True, size_hint_y=None,
                                           height=40)
             self.profileData.add_widget(self.newpassinput)
             ###confirm password
             self.profileData.add_widget(
                 Label(text='confirm new password:', size_hint_y=None, size_hint_x=None, width=150, height=40))
-            self.confirmnewpassinput = TextInput(text=amber.database[user_id].password, password=True, size_hint_y=None,
+            self.confirmnewpassinput = TextInput(text='', password=True, size_hint_y=None,
                                                  height=40)
             self.profileData.add_widget(self.confirmnewpassinput)
             ###old password
@@ -1742,9 +1713,9 @@ class Page(BoxLayout):
             self.profileData.add_widget(self.oldpassinput)
             ###Gender
             self.profileData.add_widget(
-                Label(text='Gender:', size_hint_y=None, size_hint_x=None, width=150, height=40))
-            self.genderinput = Spinner(text=amber.database[user_id].gender, values=('male', 'female'), size_hint_y=None,
-                                       height=40)
+                 Label(text='Gender:', size_hint_y=None, size_hint_x=None, width=150, height=40))
+            self.genderinput = Spinner(text=amber.database[user_id].gender,values=('male','female'), size_hint_y=None,
+                                           height=40)
             # self.genderinput = TextInput(text=amber.database[user_id].gender,
             #                            size_hint_y=None,
             #                            height=40)
@@ -1752,33 +1723,43 @@ class Page(BoxLayout):
 
             ###birthday
             Birthday = str(amber.database[user_id].birthday).split(' ')
-            BirthdayValues = Birthday[0].split('-')
-            self.birthdayinputRow = BoxLayout(orientation='horizontal', size_hint_y=None, height=40)
+            BirthdayValues= Birthday[0].split('-')
+            self.birthdayinputRow = BoxLayout(orientation='horizontal',size_hint_y=None,height=40)
             self.profileData.add_widget(
                 Label(text='Birthday:', size_hint_y=None, size_hint_x=None, width=150, height=40))
-            self.birthdayinputyear = TextInput(text=str(BirthdayValues[0]), size_hint_y=None, height=40)
-            self.birthdayinputmonth = TextInput(text=str(BirthdayValues[1]), size_hint_y=None, height=40)
-            self.birthdayinputday = TextInput(text=str(BirthdayValues[2]), size_hint_y=None, height=40)
+            years=[]
+            for num in range(0,119):
+                years.append(str(1900+num))
+            days=[]
+            for num in range (1,32):
+                days.append(str(num))
+            self.birthdayinputyear = Spinner(text=str(BirthdayValues[0]),
+                                             values=(years),size_hint_y=None,height=40)
+            self.birthdayinputmonth = Spinner(text=str(BirthdayValues[1]),
+                                              values=('1','2','3','4','5','6','7','8','9','10','11','12'),size_hint_y=None,height=40)
+            self.birthdayinputday = Spinner(text=str(BirthdayValues[2]),
+                                            values=(days),size_hint_y=None,height=40)
             self.birthdayinputRow.add_widget(self.birthdayinputyear)
             self.birthdayinputRow.add_widget(self.birthdayinputmonth)
             self.birthdayinputRow.add_widget(self.birthdayinputday)
             self.profileData.add_widget(self.birthdayinputRow)
 
+
+
             self.add_widget(self.profileData)
             self.add_widget(self.Save_button())
-
         def Save_button(self, **kwargs):
             return Page.EditAboutPage.SaveButton(user_id=self.user_id, destination_id=self.destination_id,
                                                  deactivateInput=self.deactivateInput,
-                                                 nameinput=self.nameinput,
-                                                 genderinput=self.genderinput,
+                                                   nameinput=self.nameinput,
+                                                   genderinput=self.genderinput,
                                                  dateofbirth_year=self.birthdayinputyear,
                                                  dateofbirth_Month=self.birthdayinputmonth,
                                                  dateofbirth_Day=self.birthdayinputday,
-                                                 oldpass=self.oldpassinput,
-                                                 newpass=self.newpassinput,
-                                                 confirmnewpass=self.confirmnewpassinput,
-                                                 screen_manager=self.screen_manager, **kwargs)
+                                                   oldpass=self.oldpassinput,
+                                                   newpass=self.newpassinput,
+                                                   confirmnewpass=self.confirmnewpassinput,
+                                                   screen_manager=self.screen_manager, **kwargs)
 
     class EditEduPage(BoxLayout):
         '''
@@ -1786,37 +1767,34 @@ class Page(BoxLayout):
                 Education       :using spinneer for dates
                 Living PLaces   :using spinneer for dates
         '''
-
         class RemoveEduButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, parentwidget, eduArray, eduBoxWidget, majoredu,
-                         placeedu, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,parentwidget,eduArray,eduBoxWidget,majoredu,placeedu, **kwargs):
                 super(Page.EditEduPage.RemoveEduButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.parentwidget = parentwidget
-                self.eduArray = eduArray
-                self.eduBoxWidget = eduBoxWidget
-                self.majoredu = majoredu
-                self.placeedu = placeedu
+                self.parentwidget=parentwidget
+                self.eduArray=eduArray
+                self.eduBoxWidget=eduBoxWidget
+                self.majoredu=majoredu
+                self.placeedu=placeedu
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = '-'
-                self.font_size = 70
+                self.font_size=70
 
             def on_release(self):
-                if self.majoredu.text != '' and self.placeedu.text != '':
+                if self.majoredu.text!='' and self.placeedu.text!='':
                     personal_docks.PersonalDock.remove_education(amber.database[self.user_id],
                                                                  self.majoredu.text,
                                                                  self.placeedu.text)
                 self.parentwidget.remove_widget(self.eduBoxWidget)
                 index = self.eduArray.index(self.eduBoxWidget)
                 self.eduArray.pop(index)
-
         class EditEduButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, parentwidget, eduArray,
-                         eduBoxWidget, majoredu, placeedu, startdate, enddate, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,parentwidget,eduArray,
+                         eduBoxWidget,majoredu,placeedu,startdate,enddate, **kwargs):
                 super(Page.EditEduPage.EditEduButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
@@ -1839,18 +1817,19 @@ class Page(BoxLayout):
                 # self.eduBoxWidget.remove_widget(self.enddate)
                 self.eduBoxWidget.clear_widgets()
 
-                self.majoredu = Button(text=self.majoredu.text,
-                                       size_hint_x=0.4, size_hint_y=None, height=30)
-                self.placeedu = Button(text=self.placeedu.text,
-                                       size_hint_x=0.4, size_hint_y=None, height=30)
-                yearslist = []
-                for num in range(0, 1019):
-                    yearslist.append(str(1900 + num))
-                yeartuple = tuple(yearslist)
-                self.startdate = Spinner(text=self.startdate.text, values=yeartuple,
-                                         size_hint_x=0.1, size_hint_y=None, height=30)
-                self.enddate = Spinner(text=self.enddate.text, values=yeartuple,
-                                       size_hint_x=0.1, size_hint_y=None, height=30)
+                self.majoredu=Button(text=self.majoredu.text,
+                                        size_hint_x=0.4, size_hint_y=None, height=30)
+                self.placeedu=Button(text=self.placeedu.text,
+                                        size_hint_x=0.4, size_hint_y=None, height=30)
+                # yearslist=[]
+
+                self.startdate = Spinner(text=self.startdate.text,
+                                        size_hint_x=0.1, size_hint_y=None, height=30)
+                self.enddate = Spinner(text=self.enddate.text,
+                                      size_hint_x=0.1, size_hint_y=None, height=30)
+                for num in range(amber.database[self.user_id].birthday.year, 2019):
+                    self.enddate.values.append(str(num))
+                    self.startdate.values.append(str(num))
                 # self.startdate = TextInput(text=self.startdate.text,
                 #                         size_hint_x=0.1, size_hint_y=None, height=30)
                 # self.enddate = TextInput(text=self.enddate.text,
@@ -1873,38 +1852,39 @@ class Page(BoxLayout):
                                                                                self.placeedu))
 
         class SaveEduButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, parentwidget, eduArray,
-                         eduBoxWidget, majoredu, placeedu, startdate, enddate, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,parentwidget,eduArray,
+                         eduBoxWidget,majoredu,placeedu,startdate,enddate, **kwargs):
                 super(Page.EditEduPage.SaveEduButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.parentwidget = parentwidget
-                self.eduArray = eduArray
-                self.eduBoxWidget = eduBoxWidget
-                self.majoredu = majoredu
-                self.placeedu = placeedu
+                self.parentwidget=parentwidget
+                self.eduArray=eduArray
+                self.eduBoxWidget=eduBoxWidget
+                self.majoredu=majoredu
+                self.placeedu=placeedu
                 self.startdate = startdate
                 self.enddate = enddate
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = 'Save'
-                self.font_size = 14
+                self.font_size=14
 
             def on_release(self):
-                if self.majoredu.text != '' and self.placeedu.text != '' and self.startdate.text != '' and self.enddate.text != '':
+                if self.majoredu.text!='' and self.placeedu.text!='' and self.startdate.text!='' and self.enddate.text !='' :
 
                     if not personal_docks.PersonalDock.edit_education(amber.database[self.user_id],
-                                                                      self.majoredu.text,
-                                                                      self.placeedu.text,
-                                                                      self.startdate.text,
-                                                                      self.enddate.text):
+                                                               self.majoredu.text,
+                                                               self.placeedu.text,
+                                                               self.startdate.text,
+                                                               self.enddate.text):
+
                         personal_docks.PersonalDock.add_education(amber.database[self.user_id],
-                                                                  self.majoredu.text,
-                                                                  self.placeedu.text,
-                                                                  self.startdate.text,
-                                                                  self.enddate.text)
+                                                              self.majoredu.text,
+                                                              self.placeedu.text,
+                                                              self.startdate.text,
+                                                              self.enddate.text)
 
                     self.eduBoxWidget.clear_widgets()
 
@@ -1913,9 +1893,9 @@ class Page(BoxLayout):
                     self.placeedu = Button(text=self.placeedu.text,
                                            size_hint_x=0.4, size_hint_y=None, height=30)
                     self.startdate = Button(text=self.startdate.text,
-                                            size_hint_x=0.1, size_hint_y=None, height=30)
+                                                     size_hint_x=0.1, size_hint_y=None, height=30)
                     self.enddate = Button(text=self.enddate.text,
-                                          size_hint_x=0.1, size_hint_y=None, height=30)
+                                                         size_hint_x=0.1, size_hint_y=None, height=30)
                     self.eduBoxWidget.add_widget(self.majoredu)
                     self.eduBoxWidget.add_widget(self.placeedu)
                     self.eduBoxWidget.add_widget(self.startdate)
@@ -1928,19 +1908,19 @@ class Page(BoxLayout):
                                                                                  self.startdate,
                                                                                  self.enddate))
                     self.eduBoxWidget.add_widget(Page.EditEduPage.RemoveEdu_button(self, self.parentwidget,
-                                                                                   self.eduArray,
-                                                                                   self.eduBoxWidget,
-                                                                                   self.majoredu,
-                                                                                   self.placeedu))
+                                                                                               self.eduArray,
+                                                                                               self.eduBoxWidget,
+                                                                                               self.majoredu,
+                                                                                               self.placeedu))
 
         class AddEduButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, edubox, eduArray, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,edubox,eduArray, **kwargs):
                 super(Page.EditEduPage.AddEduButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.edubox = edubox
-                self.eduArray = eduArray
+                self.edubox=edubox
+                self.eduArray=eduArray
                 self.size_hint_y = None
                 self.size_hint_x = 1
                 self.height = 50
@@ -1950,106 +1930,107 @@ class Page(BoxLayout):
                 self.edubox.remove_widget(self)
 
                 index = len(self.eduArray)
-                self.eduArray.append(
-                    BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5, spacing=10))
+                self.eduArray.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
                 # self.eduArray[index].edulabelnum = Label(text=str(index + 1), size_hint_x=None, width=50,
                 #                         size_hint_y=None, height=50)
                 # # with edulabelnum.canvas:
                 # #     Color(1, 1, 1, 0.2)
                 # #     Rectangle(pos=edulabelnum.pos, size=edulabelnum.size)
                 # self.eduArray[index].add_widget(self.eduArray[index].edulabelnum)
-                self.eduArray[index].majorinput = TextInput(size_hint_x=0.4,
-                                                            size_hint_y=None, height=30)
+                self.eduArray[index].majorinput = TextInput( size_hint_x=0.4,
+                                           size_hint_y=None, height=30)
                 self.eduArray[index].add_widget(self.eduArray[index].majorinput)
-                self.eduArray[index].placeinput = TextInput(size_hint_x=0.4,
-                                                            size_hint_y=None, height=30)
+                self.eduArray[index].placeinput = TextInput( size_hint_x=0.4,
+                                           size_hint_y=None, height=30)
                 self.eduArray[index].add_widget(self.eduArray[index].placeinput)
-                yearslist = []
-                for num in range(0, 1019):
-                    yearslist.append(str(1900 + num))
-                yeartuple = tuple(yearslist)
-                self.eduArray[index].startdateinput = Spinner(text=self.startdate.text, values=yeartuple,
-                                                              size_hint_x=0.1, size_hint_y=None, height=30)
-                self.eduArray[index].finishdateinput = Spinner(text=self.enddate.text, values=yeartuple,
-                                                               size_hint_x=0.1, size_hint_y=None, height=30)
+                # yearslist=[]
+
+                # yeartuple = tuple(yearslist)
+                self.eduArray[index].startdateinput = Spinner(
+                                        size_hint_x=0.1, size_hint_y=None, height=30)
+                self.eduArray[index].finishdateinput = Spinner(
+                                      size_hint_x=0.1, size_hint_y=None, height=30)
+
+                for num in range(amber.database[self.user_id].birthday.year, 2019):
+                    self.eduArray[index].startdateinput.values.append(str(num))
+                    self.eduArray[index].finishdateinput.values.append(str(num))
                 # self.eduArray[index].startdateinput = TextInput( size_hint_x=0.1,
                 #                                size_hint_y=None, height=30)
                 self.eduArray[index].add_widget(self.eduArray[index].startdateinput)
                 # self.eduArray[index].finishdateinput = TextInput( size_hint_x=0.1,
                 #                                 size_hint_y=None, height=30)
                 self.eduArray[index].add_widget(self.eduArray[index].finishdateinput)
-                self.eduArray[index].add_widget(Page.EditEduPage.SaveEdu_button(self, self.edubox,
+                self.eduArray[index].add_widget(Page.EditEduPage.SaveEdu_button(self,self.edubox,
                                                                                 self.eduArray,
                                                                                 self.eduArray[index],
                                                                                 self.eduArray[index].majorinput,
                                                                                 self.eduArray[index].placeinput,
                                                                                 self.eduArray[index].startdateinput,
                                                                                 self.eduArray[index].finishdateinput))
-                self.eduArray[index].add_widget(Page.EditEduPage.RemoveEdu_button(self, self.edubox,
+                self.eduArray[index].add_widget(Page.EditEduPage.RemoveEdu_button(self,self.edubox,
                                                                                   self.eduArray,
                                                                                   self.eduArray[index],
                                                                                   self.eduArray[index].majorinput,
                                                                                   self.eduArray[index].placeinput))
                 self.edubox.add_widget(self.eduArray[index])
-                self.edubox.add_widget(Page.EditEduPage.AddEdu_button(self, self.edubox, self.eduArray))
+                self.edubox.add_widget(Page.EditEduPage.AddEdu_button(self,self.edubox, self.eduArray))
 
         class RemovePlaceButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, parentwidget, placeArray, placeBoxWidget, place,
-                         **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,parentwidget,placeArray,placeBoxWidget,place, **kwargs):
                 super(Page.EditEduPage.RemovePlaceButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.parentwidget = parentwidget
-                self.placeArray = placeArray
-                self.placeBoxWidget = placeBoxWidget
-                self.place = place
+                self.parentwidget=parentwidget
+                self.placeArray=placeArray
+                self.placeBoxWidget=placeBoxWidget
+                self.place=place
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = '-'
-                self.font_size = 50
+                self.font_size=50
 
             def on_release(self):
                 if self.place.text != '':
                     personal_docks.PersonalDock.remove_living_place(amber.database[self.user_id],
-                                                                    self.place.text)
+                                                                 self.place.text)
                 self.parentwidget.remove_widget(self.placeBoxWidget)
                 index = self.placeArray.index(self.placeBoxWidget)
                 self.placeArray.pop(index)
-
         class SavePlaceButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, parentwidget, placeArray,
-                         placeBoxWidget, place, startdate, enddate, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,parentwidget,placeArray,
+                         placeBoxWidget,place,startdate,enddate, **kwargs):
                 super(Page.EditEduPage.SavePlaceButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.parentwidget = parentwidget
-                self.placeArray = placeArray
-                self.placeBoxWidget = placeBoxWidget
-                self.place = place
+                self.parentwidget=parentwidget
+                self.placeArray=placeArray
+                self.placeBoxWidget=placeBoxWidget
+                self.place=place
                 self.startdate = startdate
                 self.enddate = enddate
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = 'save'
-                self.font_size = 14
+                self.font_size=14
 
             def on_release(self):
                 if not personal_docks.PersonalDock.edit_living_place(amber.database[self.user_id],
-                                                                     self.place.text,
-                                                                     self.startdate.text,
-                                                                     self.enddate.text):
+                                                           self.place.text,
+                                                           self.startdate.text,
+                                                           self.enddate.text):
+
                     personal_docks.PersonalDock.add_living_place(amber.database[self.user_id],
-                                                                 self.place.text,
-                                                                 self.startdate.text,
-                                                                 self.enddate.text)
+                                                          self.place.text,
+                                                          self.startdate.text,
+                                                          self.enddate.text)
                 self.placeBoxWidget.clear_widgets()
 
                 self.place = Button(text=self.place.text,
-                                    size_hint_x=0.4, size_hint_y=None, height=30)
+                                       size_hint_x=0.4, size_hint_y=None, height=30)
                 self.startdate = Button(text=self.startdate.text,
                                         size_hint_x=0.1, size_hint_y=None, height=30)
                 self.enddate = Button(text=self.enddate.text,
@@ -2058,48 +2039,53 @@ class Page(BoxLayout):
                 self.placeBoxWidget.add_widget(self.startdate)
                 self.placeBoxWidget.add_widget(self.enddate)
                 self.placeBoxWidget.add_widget(Page.EditEduPage.EditPlace_button(self, self.parentwidget,
-                                                                                 self.placeArray,
-                                                                                 self.placeBoxWidget,
-                                                                                 self.place,
-                                                                                 self.startdate,
-                                                                                 self.enddate))
+                                                                             self.placeArray,
+                                                                             self.placeBoxWidget,
+                                                                             self.place,
+                                                                             self.startdate,
+                                                                             self.enddate))
                 self.placeBoxWidget.add_widget(Page.EditEduPage.RemovePlace_button(self, self.parentwidget,
-                                                                                   self.placeArray,
-                                                                                   self.placeBoxWidget,
-                                                                                   self.place))
+                                                                               self.placeArray,
+                                                                               self.placeBoxWidget,
+                                                                               self.place))
+
 
         class EditPlaceButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, parentwidget, placeArray,
-                         placeBoxWidget, place, startdate, enddate, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,parentwidget,placeArray,
+                         placeBoxWidget,place,startdate,enddate, **kwargs):
                 super(Page.EditEduPage.EditPlaceButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.parentwidget = parentwidget
-                self.placeArray = placeArray
-                self.placeBoxWidget = placeBoxWidget
-                self.place = place
+                self.parentwidget=parentwidget
+                self.placeArray=placeArray
+                self.placeBoxWidget=placeBoxWidget
+                self.place=place
                 self.startdate = startdate
                 self.enddate = enddate
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = 'Edit'
-                self.font_size = 14
+                self.font_size=14
 
             def on_release(self):
                 self.placeBoxWidget.clear_widgets()
 
                 self.place = Button(text=self.place.text,
-                                    size_hint_x=0.4, size_hint_y=None, height=30)
-                yearslist = []
-                for num in range(0, 1019):
-                    yearslist.append(str(1900 + num))
-                yeartuple = tuple(yearslist)
-                self.startdate = Spinner(text=self.startdate.text, values=yeartuple,
+                                       size_hint_x=0.4, size_hint_y=None, height=30)
+                # yearslist = []
+                # for num in range(0, 119):
+                #     yearslist.append(str(1900 + num))
+                # yeartuple = tuple(yearslist)
+                self.startdate = Spinner(text=self.startdate.text,
                                          size_hint_x=0.1, size_hint_y=None, height=30)
-                self.enddate = Spinner(text=self.enddate.text, values=yeartuple,
+
+                self.enddate = Spinner(text=self.enddate.text,
                                        size_hint_x=0.1, size_hint_y=None, height=30)
+                for num in range(amber.database[self.user_id].birthday.year, 2019):
+                    self.startdate.values.append(str(num))
+                    self.enddate.values.append(str(num))
 
                 # self.startdate = TextInput(text=self.startdate.text,
                 #                         size_hint_x=0.1, size_hint_y=None, height=30)
@@ -2109,24 +2095,25 @@ class Page(BoxLayout):
                 self.placeBoxWidget.add_widget(self.startdate)
                 self.placeBoxWidget.add_widget(self.enddate)
                 self.placeBoxWidget.add_widget(Page.EditEduPage.SavePlace_button(self, self.parentwidget,
-                                                                                 self.placeArray,
-                                                                                 self.placeBoxWidget,
-                                                                                 self.place,
-                                                                                 self.startdate,
-                                                                                 self.enddate))
+                                                                             self.placeArray,
+                                                                             self.placeBoxWidget,
+                                                                             self.place,
+                                                                             self.startdate,
+                                                                             self.enddate))
                 self.placeBoxWidget.add_widget(Page.EditEduPage.RemovePlace_button(self, self.parentwidget,
-                                                                                   self.placeArray,
-                                                                                   self.placeBoxWidget,
-                                                                                   self.place))
+                                                                               self.placeArray,
+                                                                               self.placeBoxWidget,
+                                                                               self.place))
+
 
         class AddPlaceButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, placebox, placeArray, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,placebox,placeArray,**kwargs):
                 super(Page.EditEduPage.AddPlaceButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.placebox = placebox
-                self.placeArray = placeArray
+                self.placebox=placebox
+                self.placeArray=placeArray
                 self.size_hint_y = None
                 self.size_hint_x = 1
                 self.height = 50
@@ -2136,46 +2123,47 @@ class Page(BoxLayout):
                 self.placebox.remove_widget(self)
 
                 index = len(self.placeArray)
-                self.placeArray.append(
-                    BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5, spacing=10))
+                self.placeArray.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
                 # self.placeArray[index].placelabelnum = Label(text=str(index + 1), size_hint_x=None, width=50,
                 #                         size_hint_y=None, height=50)
                 # # with edulabelnum.canvas:
                 # #     Color(1, 1, 1, 0.2)
                 # #     Rectangle(pos=edulabelnum.pos, size=edulabelnum.size)
                 # self.placeArray[index].add_widget(self.placeArray[index].placelabelnum)
-                self.placeArray[index].placeinput = TextInput(size_hint_x=0.4,
-                                                              size_hint_y=None, height=30)
+                self.placeArray[index].placeinput = TextInput( size_hint_x=0.4,
+                                           size_hint_y=None, height=30)
                 self.placeArray[index].add_widget(self.placeArray[index].placeinput)
 
-                yearslist = []
-                for num in range(0, 1019):
-                    yearslist.append(str(1900 + num))
-                yeartuple = tuple(yearslist)
-                self.placeArray[index].startdateinput = Spinner(text=self.startdate.text, values=yeartuple,
-                                                                size_hint_x=0.1, size_hint_y=None, height=30)
-                self.placeArray[index].finishdateinput = Spinner(text=self.enddate.text, values=yeartuple,
-                                                                 size_hint_x=0.1, size_hint_y=None, height=30)
+                # yearslist = []
+                # for num in range(0, 119):
+                #     yearslist.append(str(1900 + num))
+                # yeartuple = tuple(yearslist)
+                self.placeArray[index].startdateinput = Spinner(
+                                         size_hint_x=0.1, size_hint_y=None, height=30)
+
+                self.placeArray[index].finishdateinput= Spinner(
+                                       size_hint_x=0.1, size_hint_y=None, height=30)
+                for num in range(amber.database[self.user_id].birthday.year,2019):
+                    self.placeArray[index].startdateinput.values.append(str(num))
+                    self.placeArray[index].finishdateinput.values.append(str(num))
                 # self.placeArray[index].startdateinput = TextInput( size_hint_x=0.1,
                 #                                size_hint_y=None, height=30)
                 self.placeArray[index].add_widget(self.placeArray[index].startdateinput)
                 # self.placeArray[index].finishdateinput = TextInput( size_hint_x=0.1,
                 #                                 size_hint_y=None, height=30)
                 self.placeArray[index].add_widget(self.placeArray[index].finishdateinput)
-                self.placeArray[index].add_widget(Page.EditEduPage.SavePlace_button(self, self.placebox,
-                                                                                    self.placeArray,
-                                                                                    self.placeArray[index],
-                                                                                    self.placeArray[index].placeinput,
-                                                                                    self.placeArray[
-                                                                                        index].startdateinput,
-                                                                                    self.placeArray[
-                                                                                        index].finishdateinput))
-                self.placeArray[index].add_widget(
-                    Page.EditEduPage.RemovePlace_button(self, self.placebox, self.placeArray,
-                                                        self.placeArray[index],
-                                                        self.placeArray[index].placeinput))
+                self.placeArray[index].add_widget(Page.EditEduPage.SavePlace_button(self,self.placebox,
+                                                                                self.placeArray,
+                                                                                self.placeArray[index],
+                                                                                self.placeArray[index].placeinput,
+                                                                                self.placeArray[index].startdateinput,
+                                                                                self.placeArray[index].finishdateinput))
+                self.placeArray[index].add_widget(Page.EditEduPage.RemovePlace_button(self,self.placebox,self.placeArray,
+                                                                                      self.placeArray[index],
+                                                                                      self.placeArray[index].placeinput))
                 self.placebox.add_widget(self.placeArray[index])
-                self.placebox.add_widget(Page.EditEduPage.AddPlace_button(self, self.placebox, self.placeArray))
+                self.placebox.add_widget(Page.EditEduPage.AddPlace_button(self,self.placebox, self.placeArray))
+
 
         def __init__(self, user_id, destination_id, screen_manager, **kwargs):
             super(Page.EditEduPage, self).__init__(**kwargs)
@@ -2185,61 +2173,57 @@ class Page(BoxLayout):
             self.orientation = 'vertical'
             self.clear_widgets()
             ###Education information
-            self.edulabel = Label(text='Edit Education', size_hint_y=None, height=40)
+            self.edulabel=Label(text='Edit Education', size_hint_y= None,height=40)
             # with self.edulabel.canvas:
             #     Color(1, 1, 1, 0.2)
             #     # Rectangle(pos=(0,400), size_hint_y=None , height=20)
             #     Rectangle(pos=self.edulabel.pos, size=self.edulabel.size)
             # self.add_widget(self.edulabel)
             self.eduheader = BoxLayout(orientation='horizontal', size_hint_y=None, height=40, padding=10, spacing=10)
-            self.eduheader.add_widget(Button(text='Major', size_hint_x=0.4, size_hint_y=None, height=30, disabled=True))
-            self.eduheader.add_widget(
-                Button(text='university', size_hint_x=0.4, size_hint_y=None, height=30, disabled=True))
-            self.eduheader.add_widget(
-                Button(text='Start\ndate', size_hint_x=0.1, size_hint_y=None, height=30, disabled=True))
-            self.eduheader.add_widget(
-                Button(text='Finish\ndate', size_hint_x=0.1, size_hint_y=None, height=30, disabled=True))
-            self.eduheader.add_widget(Button(text='+', size_hint_x=0.05, size_hint_y=None, height=30, disabled=True))
-            self.eduheader.add_widget(Button(text='-', size_hint_x=0.05, size_hint_y=None, height=30, disabled=True))
+            self.eduheader.add_widget(Button(text='Major', size_hint_x=0.4, size_hint_y=None, height=30,disabled=True))
+            self.eduheader.add_widget(Button(text='university', size_hint_x=0.4, size_hint_y=None, height=30,disabled=True))
+            self.eduheader.add_widget(Button(text='Start\ndate', size_hint_x=0.1, size_hint_y=None, height=30,disabled=True))
+            self.eduheader.add_widget(Button(text='Finish\ndate', size_hint_x=0.1, size_hint_y=None, height=30,disabled=True))
+            self.eduheader.add_widget(Button(text='+', size_hint_x=0.05, size_hint_y=None, height=30,disabled=True))
+            self.eduheader.add_widget(Button(text='-', size_hint_x=0.05, size_hint_y=None, height=30,disabled=True))
             self.add_widget(self.eduheader)
 
             self.EducationBoxes = []
             # edu is tuple of four elements (major, place of education, starting date, finishing date)
             for edu in amber.database[user_id].education:
-                self.EducationBoxes.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+                self.EducationBoxes.append(BoxLayout(orientation='horizontal',size_hint_y=None ,height=50, padding=5, spacing=10))
 
             self.EduBox = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=None)
-            for index, edu in enumerate(self.EducationBoxes):
+            for index,edu in enumerate(self.EducationBoxes):
                 # edu.edulabelnum = Label(text=str(index+1),size_hint_x=None ,width=50,
                 #                         size_hint_y=None, height=50)
                 #
                 # edu.add_widget(edu.edulabelnum)
-                edu.majorinput = Button(text=amber.database[user_id].education[index][0], size_hint_x=0.4,
-                                        size_hint_y=None, height=30)
+                edu.majorinput=Button(text=amber.database[user_id].education[index][0], size_hint_x=0.4,
+                                         size_hint_y=None , height=30)
                 edu.add_widget(edu.majorinput)
                 edu.placeinput = Button(text=amber.database[user_id].education[index][1], size_hint_x=0.4,
-                                        size_hint_y=None, height=30)
+                                           size_hint_y=None, height=30)
                 edu.add_widget(edu.placeinput)
                 edu.startdateinput = Button(text=amber.database[user_id].education[index][2], size_hint_x=0.1,
-                                            size_hint_y=None, height=30)
+                                              size_hint_y=None, height=30)
                 edu.add_widget(edu.startdateinput)
                 edu.finishdateinput = Button(text=amber.database[user_id].education[index][3], size_hint_x=0.1,
-                                             size_hint_y=None, height=30)
+                                                size_hint_y=None, height=30)
                 edu.add_widget(edu.finishdateinput)
                 edu.add_widget(self.EditEdu_button(self.EduBox,
-                                                   self.EducationBoxes,
-                                                   edu, edu.majorinput,
-                                                   edu.placeinput,
-                                                   edu.startdateinput,
-                                                   edu.finishdateinput))
-                edu.add_widget(
-                    self.RemoveEdu_button(self.EduBox, self.EducationBoxes, edu, edu.majorinput, edu.placeinput))
+                                                    self.EducationBoxes,
+                                                    edu,edu.majorinput,
+                                                    edu.placeinput,
+                                                    edu.startdateinput,
+                                                    edu.finishdateinput))
+                edu.add_widget(self.RemoveEdu_button(self.EduBox,self.EducationBoxes,edu,edu.majorinput,edu.placeinput))
 
                 # edu.RemoveButton.on_release(print('pressed'))
                 self.EduBox.add_widget(edu)
-            self.EduBox.add_widget(self.AddEdu_button(self.EduBox, self.EducationBoxes))
+            self.EduBox.add_widget(self.AddEdu_button(self.EduBox,self.EducationBoxes))
             self.EduBox.bind(minimum_height=self.EduBox.setter('height'))
-            self.EduBoxScrollView = ScrollView(size_hint=(1, None), size=(200, 200))
+            self.EduBoxScrollView = ScrollView(size_hint=(1, None), size=(200,200))
             self.EduBoxScrollView.add_widget(self.EduBox)
             self.add_widget(self.EduBoxScrollView)
 
@@ -2251,28 +2235,31 @@ class Page(BoxLayout):
             #     Rectangle(pos=self.placelabel.pos, size=self.placelabel.size)
 
             self.add_widget(self.placelabel)
-            self.placesheader = BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5, spacing=10)
-            self.placesheader.add_widget(Label(text='Location', size_hint_x=0.3, size_hint_y=None, height=50))
-            self.placesheader.add_widget(Label(text='From(start date)', size_hint_x=0.3, size_hint_y=None, height=50))
-            self.placesheader.add_widget(Label(text='to(end date)', size_hint_x=0.3, size_hint_y=None, height=50))
-            self.placesheader.add_widget(Label(text='Save/Remove', size_hint_x=0.1, size_hint_y=None, height=50))
+            self.placesheader = BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10)
+            self.placesheader.add_widget(Button(text='Location',size_hint_x=0.4,size_hint_y=None, height=30,disabled=True,halign='center'))
+            self.placesheader.add_widget(Button(text='From\n(start date)',size_hint_x=0.1, size_hint_y = None, height = 30,disabled=True,halign='center'))
+            self.placesheader.add_widget(Button(text='to\n(end date)',size_hint_x=0.1, size_hint_y = None, height = 30,disabled=True,halign='center'))
+            self.placesheader.add_widget(Button(text='Save',size_hint_x=0.05, size_hint_y = None, height = 30,disabled=True,halign='center'))
+            self.placesheader.add_widget(Button(text='Remove',size_hint_x=0.05, size_hint_y = None, height = 30,disabled=True,halign='center'))
             self.add_widget(self.placesheader)
             self.PlacesBoxes = []
             # edu is tuple of four elements (major, place of education, starting date, finishing date)
             for place in amber.database[user_id].living_in:
-                self.PlacesBoxes.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+                self.PlacesBoxes.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
 
             self.placesBox = BoxLayout(orientation='vertical', height=50, padding=5, spacing=10, size_hint_y=None)
             for index, place in enumerate(self.PlacesBoxes):
-                place.placeinput = Button(text=amber.database[user_id].living_in[index][0], size_hint_x=0.3,
-                                          size_hint_y=None, height=30)
+                place.placeinput = Button(text=amber.database[user_id].living_in[index][0], size_hint_x=0.4,
+                                           size_hint_y=None, height=30)
                 place.add_widget(place.placeinput)
-                place.startdateinput = Button(text=amber.database[user_id].living_in[index][1], size_hint_x=0.3,
-                                              size_hint_y=None, height=30)
-                place.add_widget(place.startdateinput)
-                place.finishdateinput = Button(text=amber.database[user_id].living_in[index][2], size_hint_x=0.3,
+                place.startdateinput = Button(text=amber.database[user_id].living_in[index][1], size_hint_x=0.1,
                                                size_hint_y=None, height=30)
+                place.add_widget(place.startdateinput)
+                place.finishdateinput = Button(text=amber.database[user_id].living_in[index][2], size_hint_x=0.1,
+                                                size_hint_y=None, height=30)
                 place.add_widget(place.finishdateinput)
+                place.add_widget(
+                    self.EditPlace_button(self.placesBox, self.PlacesBoxes, place, place.placeinput,place.startdateinput,place.finishdateinput))
                 place.add_widget(
                     self.RemovePlace_button(self.placesBox, self.PlacesBoxes, place, place.placeinput))
 
@@ -2285,31 +2272,25 @@ class Page(BoxLayout):
             # self.add_widget(self.Save_button())
 
             # self.EduBox.remove_widget(self.EducationBoxes[0])
-
-        def RemoveEdu_button(self, edubox, eduArray, edu, major, place, **kwargs):
-            return Page.EditEduPage.RemoveEduButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                    screen_manager=self.screen_manager,
+        def RemoveEdu_button(self,edubox,eduArray,edu,major,place, **kwargs):
+            return Page.EditEduPage.RemoveEduButton(user_id=self.user_id, destination_id=self.destination_id,screen_manager=self.screen_manager ,
                                                     parentwidget=edubox,
                                                     eduArray=eduArray,
                                                     eduBoxWidget=edu,
-                                                    majoredu=major, placeedu=place, **kwargs)
-
-        def SaveEdu_button(self, edubox, eduArray, edu, major, place, startdate, enddate, **kwargs):
-            return Page.EditEduPage.SaveEduButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                  screen_manager=self.screen_manager,
-                                                  parentwidget=edubox,
-                                                  eduArray=eduArray,
-                                                  eduBoxWidget=edu,
-                                                  majoredu=major, placeedu=place,
-                                                  startdate=startdate, enddate=enddate, **kwargs)
-
-        def AddEdu_button(self, edubox, eduArray, **kwargs):
-            return Page.EditEduPage.AddEduButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                 screen_manager=self.screen_manager,
-                                                 edubox=edubox, eduArray=eduArray,
+                                                    majoredu=major, placeedu=place,**kwargs)
+        def SaveEdu_button(self,edubox,eduArray,edu,major,place,startdate,enddate, **kwargs):
+            return Page.EditEduPage.SaveEduButton(user_id=self.user_id, destination_id=self.destination_id,screen_manager=self.screen_manager ,
+                                                    parentwidget=edubox,
+                                                    eduArray=eduArray,
+                                                    eduBoxWidget=edu,
+                                                    majoredu=major, placeedu=place,
+                                                    startdate=startdate, enddate=enddate,**kwargs)
+        def AddEdu_button(self,edubox,eduArray,**kwargs):
+            return Page.EditEduPage.AddEduButton(user_id=self.user_id, destination_id=self.destination_id,screen_manager=self.screen_manager ,
+                                                  edubox=edubox,eduArray=eduArray,
                                                  **kwargs)
 
-        def EditEdu_button(self, edubox, eduArray, edu, major, place, startdate, enddate, **kwargs):
+        def EditEdu_button(self,edubox,eduArray,edu,major,place,startdate,enddate, **kwargs):
             return Page.EditEduPage.EditEduButton(user_id=self.user_id, destination_id=self.destination_id,
                                                   screen_manager=self.screen_manager,
                                                   parentwidget=edubox,
@@ -2318,37 +2299,32 @@ class Page(BoxLayout):
                                                   majoredu=major, placeedu=place,
                                                   startdate=startdate, enddate=enddate, **kwargs)
 
-        def RemovePlace_button(self, placebox, placeArray, oneplace, place, **kwargs):
-            return Page.EditEduPage.RemovePlaceButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                      screen_manager=self.screen_manager,
-                                                      parentwidget=placebox,
-                                                      placeArray=placeArray,
-                                                      placeBoxWidget=oneplace,
-                                                      place=place, **kwargs)
 
-        def SavePlace_button(self, placebox, placeArray, oneplace, place, startdate, enddate, **kwargs):
-            return Page.EditEduPage.SavePlaceButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                    screen_manager=self.screen_manager,
+        def RemovePlace_button(self,placebox,placeArray,oneplace,place, **kwargs):
+            return Page.EditEduPage.RemovePlaceButton(user_id=self.user_id, destination_id=self.destination_id,screen_manager=self.screen_manager ,
+                                                    parentwidget=placebox,
+                                                    placeArray=placeArray,
+                                                    placeBoxWidget=oneplace,
+                                                    place=place,**kwargs)
+        def SavePlace_button(self,placebox,placeArray,oneplace,place,startdate,enddate, **kwargs):
+            return Page.EditEduPage.SavePlaceButton(user_id=self.user_id, destination_id=self.destination_id,screen_manager=self.screen_manager ,
                                                     parentwidget=placebox,
                                                     placeArray=placeArray,
                                                     placeBoxWidget=oneplace,
                                                     place=place,
-                                                    startdate=startdate, enddate=enddate, **kwargs)
-
-        def EditPlace_button(self, placebox, placeArray, oneplace, place, startdate, enddate, **kwargs):
-            return Page.EditEduPage.EditPlaceButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                    screen_manager=self.screen_manager,
+                                                    startdate=startdate, enddate=enddate,**kwargs)
+        def EditPlace_button(self,placebox,placeArray,oneplace,place,startdate,enddate, **kwargs):
+            return Page.EditEduPage.EditPlaceButton(user_id=self.user_id, destination_id=self.destination_id,screen_manager=self.screen_manager ,
                                                     parentwidget=placebox,
                                                     placeArray=placeArray,
                                                     placeBoxWidget=oneplace,
                                                     place=place,
-                                                    startdate=startdate, enddate=enddate, **kwargs)
+                                                    startdate=startdate, enddate=enddate,**kwargs)
 
-        def AddPlace_button(self, placebox, placeArray, **kwargs):
-            return Page.EditEduPage.AddPlaceButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                   screen_manager=self.screen_manager,
-                                                   placebox=placebox, placeArray=placeArray,
-                                                   **kwargs)
+        def AddPlace_button(self,placebox,placeArray,**kwargs):
+            return Page.EditEduPage.AddPlaceButton(user_id=self.user_id, destination_id=self.destination_id,screen_manager=self.screen_manager ,
+                                                  placebox=placebox,placeArray=placeArray,
+                                                 **kwargs)
 
     class EditContactPage(BoxLayout):
         '''
@@ -2357,60 +2333,55 @@ class Page(BoxLayout):
                 Phone Number    :Done without test
                 Links           :Done without test
         '''
-
         class EditMasterPhoneButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, MasterPhoneBox, PhoneNumWidget, **kwargs):
+            def __init__(self,user_id, destination_id, screen_manager,MasterPhoneBox,PhoneNumWidget,**kwargs):
                 super(Page.EditContactPage.EditMasterPhoneButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.MasterPhoneBox = MasterPhoneBox
-                self.PhoneNumWidget = PhoneNumWidget
+                self.MasterPhoneBox=MasterPhoneBox
+                self.PhoneNumWidget=PhoneNumWidget
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = 'Edit'
                 self.font_size = 10
-
             def on_release(self):
                 self.MasterPhoneBox.remove_widget(self)
                 self.MasterPhoneBox.remove_widget(self.PhoneNumWidget)
-                self.PhoneNuminput = TextInput(text=str(amber.database[self.user_id].master_phone_number),
-                                               size_hint_x=0.3, size_hint_y=None, height=30)
+                self.PhoneNuminput=TextInput(text=str(amber.database[self.user_id].master_phone_number),
+                                            size_hint_x=0.3,size_hint_y=None, height=30)
                 self.MasterPhoneBox.add_widget(self.PhoneNuminput)
-                self.MasterPhoneBox.add_widget(
-                    Page.EditContactPage.SaveMasterPhone_button(self, self.MasterPhoneBox, self.PhoneNuminput))
-
+                self.MasterPhoneBox.add_widget(Page.EditContactPage.SaveMasterPhone_button(self,self.MasterPhoneBox,self.PhoneNuminput))
         class SaveMasterPhoneButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, MasterPhoneBox, PhoneNumWidget, **kwargs):
+            def __init__(self,user_id, destination_id, screen_manager,MasterPhoneBox,PhoneNumWidget,**kwargs):
                 super(Page.EditContactPage.SaveMasterPhoneButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.MasterPhoneBox = MasterPhoneBox
-                self.PhoneNumWidget = PhoneNumWidget
+                self.MasterPhoneBox=MasterPhoneBox
+                self.PhoneNumWidget=PhoneNumWidget
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = 'Save'
                 self.font_size = 10
-
             def on_release(self):
                 valid_number = True
                 for digit in self.PhoneNumWidget.text:
                     if not digit.isdigit():
                         valid_number = False
-                UsersId = amber.generate_personal_docks()
-                for id in UsersId:
+                UsersId= amber.generate_personal_docks()
+                for id in UsersId :
                     if amber.database[id].master_phone_number == self.PhoneNumWidget.text:
                         valid_number = False
 
-                if self.PhoneNumWidget.text == '':
+                if self.PhoneNumWidget.text == '' :
                     valid_number = False
 
-                if valid_number:
+                if valid_number :
                     personal_docks.PersonalDock.change_master_phone_number(amber.database[self.user_id],
-                                                                           self.PhoneNumWidget.text)
+                                                                 self.PhoneNumWidget.text)
                     self.MasterPhoneBox.remove_widget(self)
                     self.MasterPhoneBox.remove_widget(self.PhoneNumWidget)
                     self.PhoneNum = Button(text=str(amber.database[self.user_id].master_phone_number),
@@ -2418,9 +2389,9 @@ class Page(BoxLayout):
                     self.MasterPhoneBox.add_widget(self.PhoneNum)
                     self.MasterPhoneBox.add_widget(
                         Page.EditContactPage.EditMasterPhone_button(self, self.MasterPhoneBox, self.PhoneNum))
-                else:
+                else :
                     self.PhoneNumWidget.text = '!Sorry,This Phone Number is not Valid'
-                    self.PhoneNumWidget.background_color = (1, 0, 0.1, 1)
+                    self.PhoneNumWidget.background_color = (1,0,0.1,1)
 
         class EditMasterMailButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, MasterMailBox, MailNumWidget, **kwargs):
@@ -2440,11 +2411,9 @@ class Page(BoxLayout):
                 self.MasterMailBox.remove_widget(self)
                 self.MasterMailBox.remove_widget(self.MailNumWidget)
                 self.MailNuminput = TextInput(text=str(amber.database[self.user_id].master_email),
-                                              size_hint_x=0.3, size_hint_y=None, height=30)
+                                               size_hint_x=0.3, size_hint_y=None, height=30)
                 self.MasterMailBox.add_widget(self.MailNuminput)
-                self.MasterMailBox.add_widget(
-                    Page.EditContactPage.SaveMasterMail_button(self, self.MasterMailBox, self.MailNuminput))
-
+                self.MasterMailBox.add_widget(Page.EditContactPage.SaveMasterMail_button(self,self.MasterMailBox, self.MailNuminput))
         class SaveMasterMailButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, MasterMailBox, MailNumWidget, **kwargs):
                 super(Page.EditContactPage.SaveMasterMailButton, self).__init__(**kwargs)
@@ -2460,105 +2429,101 @@ class Page(BoxLayout):
                 self.font_size = 10
 
             def on_release(self):
-                valid_mail = True
+                valid_mail=True
                 UsersId = amber.generate_personal_docks()
                 for id in UsersId:
                     if amber.database[id].master_email == self.MailNumWidget.text:
                         valid_mail = False
-                if self.MailNumWidget.text == '':
+                if self.MailNumWidget.text == '' :
                     valid_mail = False
 
                 if not '@' in self.MailNumWidget.text or not '.com' in self.MailNumWidget.text:
                     valid_mail = False
 
-                if valid_mail:
+                if valid_mail :
                     personal_docks.PersonalDock.change_master_email(amber.database[self.user_id],
-                                                                    self.MailNumWidget.text)
+                                                                           self.MailNumWidget.text)
                     self.MasterMailBox.remove_widget(self)
                     self.MasterMailBox.remove_widget(self.MailNumWidget)
                     self.MailNum = Button(text=str(amber.database[self.user_id].master_email),
-                                          size_hint_x=0.3, size_hint_y=None, height=30)
+                                           size_hint_x=0.3, size_hint_y=None, height=30)
                     self.MasterMailBox.add_widget(self.MailNum)
-                    self.MasterMailBox.add_widget(
-                        Page.EditContactPage.EditMasterMail_button(self, self.MasterMailBox, self.MailNum))
+                    self.MasterMailBox.add_widget(Page.EditContactPage.EditMasterMail_button(self,self.MasterMailBox,self.MailNum))
                 else:
                     self.MailNumWidget.text = '!Sorry,This E-Mail is not Valid'
                     self.MailNumWidget.background_color = (1, 0, 0.1, 1)
 
+
         class RemovePhoneButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, parentwidget, Phonelist, PhoneBoxWidget,
-                         PhoneNum, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,parentwidget,Phonelist,PhoneBoxWidget,PhoneNum, **kwargs):
                 super(Page.EditContactPage.RemovePhoneButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.parentwidget = parentwidget
-                self.Phonelist = Phonelist
-                self.PhoneBoxWidget = PhoneBoxWidget
-                self.PhoneNum = PhoneNum
+                self.parentwidget=parentwidget
+                self.Phonelist=Phonelist
+                self.PhoneBoxWidget=PhoneBoxWidget
+                self.PhoneNum=PhoneNum
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = '-'
-                self.font_size = 20
+                self.font_size=20
 
             def on_release(self):
                 if self.PhoneNum.text != '':
                     personal_docks.PersonalDock.remove_phone_number(amber.database[self.user_id],
-                                                                    self.PhoneNum.text)
+                                                                 self.PhoneNum.text)
                 self.parentwidget.remove_widget(self.PhoneBoxWidget)
                 index = self.Phonelist.index(self.PhoneBoxWidget)
                 self.Phonelist.pop(index)
-
         class SavePhoneButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, parentwidget, PhoneList,
-                         PhoneBoxWidget, PhoneNum, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,parentwidget,PhoneList,
+                         PhoneBoxWidget,PhoneNum, **kwargs):
                 super(Page.EditContactPage.SavePhoneButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.parentwidget = parentwidget
-                self.PhoneList = PhoneList
-                self.PhoneBoxWidget = PhoneBoxWidget
-                self.PhoneNum = PhoneNum
+                self.parentwidget=parentwidget
+                self.PhoneList=PhoneList
+                self.PhoneBoxWidget=PhoneBoxWidget
+                self.PhoneNum=PhoneNum
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = '+'
-                self.font_size = 30
+                self.font_size=30
 
             def on_release(self):
-                valid_number = True
+                valid_number=True
                 for digit in self.PhoneNum.text:
                     if not digit.isdigit():
-                        valid_number = False
-                if valid_number and self.PhoneNum.text != '':
+                        valid_number=False
+                if valid_number and self.PhoneNum.text!='':
                     personal_docks.PersonalDock.add_phone_number(amber.database[self.user_id],
-                                                                 self.PhoneNum.text)
+                                                              self.PhoneNum.text)
                     self.PhoneBoxWidget.remove_widget(self)
                     self.PhoneBoxWidget.remove_widget(self.PhoneNum)
-                    savedphone = Button(text=str(self.PhoneNum.text), size_hint_x=0.3,
-                                        size_hint_y=None, height=30)
+                    savedphone=Button(text=str(self.PhoneNum.text) , size_hint_x=0.3,
+                                             size_hint_y=None , height=30 )
                     self.PhoneBoxWidget.add_widget(savedphone)
-                    self.PhoneBoxWidget.add_widget(Page.EditContactPage.RemovePhone_button(self, self.parentwidget,
-                                                                                           self.PhoneList,
-                                                                                           self.PhoneBoxWidget,
-                                                                                           self.PhoneNum))
-                else:
+                    self.PhoneBoxWidget.add_widget(Page.EditContactPage.RemovePhone_button(self,self.parentwidget,
+                                                                                            self.PhoneList,
+                                                                                            self.PhoneBoxWidget,self.PhoneNum))
+                else :
                     self.PhoneBoxWidget.remove_widget(self)
                     self.PhoneBoxWidget.remove_widget(self.PhoneNum)
                     self.parentwidget.remove_widget(self.PhoneBoxWidget)
                     # self.PhoneBoxWidget.add_widget(Label(text='!sorry , Wrong number' , size_hint_x=0.3,
                     #                          size_hint_y=None , height=30 ))
-
         class AddPhoneButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, PhoneBox, Phonelist, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,PhoneBox,Phonelist,**kwargs):
                 super(Page.EditContactPage.AddPhoneButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.PhoneBox = PhoneBox
-                self.Phonelist = Phonelist
+                self.PhoneBox=PhoneBox
+                self.Phonelist=Phonelist
                 self.size_hint_y = None
                 self.size_hint_x = 1
                 self.height = 50
@@ -2568,90 +2533,85 @@ class Page(BoxLayout):
                 self.PhoneBox.remove_widget(self)
 
                 index = len(self.Phonelist)
-                self.Phonelist.append(
-                    BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5, spacing=10))
-                self.Phonelist[index].Phoneinput = TextInput(size_hint_x=0.3,
-                                                             size_hint_y=None, height=30)
+                self.Phonelist.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
+                self.Phonelist[index].Phoneinput = TextInput( size_hint_x=0.3,
+                                                            size_hint_y=None, height=30)
                 self.Phonelist[index].add_widget(self.Phonelist[index].Phoneinput)
-                self.Phonelist[index].add_widget(Page.EditContactPage.SavePhone_button(self, self.PhoneBox,
-                                                                                       self.Phonelist,
-                                                                                       self.Phonelist[index],
-                                                                                       self.Phonelist[
-                                                                                           index].Phoneinput))
+                self.Phonelist[index].add_widget(Page.EditContactPage.SavePhone_button(self,self.PhoneBox,
+                                                                                self.Phonelist,
+                                                                                self.Phonelist[index],
+                                                                                self.Phonelist[index].Phoneinput))
 
                 self.PhoneBox.add_widget(self.Phonelist[index])
-                self.PhoneBox.add_widget(Page.EditContactPage.AddPhone_button(self, self.PhoneBox, self.Phonelist))
+                self.PhoneBox.add_widget(Page.EditContactPage.AddPhone_button(self,self.PhoneBox, self.Phonelist))
+
 
         class RemoveMailButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, MailColumn, MailList, MailBoxWidget, MailWidget,
-                         **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,MailColumn,MailList,MailBoxWidget,MailWidget, **kwargs):
                 super(Page.EditContactPage.RemoveMailButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.MailColumn = MailColumn
-                self.MailList = MailList
-                self.MailBoxWidget = MailBoxWidget
-                self.MailWidget = MailWidget
+                self.MailColumn=MailColumn
+                self.MailList=MailList
+                self.MailBoxWidget=MailBoxWidget
+                self.MailWidget=MailWidget
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = '-'
-                self.font_size = 20
+                self.font_size=20
 
             def on_release(self):
                 if self.MailWidget.text != '':
                     personal_docks.PersonalDock.remove_email(amber.database[self.user_id],
-                                                             self.MailWidget.text)
+                                                                 self.MailWidget.text)
                 self.MailColumn.remove_widget(self.MailBoxWidget)
                 index = self.MailList.index(self.MailBoxWidget)
                 self.MailList.pop(index)
-
         class SaveMailButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, MailColumn, MailList,
-                         MailBoxWidget, MailWidget, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,MailColumn,MailList,
+                         MailBoxWidget,MailWidget, **kwargs):
                 super(Page.EditContactPage.SaveMailButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.MailColumn = MailColumn
-                self.MailList = MailList
-                self.MailBoxWidget = MailBoxWidget
-                self.MailWidget = MailWidget
+                self.MailColumn=MailColumn
+                self.MailList=MailList
+                self.MailBoxWidget=MailBoxWidget
+                self.MailWidget=MailWidget
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = '+'
-                self.font_size = 30
+                self.font_size=30
 
             def on_release(self):
-                if self.MailWidget.text != '':
+                if self.MailWidget.text!='':
                     personal_docks.PersonalDock.add_email(amber.database[self.user_id],
-                                                          self.MailWidget.text)
+                                                              self.MailWidget.text)
                     self.MailBoxWidget.remove_widget(self)
                     self.MailBoxWidget.remove_widget(self.MailWidget)
-                    savedMail = Button(text=str(self.MailWidget.text), size_hint_x=0.3,
-                                       size_hint_y=None, height=30)
+                    savedMail=Button(text=str(self.MailWidget.text) , size_hint_x=0.3,
+                                             size_hint_y=None , height=30 )
                     self.MailBoxWidget.add_widget(savedMail)
-                    self.MailBoxWidget.add_widget(Page.EditContactPage.RemoveMail_button(self, self.MailColumn,
-                                                                                         self.MailList,
-                                                                                         self.MailBoxWidget,
-                                                                                         self.MailWidget))
-                else:
+                    self.MailBoxWidget.add_widget(Page.EditContactPage.RemoveMail_button(self,self.MailColumn,
+                                                                                            self.MailList,
+                                                                                            self.MailBoxWidget,self.MailWidget))
+                else :
                     self.MailBoxWidget.remove_widget(self)
                     self.MailBoxWidget.remove_widget(self.MailWidget)
                     self.MailColumn.remove_widget(self.MailBoxWidget)
                     # self.MailBoxWidget.add_widget(Label(text='!sorry , Wrong number' , size_hint_x=0.3,
                     #                          size_hint_y=None , height=30 ))
-
         class AddMailButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, MailColumn, MailList, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,MailColumn,MailList,**kwargs):
                 super(Page.EditContactPage.AddMailButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.MailColumn = MailColumn
-                self.MailList = MailList
+                self.MailColumn=MailColumn
+                self.MailList=MailList
                 self.size_hint_y = None
                 self.size_hint_x = 1
                 self.height = 50
@@ -2661,29 +2621,27 @@ class Page(BoxLayout):
                 self.MailColumn.remove_widget(self)
 
                 index = len(self.MailList)
-                self.MailList.append(
-                    BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5, spacing=10))
-                self.MailList[index].Mailinput = TextInput(size_hint_x=0.3,
-                                                           size_hint_y=None, height=30)
+                self.MailList.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
+                self.MailList[index].Mailinput = TextInput( size_hint_x=0.3,
+                                                            size_hint_y=None, height=30)
                 self.MailList[index].add_widget(self.MailList[index].Mailinput)
-                self.MailList[index].add_widget(Page.EditContactPage.SaveMail_button(self, self.MailColumn,
-                                                                                     self.MailList,
-                                                                                     self.MailList[index],
-                                                                                     self.MailList[index].Mailinput))
+                self.MailList[index].add_widget(Page.EditContactPage.SaveMail_button(self,self.MailColumn,
+                                                                                self.MailList,
+                                                                                self.MailList[index],
+                                                                                self.MailList[index].Mailinput))
 
                 self.MailColumn.add_widget(self.MailList[index])
-                self.MailColumn.add_widget(Page.EditContactPage.AddMail_button(self, self.MailColumn, self.MailList))
+                self.MailColumn.add_widget(Page.EditContactPage.AddMail_button(self,self.MailColumn, self.MailList))
 
         class RemoveLinkButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, LinksColumn, LinksList, LinkBox, LinkStrWidget,
-                         LinkURLWidget, **kwargs):
+            def __init__(self,user_id, destination_id, screen_manager,LinksColumn,LinksList,LinkBox,LinkStrWidget,LinkURLWidget, **kwargs):
                 super(Page.EditContactPage.RemoveLinkButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
                 self.LinksColumn = LinksColumn
                 self.LinksList = LinksList
-                self.LinkBox = LinkBox
+                self.LinkBox=LinkBox
                 self.LinkStrWidget = LinkStrWidget
                 self.LinkURLWidget = LinkURLWidget
                 self.size_hint_y = None
@@ -2691,7 +2649,6 @@ class Page(BoxLayout):
                 self.height = 30
                 self.text = '-'
                 self.font_size = 20
-
             def on_release(self):
                 if self.LinkStrWidget.text != '' and self.LinkURLWidget.text != '':
                     personal_docks.PersonalDock.remove_link(amber.database[self.user_id],
@@ -2699,9 +2656,8 @@ class Page(BoxLayout):
                 self.LinksColumn.remove_widget(self.LinkBox)
                 index = self.LinksList.index(self.LinkBox)
                 self.LinksList.pop(index)
-
         class SaveLinkButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, LinksColumn, LinksList, LinkBox, LinkStrWidget,
+            def __init__(self, user_id, destination_id, screen_manager, LinksColumn, LinksList,LinkBox, LinkStrWidget,
                          LinkURLWidget, **kwargs):
                 super(Page.EditContactPage.SaveLinkButton, self).__init__(**kwargs)
                 self.user_id = user_id
@@ -2709,7 +2665,7 @@ class Page(BoxLayout):
                 self.screen_manager = screen_manager
                 self.LinksColumn = LinksColumn
                 self.LinksList = LinksList
-                self.LinkBox = LinkBox
+                self.LinkBox=LinkBox
                 self.LinkStrWidget = LinkStrWidget
                 self.LinkURLWidget = LinkURLWidget
                 self.size_hint_y = None
@@ -2717,35 +2673,35 @@ class Page(BoxLayout):
                 self.height = 30
                 self.text = '+'
                 self.font_size = 20
-
             def on_release(self):
                 if self.LinkStrWidget.text != '' and self.LinkURLWidget.text != '':
-                    personal_docks.PersonalDock.add_link(amber.database[self.user_id],
-                                                         self.LinkStrWidget.text, self.LinkURLWidget.text)
+                    if not personal_docks.PersonalDock.edit_link_url(amber.database[self.user_id],
+                                                          self.LinkStrWidget.text,self.LinkURLWidget.text):
+                        personal_docks.PersonalDock.add_link(amber.database[self.user_id],
+                                                              self.LinkStrWidget.text,self.LinkURLWidget.text)
                     # self.LinkBox.remove_widget(self)
                     # self.LinkBox.remove_widget(self.LinkStrWidget)
                     # self.LinkBox.remove_widget(self.LinkURLWidget)
                     self.LinkBox.clear_widgets()
 
                     self.savedLinkstr = Button(text=str(self.LinkStrWidget.text), size_hint_x=0.3,
-                                               size_hint_y=None, height=30)
+                                       size_hint_y=None, height=30)
                     self.savedLinkurl = Button(text=str(self.LinkURLWidget.text), size_hint_x=0.3,
-                                               size_hint_y=None, height=30)
+                                          size_hint_y=None, height=30)
                     self.LinkBox.add_widget(self.savedLinkstr)
                     self.LinkBox.add_widget(self.savedLinkurl)
-                    self.LinkBox.add_widget(Page.EditContactPage.EditLink_button(self, self.LinksColumn,
-                                                                                 self.LinksList,
-                                                                                 self.LinkBox,
-                                                                                 self.savedLinkstr,
-                                                                                 self.savedLinkurl))
-                    self.LinkBox.add_widget(Page.EditContactPage.RemoveLink_button(self, self.LinksColumn,
-                                                                                   self.LinksList,
-                                                                                   self.LinkBox,
-                                                                                   self.savedLinkstr,
-                                                                                   self.savedLinkurl))
-
+                    self.LinkBox.add_widget(Page.EditContactPage.EditLink_button(self,self.LinksColumn,
+                                                                                self.LinksList,
+                                                                                self.LinkBox,
+                                                                                self.savedLinkstr,
+                                                                                self.savedLinkurl))
+                    self.LinkBox.add_widget(Page.EditContactPage.RemoveLink_button(self,self.LinksColumn,
+                                                                                self.LinksList,
+                                                                                self.LinkBox,
+                                                                                self.savedLinkstr,
+                                                                                self.savedLinkurl))
         class EditLinkButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, LinksColumn, LinksList, LinkBox, LinkStrWidget,
+            def __init__(self, user_id, destination_id, screen_manager, LinksColumn, LinksList,LinkBox, LinkStrWidget,
                          LinkURLWidget, **kwargs):
                 super(Page.EditContactPage.EditLinkButton, self).__init__(**kwargs)
                 self.user_id = user_id
@@ -2753,7 +2709,7 @@ class Page(BoxLayout):
                 self.screen_manager = screen_manager
                 self.LinksColumn = LinksColumn
                 self.LinksList = LinksList
-                self.LinkBox = LinkBox
+                self.LinkBox=LinkBox
                 self.LinkStrWidget = LinkStrWidget
                 self.LinkURLWidget = LinkURLWidget
                 self.size_hint_y = None
@@ -2761,7 +2717,6 @@ class Page(BoxLayout):
                 self.height = 30
                 self.text = 'Edit'
                 # self.font_size = 20
-
             def on_release(self):
                 # self.LinkBox.remove_widget(self)
                 # self.LinkBox.remove_widget(self.LinkStrWidget)
@@ -2773,17 +2728,16 @@ class Page(BoxLayout):
                                               size_hint_x=0.3, size_hint_y=None, height=30)
                 self.LinkBox.add_widget(self.LinkStrInput)
                 self.LinkBox.add_widget(self.LinkURLInput)
-                self.LinkBox.add_widget(Page.EditContactPage.SaveLink_button(self, self.LinksColumn,
-                                                                             self.LinksList,
-                                                                             self.LinkBox,
-                                                                             self.LinkStrInput,
-                                                                             self.LinkURLInput))
-                self.LinkBox.add_widget(Page.EditContactPage.RemoveLink_button(self, self.LinksColumn,
-                                                                               self.LinksList,
-                                                                               self.LinkBox,
-                                                                               self.LinkStrInput,
-                                                                               self.LinkURLInput))
-
+                self.LinkBox.add_widget(Page.EditContactPage.SaveLink_button(self,self.LinksColumn,
+                                                                                self.LinksList,
+                                                                                self.LinkBox,
+                                                                                self.LinkStrInput,
+                                                                                self.LinkURLInput))
+                self.LinkBox.add_widget(Page.EditContactPage.RemoveLink_button(self,self.LinksColumn,
+                                                                                self.LinksList,
+                                                                                self.LinkBox,
+                                                                                self.LinkStrInput,
+                                                                                self.LinkURLInput))
         class AddLinkButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, LinksColumn, LinksList, **kwargs):
                 super(Page.EditContactPage.AddLinkButton, self).__init__(**kwargs)
@@ -2796,36 +2750,32 @@ class Page(BoxLayout):
                 self.size_hint_x = 1
                 self.height = 50
                 self.text = 'Add Link URL'
-
             def on_release(self):
                 self.LinksColumn.remove_widget(self)
 
                 index = len(self.LinksList)
-                self.LinksList.append(
-                    BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5, spacing=10))
-                self.LinksList[index].LinkStrinput = TextInput(size_hint_x=0.3,
-                                                               size_hint_y=None, height=30)
+                self.LinksList.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
+                self.LinksList[index].LinkStrinput = TextInput( size_hint_x=0.3,
+                                                            size_hint_y=None, height=30)
                 self.LinksList[index].LinkURlinput = TextInput(size_hint_x=0.3,
                                                                size_hint_y=None, height=30)
                 self.LinksList[index].add_widget(self.LinksList[index].LinkStrinput)
                 self.LinksList[index].add_widget(self.LinksList[index].LinkURlinput)
-                self.LinksList[index].add_widget(Page.EditContactPage.SaveLink_button(self, self.LinksColumn,
-                                                                                      self.LinksList,
-                                                                                      self.LinksList[index],
-                                                                                      self.LinksList[
-                                                                                          index].LinkStrinput,
-                                                                                      self.LinksList[
-                                                                                          index].LinkURlinput))
-                self.LinksList[index].add_widget(Page.EditContactPage.RemoveLink_button(self, self.LinksColumn,
-                                                                                        self.LinksList,
-                                                                                        self.LinksList[index],
-                                                                                        self.LinksList[
-                                                                                            index].LinkStrinput,
-                                                                                        self.LinksList[
-                                                                                            index].LinkURlinput))
+                self.LinksList[index].add_widget(Page.EditContactPage.SaveLink_button(self,self.LinksColumn,
+                                                                                self.LinksList,
+                                                                                self.LinksList[index],
+                                                                                self.LinksList[index].LinkStrinput,
+                                                                                self.LinksList[index].LinkURlinput))
+                self.LinksList[index].add_widget(Page.EditContactPage.RemoveLink_button(self,self.LinksColumn,
+                                                                                self.LinksList,
+                                                                                self.LinksList[index],
+                                                                                self.LinksList[index].LinkStrinput,
+                                                                                self.LinksList[index].LinkURlinput))
 
                 self.LinksColumn.add_widget(self.LinksList[index])
-                self.LinksColumn.add_widget(Page.EditContactPage.AddLink_button(self, self.LinksColumn, self.LinksList))
+                self.LinksColumn.add_widget(Page.EditContactPage.AddLink_button(self,self.LinksColumn, self.LinksList))
+
+
 
         def __init__(self, user_id, destination_id, screen_manager, **kwargs):
             super(Page.EditContactPage, self).__init__(**kwargs)
@@ -2834,7 +2784,7 @@ class Page(BoxLayout):
             self.screen_manager = screen_manager
             self.orientation = 'vertical'
             size_hint_y = 3
-            self.add_widget(Label(text='', size_hint_y=1, height=50))
+            self.add_widget(Label(text='',size_hint_y=1, height=50))
             self.Phonecolumn = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=1)
             self.Emailcolumn = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=1)
             self.LinksRow = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=1)
@@ -2845,25 +2795,24 @@ class Page(BoxLayout):
             self.Phonecolumn.add_widget(self.MasterPhoneheader)
             self.Emailcolumn.add_widget(self.MasterEmailheader)
 
-            self.MasterPhoneBox = BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5,
-                                            spacing=10)
+            self.MasterPhoneBox = BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10)
             self.MasterPhoneButton = Button(text=str(amber.database[user_id].master_phone_number), size_hint_x=0.3,
-                                            size_hint_y=None, height=30)
+                                size_hint_y=None, height=30)
             self.MasterPhoneBox.add_widget(self.MasterPhoneButton)
-            self.MasterPhoneBox.add_widget(self.EditMasterPhone_button(self.MasterPhoneBox, self.MasterPhoneButton))
+            self.MasterPhoneBox.add_widget(self.EditMasterPhone_button(self.MasterPhoneBox,self.MasterPhoneButton))
 
             self.Phonecolumn.add_widget(self.MasterPhoneBox)
 
             self.MasterMailBox = BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5,
-                                           spacing=10)
+                                            spacing=10)
             self.MasterMailButton = Button(text=str(amber.database[user_id].master_email), size_hint_x=0.3,
-                                           size_hint_y=None, height=30)
+                                            size_hint_y=None, height=30)
             self.MasterMailBox.add_widget(self.MasterMailButton)
-            self.MasterMailBox.add_widget(self.EditMasterMail_button(self.MasterMailBox, self.MasterMailButton))
+            self.MasterMailBox.add_widget(self.EditMasterMail_button(self.MasterMailBox,self.MasterMailButton))
 
             self.Emailcolumn.add_widget(self.MasterMailBox)
 
-            self.Phoneheader = Label(text='Mobile Numbers', size_hint_x=1, size_hint_y=1, height=50)
+            self.Phoneheader = Label(text='Mobile Numbers',size_hint_x=1,size_hint_y=1, height=50)
             self.Emailheader = Label(text='Emails', size_hint_x=1, size_hint_y=1, height=50)
             self.Linksheader = Label(text='Links(Subject & URL)', size_hint_x=1, size_hint_y=1, height=50)
 
@@ -2871,16 +2820,17 @@ class Page(BoxLayout):
             self.Emailcolumn.add_widget(self.Emailheader)
             self.LinksRow.add_widget(self.Linksheader)
 
+
             ###Phone Information
             self.PhoneBox = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=None)
-            self.PhoneList = []
+            self.PhoneList =[]
             for index, Number in enumerate(amber.database[user_id].phone_numbers):
                 # if index != 0:
                 self.PhoneList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
             for index, Number in enumerate(self.PhoneList):
-                if index != 0:
+                if index != 0 :
                     Number.Phoneinput = Button(text=amber.database[user_id].phone_numbers[index], size_hint_x=0.3,
-                                               size_hint_y=None, height=30)
+                                                 size_hint_y=None, height=30)
                     Number.add_widget(Number.Phoneinput)
                     Number.add_widget(
                         self.RemovePhone_button(self.PhoneBox, self.PhoneList, Number, Number.Phoneinput))
@@ -2888,20 +2838,20 @@ class Page(BoxLayout):
                     self.PhoneBox.add_widget(Number)
             self.PhoneBox.add_widget(self.AddPhone_button(self.PhoneBox, self.PhoneList))
             self.PhoneBox.bind(minimum_height=self.PhoneBox.setter('height'))
-            self.PhoneBoxScrollView = ScrollView(size_hint=(1, None), size=(200, 200))
+            self.PhoneBoxScrollView = ScrollView(size_hint=(1, None),size=(200,200))
             self.PhoneBoxScrollView.add_widget(self.PhoneBox)
             self.Phonecolumn.add_widget(self.PhoneBoxScrollView)
 
             ###Emails Information
             self.EmailBox = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=None)
-            self.EmailList = []
+            self.EmailList=[]
             for index, mail in enumerate(amber.database[user_id].emails):
                 # if index != 0:
                 self.EmailList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
-            for index, mail in enumerate(self.PhoneList):
-                if index != 0:
+            for index, mail in enumerate(self.EmailList):
+                if index != 0 :
                     mail.mailinput = Button(text=amber.database[user_id].emails[index], size_hint_x=0.3,
-                                            size_hint_y=None, height=30)
+                                                 size_hint_y=None, height=30)
                     mail.add_widget(mail.mailinput)
                     mail.add_widget(
                         self.RemoveMail_button(self.EmailBox, self.EmailList, mail, mail.mailinput))
@@ -2915,28 +2865,28 @@ class Page(BoxLayout):
 
             ###Links Information
             self.LinksBox = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=None)
-            self.LinksList = []
-            for link in amber.database[user_id].links:
+            self.LinksList=[]
+            for  link in amber.database[user_id].links:
                 # if index != 0:
-                self.LinksList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+                self.LinksList.append(BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5, spacing=10))
             for index, link in enumerate(self.LinksList):
-                if index != 0:
                     link.linkstrwidget = Button(text=amber.database[user_id].links[index][0], size_hint_x=0.3,
-                                                size_hint_y=None, height=30)
+                                                 size_hint_y=None, height=30)
                     link.linkURLwidget = Button(text=amber.database[user_id].links[index][1], size_hint_x=0.3,
                                                 size_hint_y=None, height=30)
                     link.add_widget(link.linkstrwidget)
                     link.add_widget(link.linkURLwidget)
-                    link.add_widget(Page.EditContactPage.EditLink_button(self.LinksBox,
-                                                                         self.LinksList,
-                                                                         self.LinkBox,
-                                                                         link.linkstrwidget,
-                                                                         link.linkURLwidget))
-                    link.add_widget(Page.EditContactPage.RemoveLink_button(self.LinksBox,
-                                                                           self.LinksList,
-                                                                           self.LinkBox,
-                                                                           link.linkstrwidget,
-                                                                           link.linkURLwidget))
+                    link.add_widget(self.EditLink_button(self.LinksBox,
+                                                                            self.LinksList,
+                                                                            link,
+                                                                            link.linkstrwidget,
+                                                                            link.linkURLwidget))
+                    link.add_widget(self.RemoveLink_button(self.LinksBox,
+                                                                            self.LinksList,
+                                                                            link,
+                                                                            link.linkstrwidget,
+                                                                            link.linkURLwidget))
+
 
                     self.LinksBox.add_widget(link)
             self.LinksBox.add_widget(self.AddLink_button(self.LinksBox, self.LinksList))
@@ -2950,58 +2900,53 @@ class Page(BoxLayout):
             self.add_widget(self.PhoneAndMailRow)
             self.add_widget(self.LinksRow)
 
-        def EditMasterPhone_button(self, MasterPhoneBox, PhoneNumWidget, **kwargs):
+        def EditMasterPhone_button(self,MasterPhoneBox,PhoneNumWidget, **kwargs):
             return Page.EditContactPage.EditMasterPhoneButton(user_id=self.user_id,
                                                               destination_id=self.destination_id,
                                                               screen_manager=self.screen_manager,
                                                               MasterPhoneBox=MasterPhoneBox,
                                                               PhoneNumWidget=PhoneNumWidget)
-
-        def SaveMasterPhone_button(self, MasterPhoneBox, PhoneNumWidget, **kwargs):
+        def SaveMasterPhone_button(self,MasterPhoneBox,PhoneNumWidget, **kwargs):
             return Page.EditContactPage.SaveMasterPhoneButton(user_id=self.user_id,
                                                               destination_id=self.destination_id,
                                                               screen_manager=self.screen_manager,
                                                               MasterPhoneBox=MasterPhoneBox,
                                                               PhoneNumWidget=PhoneNumWidget)
-
-        def EditMasterMail_button(self, MasterMailBox, MailNumWidget, **kwargs):
+        def EditMasterMail_button(self,MasterMailBox, MailNumWidget, **kwargs):
             return Page.EditContactPage.EditMasterMailButton(user_id=self.user_id,
-                                                             destination_id=self.destination_id,
-                                                             screen_manager=self.screen_manager,
+                                                              destination_id=self.destination_id,
+                                                              screen_manager=self.screen_manager,
                                                              MasterMailBox=MasterMailBox,
                                                              MailNumWidget=MailNumWidget)
-
-        def SaveMasterMail_button(self, MasterMailBox, MailNumWidget, **kwargs):
+        def SaveMasterMail_button(self,MasterMailBox, MailNumWidget, **kwargs):
             return Page.EditContactPage.SaveMasterMailButton(user_id=self.user_id,
-                                                             destination_id=self.destination_id,
-                                                             screen_manager=self.screen_manager,
+                                                              destination_id=self.destination_id,
+                                                              screen_manager=self.screen_manager,
                                                              MasterMailBox=MasterMailBox,
                                                              MailNumWidget=MailNumWidget)
 
-        def RemovePhone_button(self, PhoneBox, Phonelist, PhoneBoxWidget, PhoneNum, **kwargs):
+        def RemovePhone_button(self,PhoneBox,Phonelist,PhoneBoxWidget,PhoneNum, **kwargs):
             return Page.EditContactPage.RemovePhoneButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                          screen_manager=self.screen_manager,
-                                                          parentwidget=PhoneBox,
-                                                          Phonelist=Phonelist,
-                                                          PhoneBoxWidget=PhoneBoxWidget,
-                                                          PhoneNum=PhoneNum, **kwargs)
-
-        def SavePhone_button(self, PhoneBox, Phonelist, PhoneBoxWidget, PhoneNum, **kwargs):
+                                                      screen_manager=self.screen_manager,
+                                                      parentwidget=PhoneBox,
+                                                      Phonelist=Phonelist,
+                                                      PhoneBoxWidget=PhoneBoxWidget,
+                                                      PhoneNum=PhoneNum, **kwargs)
+        def SavePhone_button(self,PhoneBox,Phonelist,PhoneBoxWidget,PhoneNum, **kwargs):
             return Page.EditContactPage.SavePhoneButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                        screen_manager=self.screen_manager,
-                                                        parentwidget=PhoneBox,
-                                                        PhoneList=Phonelist,
-                                                        PhoneBoxWidget=PhoneBoxWidget,
-                                                        PhoneNum=PhoneNum, **kwargs)
-
-        def AddPhone_button(self, PhoneBox, Phonelist, **kwargs):
+                                                      screen_manager=self.screen_manager,
+                                                      parentwidget=PhoneBox,
+                                                      PhoneList=Phonelist,
+                                                      PhoneBoxWidget=PhoneBoxWidget,
+                                                      PhoneNum=PhoneNum, **kwargs)
+        def AddPhone_button(self,PhoneBox,Phonelist,**kwargs):
             return Page.EditContactPage.AddPhoneButton(user_id=self.user_id, destination_id=self.destination_id,
-                                                       screen_manager=self.screen_manager,
-                                                       PhoneBox=PhoneBox,
-                                                       Phonelist=Phonelist,
-                                                       **kwargs)
+                                                      screen_manager=self.screen_manager,
+                                                        PhoneBox=PhoneBox,
+                                                      Phonelist=Phonelist,
+                                                      **kwargs)
 
-        def RemoveMail_button(self, MailColumn, MailList, MailBoxWidget, MailWidget, **kwargs):
+        def RemoveMail_button(self,MailColumn,MailList,MailBoxWidget,MailWidget,**kwargs):
             return Page.EditContactPage.RemoveMailButton(user_id=self.user_id,
                                                          destination_id=self.destination_id,
                                                          screen_manager=self.screen_manager,
@@ -3009,8 +2954,7 @@ class Page(BoxLayout):
                                                          MailList=MailList,
                                                          MailBoxWidget=MailBoxWidget,
                                                          MailWidget=MailWidget, **kwargs)
-
-        def SaveMail_button(self, MailColumn, MailList, MailBoxWidget, MailWidget, **kwargs):
+        def SaveMail_button(self,MailColumn,MailList,MailBoxWidget,MailWidget,**kwargs):
             return Page.EditContactPage.SaveMailButton(user_id=self.user_id,
                                                        destination_id=self.destination_id,
                                                        screen_manager=self.screen_manager,
@@ -3018,15 +2962,14 @@ class Page(BoxLayout):
                                                        MailList=MailList,
                                                        MailBoxWidget=MailBoxWidget,
                                                        MailWidget=MailWidget, **kwargs)
-
-        def AddMail_button(self, MailColumn, MailList, **kwargs):
+        def AddMail_button(self,MailColumn,MailList,**kwargs):
             return Page.EditContactPage.AddMailButton(user_id=self.user_id,
                                                       destination_id=self.destination_id,
                                                       screen_manager=self.screen_manager,
                                                       MailColumn=MailColumn,
-                                                      MailList=MailList, **kwargs)
+                                                      MailList=MailList,**kwargs)
 
-        def RemoveLink_button(self, LinksColumn, LinksList, LinkBox, LinkStrWidget, LinkURLWidget, **kwargs):
+        def RemoveLink_button(self, LinksColumn, LinksList, LinkBox, LinkStrWidget,LinkURLWidget, **kwargs):
             return Page.EditContactPage.RemoveLinkButton(user_id=self.user_id,
                                                          destination_id=self.destination_id,
                                                          screen_manager=self.screen_manager,
@@ -3034,35 +2977,32 @@ class Page(BoxLayout):
                                                          LinksList=LinksList,
                                                          LinkBox=LinkBox,
                                                          LinkStrWidget=LinkStrWidget,
-                                                         LinkURLWidget=LinkURLWidget, **kwargs)
-
-        def SaveLink_button(self, LinksColumn, LinksList, LinkBox, LinkStrWidget, LinkURLWidget, **kwargs):
+                                                         LinkURLWidget=LinkURLWidget,**kwargs)
+        def SaveLink_button(self, LinksColumn, LinksList, LinkBox, LinkStrWidget,LinkURLWidget, **kwargs):
             return Page.EditContactPage.SaveLinkButton(user_id=self.user_id,
-                                                       destination_id=self.destination_id,
-                                                       screen_manager=self.screen_manager,
-                                                       LinksColumn=LinksColumn,
-                                                       LinksList=LinksList,
-                                                       LinkBox=LinkBox,
-                                                       LinkStrWidget=LinkStrWidget,
-                                                       LinkURLWidget=LinkURLWidget, **kwargs)
-
-        def EditLink_button(self, LinksColumn, LinksList, LinkBox, LinkStrWidget, LinkURLWidget, **kwargs):
+                                                         destination_id=self.destination_id,
+                                                         screen_manager=self.screen_manager,
+                                                         LinksColumn=LinksColumn,
+                                                         LinksList=LinksList,
+                                                         LinkBox=LinkBox,
+                                                         LinkStrWidget=LinkStrWidget,
+                                                         LinkURLWidget=LinkURLWidget,**kwargs)
+        def EditLink_button(self, LinksColumn, LinksList, LinkBox, LinkStrWidget,LinkURLWidget, **kwargs):
             return Page.EditContactPage.EditLinkButton(user_id=self.user_id,
-                                                       destination_id=self.destination_id,
-                                                       screen_manager=self.screen_manager,
-                                                       LinksColumn=LinksColumn,
-                                                       LinksList=LinksList,
-                                                       LinkBox=LinkBox,
-                                                       LinkStrWidget=LinkStrWidget,
-                                                       LinkURLWidget=LinkURLWidget, **kwargs)
-
+                                                         destination_id=self.destination_id,
+                                                         screen_manager=self.screen_manager,
+                                                         LinksColumn=LinksColumn,
+                                                         LinksList=LinksList,
+                                                         LinkBox=LinkBox,
+                                                         LinkStrWidget=LinkStrWidget,
+                                                         LinkURLWidget=LinkURLWidget,**kwargs)
         def AddLink_button(self, LinksColumn, LinksList, **kwargs):
             return Page.EditContactPage.AddLinkButton(user_id=self.user_id,
-                                                      destination_id=self.destination_id,
-                                                      screen_manager=self.screen_manager,
-                                                      LinksColumn=LinksColumn,
-                                                      LinksList=LinksList,
-                                                      **kwargs)
+                                                         destination_id=self.destination_id,
+                                                         screen_manager=self.screen_manager,
+                                                         LinksColumn=LinksColumn,
+                                                         LinksList=LinksList,
+                                                         **kwargs)
 
     class EditRelationsPage(BoxLayout):
         '''
@@ -3070,7 +3010,6 @@ class Page(BoxLayout):
         Family Member:x
         Relationship status :x
         '''
-
         class AddFamilyMemberButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, FamilyColumn, FamilyList, **kwargs):
                 super(Page.EditRelationsPage.AddFamilyMemberButton, self).__init__(**kwargs)
@@ -3085,35 +3024,61 @@ class Page(BoxLayout):
                 self.text = 'Add New Family Member'
                 self.font_size = 15
 
+
             def on_release(self):
                 self.FamilyColumn.remove_widget(self)
 
                 index = len(self.FamilyList)
-                self.FamilyList.append(
-                    BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5, spacing=10))
-                self.FamilyList[index].friendnameinput = TextInput(size_hint_x=0.3,
-                                                                   size_hint_y=None, height=30)
+                self.FamilyList.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
+
+
+
+                self.FamilyList[index].friendnameinput = Spinner( size_hint_x=0.3,
+                                                            size_hint_y=None, height=30)
+                for frd in amber.database[self.user_id].friends:
+                    self.FamilyList[index].friendnameinput.values.append(amber.database[frd].name)
                 self.FamilyList[index].add_widget(self.FamilyList[index].friendnameinput)
-                self.FamilyList[index].familyrelationinput = TextInput(size_hint_x=0.3,
-                                                                       size_hint_y=None, height=30)
+                self.FamilyList[index].familyrelationinput = Spinner(size_hint_x=0.3,
+                                                                       values=('Brother'
+                                                                       ,'Sister'
+                                                                       ,'Father'
+                                                                       ,'Mother'
+                                                                       ,'Son'
+                                                                       ,'Daughter'
+                                                                       ,'Uncle'
+                                                                       ,'Aunt'
+                                                                       ,'Nephew'
+                                                                       ,'Niece'
+                                                                       ,'Cousin'
+                                                                       ,'Grandmother'
+                                                                       ,'Granddaughter'
+                                                                       ,'Stepbrother'
+                                                                       ,'Stepsister'
+                                                                       ,'Stepfather'
+                                                                       ,'Stepmother'
+                                                                       ,'Stepson'
+                                                                       ,'Stepdaughter'
+                                                                       ,'Brother in law'
+                                                                       ,'Sister in law'
+                                                                       ,'Father in law'
+                                                                       ,'Mother in law'
+                                                                       ,'Son in law'
+                                                                       ,'Daughter in law'),size_hint_y=None, height=30)
                 self.FamilyList[index].add_widget(self.FamilyList[index].familyrelationinput)
-                self.FamilyList[index].add_widget(
-                    Page.EditRelationsPage.SaveFamilyMember_button(self, self.FamilyColumn,
+                self.FamilyList[index].add_widget(Page.EditRelationsPage.SaveFamilyMember_button(self,self.FamilyColumn,
+                                                                                self.FamilyList,
+                                                                                self.FamilyList[index],
+                                                                                self.FamilyList[index].friendnameinput,
+                                                                                self.FamilyList[index].familyrelationinput))
+
+                self.FamilyList[index].add_widget(Page.EditRelationsPage.RemoveFamilyMember_button(self, self.FamilyColumn,
                                                                    self.FamilyList,
                                                                    self.FamilyList[index],
                                                                    self.FamilyList[index].friendnameinput,
                                                                    self.FamilyList[index].familyrelationinput))
 
-                self.FamilyList[index].add_widget(
-                    Page.EditRelationsPage.RemoveFamilyMember_button(self, self.FamilyColumn,
-                                                                     self.FamilyList,
-                                                                     self.FamilyList[index],
-                                                                     self.FamilyList[index].friendnameinput,
-                                                                     self.FamilyList[index].familyrelationinput))
-
                 self.FamilyColumn.add_widget(self.FamilyList[index])
-                self.FamilyColumn.add_widget(
-                    Page.EditRelationsPage.AddFamilyMember_button(self, self.FamilyColumn, self.FamilyList))
+                self.FamilyColumn.add_widget(Page.EditRelationsPage.AddFamilyMember_button(self,self.FamilyColumn, self.FamilyList))
 
         class RemoveFamilyMemberButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, FamilyColumn, FamilyList, FamilyRow,
@@ -3137,8 +3102,7 @@ class Page(BoxLayout):
                 if self.friendnameinput.text != '' and self.familyrelationinput.text != '':
                     for friend in amber.database[self.user_id].friends:
                         if self.friendnameinput.text == amber.database[friend].name:
-                            personal_docks.PersonalDock.remove_family_member_relationship(amber.database[self.user_id],
-                                                                                          friend)
+                            personal_docks.PersonalDock.remove_family_member_relationship(amber.database[self.user_id],friend)
                             self.FamilyColumn.remove_widget(self.FamilyRow)
                             index = self.FamilyList.index(self.FamilyRow)
                             self.FamilyList.pop(index)
@@ -3170,32 +3134,28 @@ class Page(BoxLayout):
                 if self.friendnameinput.text != '' and self.familyrelationinput.text != '':
                     for friend in amber.database[self.user_id].friends:
                         if self.friendnameinput.text == amber.database[friend].name:
-                            personal_docks.PersonalDock.add_family_member_relationship(amber.database[self.user_id],
-                                                                                       friend,
-                                                                                       self.familyrelationinput.text)
+                            relation=self.familyrelationinput.text.lower().replace(' ', '')
+                            personal_docks.PersonalDock.add_family_member_relationship(amber.database[self.user_id],friend,relation)
 
                             self.FamilyRow.clear_widgets()
 
                             self.friendnameinput = Button(text=str(self.friendnameinput.text), size_hint_x=0.3,
-                                                          size_hint_y=None, height=30)
+                                                       size_hint_y=None, height=30)
                             self.familyrelationinput = Button(text=str(self.familyrelationinput.text), size_hint_x=0.3,
-                                                              size_hint_y=None, height=30)
+                                                       size_hint_y=None, height=30)
                             self.FamilyRow.add_widget(self.friendnameinput)
                             self.FamilyRow.add_widget(self.familyrelationinput)
-                            self.FamilyRow.add_widget(
-                                Page.EditRelationsPage.EditFamilyMember_button(self, self.FamilyColumn,
-                                                                               self.FamilyList,
-                                                                               self.FamilyRow,
-                                                                               self.friendnameinput,
-                                                                               self.familyrelationinput))
-                            self.FamilyRow.add_widget(
-                                Page.EditRelationsPage.RemoveFamilyMember_button(self, self.FamilyColumn,
-                                                                                 self.FamilyList,
-                                                                                 self.FamilyRow,
-                                                                                 self.friendnameinput,
-                                                                                 self.familyrelationinput))
+                            self.FamilyRow.add_widget(Page.EditRelationsPage.EditFamilyMember_button(self, self.FamilyColumn,
+                                                                                         self.FamilyList,
+                                                                                         self.FamilyRow,
+                                                                                         self.friendnameinput,
+                                                                                         self.familyrelationinput))
+                            self.FamilyRow.add_widget(Page.EditRelationsPage.RemoveFamilyMember_button(self, self.FamilyColumn,
+                                                                                           self.FamilyList,
+                                                                                           self.FamilyRow,
+                                                                                           self.friendnameinput,
+                                                                                           self.familyrelationinput))
                             break
-
         class EditFamilyMemberButton(Button):
             def __init__(self, user_id, destination_id, screen_manager, FamilyColumn, FamilyList, FamilyRow,
                          friendnameinput, familyrelationinput, **kwargs):
@@ -3218,28 +3178,53 @@ class Page(BoxLayout):
                 if self.friendnameinput.text != '' and self.familyrelationinput.text != '':
                     for friend in amber.database[self.user_id].friends:
                         if self.friendnameinput.text == amber.database[friend].name:
-                            personal_docks.PersonalDock.edit_family_member_relationship(amber.database[self.user_id],
-                                                                                        friend,
-                                                                                        self.familyrelationinput.text)
+                            personal_docks.PersonalDock.edit_family_member_relationship(amber.database[self.user_id],friend,
+                                                                                       self.familyrelationinput.text)
                         self.FamilyRow.clear_widgets()
-                        self.friendnameinput = TextInput(text=self.friendnameinput.text,
-                                                         size_hint_x=0.3, size_hint_y=None, height=30)
-                        self.familyrelationinput = TextInput(text=self.familyrelationinput.text,
-                                                             size_hint_x=0.3, size_hint_y=None, height=30)
+                        self.friendnameinput = Button(text=self.friendnameinput.text,
+                                                      size_hint_x=0.3, size_hint_y=None, height=30)
+                        # self.familyrelationinput = TextInput(text=self.familyrelationinput.text,
+                        #                               size_hint_x=0.3, size_hint_y=None, height=30)
+                        self.familyrelationinput = Spinner(size_hint_x=0.3,
+                                                                               values=('Brother'
+                                                                                       , 'Sister'
+                                                                                       , 'Father'
+                                                                                       , 'Mother'
+                                                                                       , 'Son'
+                                                                                       , 'Daughter'
+                                                                                       , 'Uncle'
+                                                                                       , 'Aunt'
+                                                                                       , 'Nephew'
+                                                                                       , 'Niece'
+                                                                                       , 'Cousin'
+                                                                                       , 'Grandmother'
+                                                                                       , 'Granddaughter'
+                                                                                       , 'Stepbrother'
+                                                                                       , 'Stepsister'
+                                                                                       , 'Stepfather'
+                                                                                       , 'Stepmother'
+                                                                                       , 'Stepson'
+                                                                                       , 'Stepdaughter'
+                                                                                       , 'Brother in law'
+                                                                                       , 'Sister in law'
+                                                                                       , 'Father in law'
+                                                                                       , 'Mother in law'
+                                                                                       , 'Son in law'
+                                                                                       , 'Daughter in law'
+                                                                                       ),
+                                                                               size_hint_y=None, height=30)
                         self.FamilyRow.add_widget(self.friendnameinput)
                         self.FamilyRow.add_widget(self.familyrelationinput)
-                        self.FamilyRow.add_widget(
-                            Page.EditRelationsPage.SaveFamilyMember_button(self, self.FamilyColumn,
-                                                                           self.FamilyList,
-                                                                           self.FamilyRow,
-                                                                           self.friendnameinput,
-                                                                           self.familyrelationinput))
-                        self.FamilyRow.add_widget(
-                            Page.EditRelationsPage.RemoveFamilyMember_button(self, self.FamilyColumn,
-                                                                             self.FamilyList,
-                                                                             self.FamilyRow,
-                                                                             self.friendnameinput,
-                                                                             self.familyrelationinput))
+                        self.FamilyRow.add_widget(Page.EditRelationsPage.SaveFamilyMember_button(self, self.FamilyColumn,
+                                                                                       self.FamilyList,
+                                                                                       self.FamilyRow,
+                                                                                     self.friendnameinput,
+                                                                                     self.familyrelationinput))
+                        self.FamilyRow.add_widget(Page.EditRelationsPage.RemoveFamilyMember_button(self, self.FamilyColumn,
+                                                                                       self.FamilyList,
+                                                                                       self.FamilyRow,
+                                                                                       self.friendnameinput,
+                                                                                       self.familyrelationinput))
                         break
 
         class AddRelationButton(Button):
@@ -3260,68 +3245,82 @@ class Page(BoxLayout):
                 self.RelationColumn.remove_widget(self)
 
                 index = len(self.RelationList)
-                self.RelationList.append(
-                    BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5, spacing=10))
-                self.RelationList[index].significant_other_id = TextInput(size_hint_x=0.4,
-                                                                          size_hint_y=None, height=30)
+                self.RelationList.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
+                # self.RelationList[index].significant_other_id = TextInput( size_hint_x=0.4,
+                #                            size_hint_y=None, height=30)
+                self.RelationList[index].significant_other_id =Spinner(size_hint_x=0.3,
+                        size_hint_y=None, height=30)
+                for frd in amber.database[self.user_id].friends:
+                    self.RelationList[index].significant_other_id.values.append(amber.database[frd].name)
                 self.RelationList[index].add_widget(self.RelationList[index].significant_other_id)
-                self.RelationList[index].Relation = TextInput(size_hint_x=0.4,
-                                                              size_hint_y=None, height=30)
+                self.RelationList[index].Relation = Spinner( size_hint_x=0.4,
+                                                             values=('Single'
+                                                             ,'In_a_relationship'
+                                                             ,'Engaged'
+                                                             ,'Married'
+                                                             ,'Separated'
+                                                             ,'In_an_open_relationship'
+                                                             ,'Complicated'
+                                                             ,'Divorced'
+                                                             ,'Widowed'
+                                                             ),
+                                           size_hint_y=None, height=30)
                 self.RelationList[index].add_widget(self.RelationList[index].Relation)
-                self.RelationList[index].startdateinput = TextInput(size_hint_x=0.1,
-                                                                    size_hint_y=None, height=30)
-                self.RelationList[index].add_widget(self.RelationList[index].startdateinput)
-                self.RelationList[index].finishdateinput = TextInput(size_hint_x=0.1,
-                                                                     size_hint_y=None, height=30)
-                self.RelationList[index].add_widget(self.RelationList[index].finishdateinput)
-                self.RelationList[index].add_widget(
-                    Page.EditRelationsPage.SaveRelation_button(self, self.RelationColumn,
-                                                               self.RelationList,
-                                                               self.RelationList[index],
-                                                               self.RelationList[index].significant_other_id,
-                                                               self.RelationList[index].Relation,
-                                                               self.RelationList[index].startdateinput,
-                                                               self.RelationList[index].finishdateinput))
-                self.RelationList[index].add_widget(
-                    Page.EditRelationsPage.RemoveRelation_button(self, self.RelationColumn,
-                                                                 self.RelationList,
-                                                                 self.RelationList[index],
-                                                                 self.RelationList[index].significant_other_id,
-                                                                 self.RelationList[index].Relation))
-                self.RelationColumn.add_widget(self.RelationList[index])
-                self.RelationColumn.add_widget(
-                    Page.EditRelationsPage.AddRelation_button(self, self.RelationColumn, self.RelationList))
+                self.RelationList[index].startdateinput = Spinner( size_hint_x=0.1,
+                                               size_hint_y=None, height=30)
 
+
+                self.RelationList[index].finishdateinput = Spinner( size_hint_x=0.1,
+                                               size_hint_y=None, height=30)
+                for num in range(amber.database[self.user_id].birthday.year, 2019):
+                    self.RelationList[index].startdateinput.values.append(str(num))
+                    self.RelationList[index].finishdateinput.values.append(str(num))
+                self.RelationList[index].add_widget(self.RelationList[index].startdateinput)
+                self.RelationList[index].add_widget(self.RelationList[index].finishdateinput)
+                self.RelationList[index].add_widget(Page.EditRelationsPage.SaveRelation_button(self,self.RelationColumn,
+                                                                                self.RelationList,
+                                                                                self.RelationList[index],
+                                                                                self.RelationList[index].significant_other_id,
+                                                                                self.RelationList[index].Relation,
+                                                                                self.RelationList[index].startdateinput,
+                                                                                self.RelationList[index].finishdateinput))
+                self.RelationList[index].add_widget(Page.EditRelationsPage.RemoveRelation_button(self,self.RelationColumn,
+                                                                                  self.RelationList,
+                                                                                  self.RelationList[index],
+                                                                                  self.RelationList[index].significant_other_id,
+                                                                                  self.RelationList[index].Relation))
+                self.RelationColumn.add_widget(self.RelationList[index])
+                self.RelationColumn.add_widget(Page.EditRelationsPage.AddRelation_button(self,self.RelationColumn, self.RelationList))
         class RemoveRelationButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, RelationColumn,
-                         RelationList, RelationRow, significant_other_id, Relation, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,RelationColumn,
+                         RelationList,RelationRow,significant_other_id,Relation, **kwargs):
                 super(Page.EditRelationsPage.RemoveRelationButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.RelationColumn = RelationColumn
-                self.RelationList = RelationList
-                self.RelationRow = RelationRow
-                self.significant_other_id = significant_other_id
-                self.Relation = Relation
+                self.RelationColumn=RelationColumn
+                self.RelationList=RelationList
+                self.RelationRow=RelationRow
+                self.significant_other_id=significant_other_id
+                self.Relation=Relation
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = '-'
-                self.font_size = 50
+                self.font_size=50
 
             def on_release(self):
-                if self.significant_other_id.text != '' and self.Relation.text != '':
+                if self.significant_other_id.text!='' and self.Relation.text!='':
                     for friend in amber.database[self.user_id].friends:
                         if self.significant_other_id.text == amber.database[friend].name:
-                            personal_docks.PersonalDock.remove_relationship(amber.database[self.user_id], friend)
+
+                            personal_docks.PersonalDock.remove_relationship(amber.database[self.user_id],friend)
                 self.RelationColumn.remove_widget(self.RelationRow)
                 index = self.RelationList.index(self.RelationRow)
                 self.RelationList.pop(index)
-
         class EditRelationButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, RelationColumn, RelationList,
-                         RelationRow, significant_other_id, Relation, startdate, enddate, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,RelationColumn,RelationList,
+                         RelationRow,significant_other_id,Relation,startdate,enddate, **kwargs):
                 super(Page.EditRelationsPage.EditRelationButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
@@ -3344,93 +3343,103 @@ class Page(BoxLayout):
                 # self.eduBoxWidget.remove_widget(self.enddate)
                 self.RelationRow.clear_widgets()
 
-                self.significant_other_id = Button(text=self.significant_other_id.text,
-                                                   size_hint_x=0.4, size_hint_y=None, height=30)
-                self.Relation = Button(text=self.Relation.text,
-                                       size_hint_x=0.4, size_hint_y=None, height=30)
-                self.startdate = TextInput(text=self.startdate.text,
-                                           size_hint_x=0.1, size_hint_y=None, height=30)
-                self.enddate = TextInput(text=self.enddate.text,
-                                         size_hint_x=0.1, size_hint_y=None, height=30)
+                self.significant_other_id=Button(text=self.significant_other_id.text,
+                                        size_hint_x=0.4, size_hint_y=None, height=30)
+                self.Relation = Spinner(text=self.Relation.text, size_hint_x=0.4,
+                                         values=('Single'
+                                         ,'In_a_relationship'
+                                         ,'Engaged'
+                                         ,'Married'
+                                         ,'Separated'
+                                         ,'In_an_open_relationship'
+                                         ,'Complicated'
+                                         ,'Divorced'
+                                         ,'Widowed'
+                                         ),size_hint_y=None, height=30)
+                self.startdate = Spinner(text=self.startdate.text, size_hint_x=0.1,
+                                               size_hint_y=None, height=30)
+                self.enddate = Spinner(text=self.enddate.text, size_hint_x=0.1,
+                                               size_hint_y=None, height=30)
+                for num in range(amber.database[self.user_id].birthday.year, 2019):
+                    self.enddate.values.append(str(num))
+                    self.startdate.values.append(str(num))
                 self.RelationRow.add_widget(self.significant_other_id)
                 self.RelationRow.add_widget(self.Relation)
                 self.RelationRow.add_widget(self.startdate)
                 self.RelationRow.add_widget(self.enddate)
-                self.RelationRow.add_widget(Page.EditRelationsPage.SaveRelation_button(self, self.parentwidget,
-                                                                                       self.RelationList,
-                                                                                       self.RelationRow,
-                                                                                       self.significant_other_id,
-                                                                                       self.Relation,
-                                                                                       self.startdate,
-                                                                                       self.enddate))
-                self.RelationRow.add_widget(Page.EditRelationsPage.RemoveRelation_button(self, self.parentwidget,
-                                                                                         self.RelationList,
-                                                                                         self.RelationRow,
-                                                                                         self.significant_other_id,
-                                                                                         self.Relation))
-
+                self.RelationRow.add_widget(Page.EditRelationsPage.SaveRelation_button(self, self.RelationColumn,
+                                                                             self.RelationList,
+                                                                             self.RelationRow,
+                                                                             self.significant_other_id,
+                                                                             self.Relation,
+                                                                             self.startdate,
+                                                                             self.enddate))
+                self.RelationRow.add_widget(Page.EditRelationsPage.RemoveRelation_button(self, self.RelationColumn,
+                                                                               self.RelationList,
+                                                                               self.RelationRow,
+                                                                               self.significant_other_id,
+                                                                               self.Relation))
         class SaveRelationButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, RelationColumn, RelationList,
-                         RelationRow, significant_other_id, Relation, startdate, enddate, **kwargs):
+            def __init__(self, user_id, destination_id, screen_manager,RelationColumn,RelationList,
+                         RelationRow,significant_other_id,Relation,startdate,enddate, **kwargs):
                 super(Page.EditRelationsPage.SaveRelationButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.RelationColumn = RelationColumn
-                self.RelationList = RelationList
-                self.RelationRow = RelationRow
-                self.significant_other_id = significant_other_id
-                self.Relation = Relation
+                self.RelationColumn=RelationColumn
+                self.RelationList=RelationList
+                self.RelationRow=RelationRow
+                self.significant_other_id=significant_other_id
+                self.Relation=Relation
                 self.startdate = startdate
                 self.enddate = enddate
                 self.size_hint_y = None
                 self.size_hint_x = 0.05
                 self.height = 30
                 self.text = 'Save'
-                self.font_size = 10
+                self.font_size=10
 
             def on_release(self):
-                if self.significant_other_id.text != '' and self.Relation.text != '' and self.startdate.text != '' and self.enddate.text != '':
+                if self.significant_other_id.text!='' and self.Relation.text!='' and self.startdate.text!='' and self.enddate.text !='' :
                     for friend in amber.database[self.user_id].friends:
                         if self.significant_other_id.text == amber.database[friend].name:
 
-                            if not personal_docks.PersonalDock.edit_relationship(amber.database[self.user_id], friend,
-                                                                                 self.Relation.text,
-                                                                                 self.startdate.text,
-                                                                                 self.enddate.text):
-                                personal_docks.PersonalDock.add_relationship(amber.database[self.user_id], friend,
-                                                                             self.Relation.text,
-                                                                             self.startdate.text,
-                                                                             self.enddate.text)
+                            if not personal_docks.PersonalDock.edit_relationship(amber.database[self.user_id],friend,
+                                                                       self.Relation.text,
+                                                                       self.startdate.text,
+                                                                       self.enddate.text):
+
+                                personal_docks.PersonalDock.add_relationship(amber.database[self.user_id],friend,
+                                                                      self.Relation.text,
+                                                                      self.startdate.text,
+                                                                      self.enddate.text)
 
                             self.RelationRow.clear_widgets()
 
                             self.significant_other_id = Button(text=self.significant_other_id.text,
-                                                               size_hint_x=0.4, size_hint_y=None, height=30)
+                                                   size_hint_x=0.4, size_hint_y=None, height=30)
                             self.Relation = Button(text=self.Relation.text,
                                                    size_hint_x=0.4, size_hint_y=None, height=30)
                             self.startdate = Button(text=self.startdate.text,
-                                                    size_hint_x=0.1, size_hint_y=None, height=30)
+                                                             size_hint_x=0.1, size_hint_y=None, height=30)
                             self.enddate = Button(text=self.enddate.text,
-                                                  size_hint_x=0.1, size_hint_y=None, height=30)
+                                                                 size_hint_x=0.1, size_hint_y=None, height=30)
                             self.RelationRow.add_widget(self.significant_other_id)
                             self.RelationRow.add_widget(self.Relation)
                             self.RelationRow.add_widget(self.startdate)
                             self.RelationRow.add_widget(self.enddate)
-                            self.RelationRow.add_widget(
-                                Page.EditRelationsPage.EditRelation_button(self, self.parentwidget,
-                                                                           self.RelationList,
-                                                                           self.RelationRow,
-                                                                           self.significant_other_id,
-                                                                           self.Relation,
-                                                                           self.startdate,
-                                                                           self.enddate))
-                            self.RelationRow.add_widget(
-                                Page.EditRelationsPage.RemoveRelation_button(self, self.parentwidget,
-                                                                             self.RelationList,
-                                                                             self.RelationRow,
-                                                                             self.significant_other_id,
-                                                                             self.Relation))
+                            self.RelationRow.add_widget(Page.EditRelationsPage.EditRelation_button(self, self.RelationColumn,
+                                                                                         self.RelationList,
+                                                                                         self.RelationRow,
+                                                                                         self.significant_other_id,
+                                                                                         self.Relation,
+                                                                                         self.startdate,
+                                                                                         self.enddate))
+                            self.RelationRow.add_widget(Page.EditRelationsPage.RemoveRelation_button(self, self.RelationColumn,
+                                                                                                    self.RelationList,
+                                                                                                    self.RelationRow,
+                                                                                                    self.significant_other_id,
+                                                                                                    self.Relation))
 
                             break
 
@@ -3463,12 +3472,12 @@ class Page(BoxLayout):
                                          size_hint_y=None, height=30)
                 Family.add_widget(Family.name)
                 Family.add_widget(Family.Relation)
-                Family.add_widget(Page.EditRelationsPage.EditFamilyMember_button(self.FamilyBoxs,
+                Family.add_widget(self.EditFamilyMember_button(self.FamilyBoxs,
                                                                                  self.FamilyList,
                                                                                  Family,
                                                                                  Family.name,
                                                                                  Family.Relation))
-                Family.add_widget(Page.EditRelationsPage.RemoveFamilyMember_button(self.FamilyBoxs,
+                Family.add_widget(self.RemoveFamilyMember_button(self.FamilyBoxs,
                                                                                    self.FamilyList,
                                                                                    Family,
                                                                                    Family.name,
@@ -3502,20 +3511,18 @@ class Page(BoxLayout):
                 Relation.add_widget(Relation.type)
                 Relation.add_widget(Relation.startdateinput)
                 Relation.add_widget(Relation.finishdateinput)
-                Relation.add_widget(Page.EditRelationsPage.EditRelation_button(self.RelationBoxs,
+                Relation.add_widget(self.EditRelation_button(self.RelationBoxs,
                                                                                self.RelationList,
                                                                                Relation,
                                                                                Relation.name,
                                                                                Relation.type,
                                                                                Relation.startdateinput,
                                                                                Relation.finishdateinput))
-                Relation.add_widget(Page.EditRelationsPage.RemoveRelation_button(self.RelationBoxs,
+                Relation.add_widget(self.RemoveRelation_button(self.RelationBoxs,
                                                                                  self.RelationList,
                                                                                  Relation,
                                                                                  Relation.name,
-                                                                                 Relation.type,
-                                                                                 Relation.startdateinput,
-                                                                                 Relation.finishdateinput))
+                                                                                 Relation.type))
 
                 self.RelationBoxs.add_widget(Relation)
             self.RelationBoxs.add_widget(self.AddRelation_button(self.RelationBoxs, self.RelationList))
@@ -3525,26 +3532,24 @@ class Page(BoxLayout):
             self.RelationsPart.add_widget(self.RelationBoxScrollView)
             self.add_widget(self.RelationsPart)
 
-        def AddFamilyMember_button(self, FamilyColumn, FamilyList, **kwargs):
-            return Page.EditRelationsPage.AddFamilyMemberButton(user_id=self.user_id,
+
+
+        def AddFamilyMember_button(self,FamilyColumn,FamilyList,**kwargs):
+            return Page.EditRelationsPage.AddFamilyMemberButton(user_id=self.user_id ,
                                                                 destination_id=self.destination_id,
                                                                 screen_manager=self.screen_manager,
                                                                 FamilyColumn=FamilyColumn,
-                                                                FamilyList=FamilyList, **kwargs)
-
-        def RemoveFamilyMember_button(self, FamilyColumn, FamilyList, FamilyRow, friendnameinput, familyrelationinput,
-                                      **kwargs):
+                                                                FamilyList=FamilyList, ** kwargs)
+        def RemoveFamilyMember_button(self,FamilyColumn,FamilyList,FamilyRow,friendnameinput,familyrelationinput, **kwargs):
             return Page.EditRelationsPage.RemoveFamilyMemberButton(user_id=self.user_id,
-                                                                   destination_id=self.destination_id,
-                                                                   screen_manager=self.screen_manager,
-                                                                   FamilyColumn=FamilyColumn,
-                                                                   FamilyList=FamilyList,
-                                                                   FamilyRow=FamilyRow,
-                                                                   friendnameinput=friendnameinput,
-                                                                   familyrelationinput=familyrelationinput, **kwargs)
-
-        def EditFamilyMember_button(self, FamilyColumn, FamilyList, FamilyRow, friendnameinput, familyrelationinput,
-                                    **kwargs):
+                                                                 destination_id=self.destination_id,
+                                                                 screen_manager=self.screen_manager,
+                                                                 FamilyColumn=FamilyColumn,
+                                                                 FamilyList=FamilyList,
+                                                                 FamilyRow=FamilyRow,
+                                                                 friendnameinput=friendnameinput,
+                                                                 familyrelationinput=familyrelationinput, **kwargs)
+        def EditFamilyMember_button(self, FamilyColumn,FamilyList,FamilyRow,friendnameinput,familyrelationinput, **kwargs):
             return Page.EditRelationsPage.EditFamilyMemberButton(user_id=self.user_id,
                                                                  destination_id=self.destination_id,
                                                                  screen_manager=self.screen_manager,
@@ -3553,61 +3558,54 @@ class Page(BoxLayout):
                                                                  FamilyRow=FamilyRow,
                                                                  friendnameinput=friendnameinput,
                                                                  familyrelationinput=familyrelationinput, **kwargs)
-
-        def SaveFamilyMember_button(self, FamilyColumn, FamilyList, FamilyRow, friendnameinput, familyrelationinput,
-                                    **kwargs):
+        def SaveFamilyMember_button(self, FamilyColumn,FamilyList,FamilyRow,friendnameinput,familyrelationinput, **kwargs):
             return Page.EditRelationsPage.SaveFamilyMemberButton(user_id=self.user_id,
-                                                                 destination_id=self.destination_id,
-                                                                 screen_manager=self.screen_manager,
+                                                            destination_id=self.destination_id,
+                                                            screen_manager=self.screen_manager,
                                                                  FamilyColumn=FamilyColumn,
                                                                  FamilyList=FamilyList,
                                                                  FamilyRow=FamilyRow,
                                                                  friendnameinput=friendnameinput,
-                                                                 familyrelationinput=familyrelationinput, **kwargs)
+                                                                familyrelationinput=familyrelationinput,**kwargs)
 
-        def AddRelation_button(self, RelationColumn, RelationList, **kwargs):
+
+        def AddRelation_button(self,RelationColumn,RelationList, **kwargs):
             return Page.EditRelationsPage.AddRelationButton(user_id=self.user_id,
                                                             destination_id=self.destination_id,
                                                             screen_manager=self.screen_manager,
                                                             RelationColumn=RelationColumn,
                                                             RelationList=RelationList, **kwargs)
-
-        def RemoveRelation_button(self, RelationColumn, RelationList, RelationRow, significant_other_id, Relation,
-                                  **kwargs):
+        def RemoveRelation_button(self,RelationColumn,RelationList,RelationRow,significant_other_id,Relation, **kwargs):
             return Page.EditRelationsPage.RemoveRelationButton(user_id=self.user_id,
-                                                               destination_id=self.destination_id,
-                                                               screen_manager=self.screen_manager,
-                                                               RelationColumn=RelationColumn,
-                                                               RelationList=RelationList,
-                                                               RelationRow=RelationRow,
-                                                               significant_other_id=significant_other_id,
-                                                               Relation=Relation, **kwargs)
-
-        def EditRelation_button(self, RelationColumn, RelationList, RelationRow, significant_other_id, Relation,
-                                startdate, enddate, **kwargs):
+                                                                 destination_id=self.destination_id,
+                                                                 screen_manager=self.screen_manager,
+                                                                 RelationColumn=RelationColumn,
+                                                                 RelationList=RelationList,
+                                                                 RelationRow=RelationRow,
+                                                                 significant_other_id=significant_other_id,
+                                                                 Relation=Relation, **kwargs)
+        def EditRelation_button(self,RelationColumn,RelationList,RelationRow,significant_other_id,Relation,startdate,enddate, **kwargs):
             return Page.EditRelationsPage.EditRelationButton(user_id=self.user_id,
-                                                             destination_id=self.destination_id,
-                                                             screen_manager=self.screen_manager,
-                                                             RelationColumn=RelationColumn,
-                                                             RelationList=RelationList,
-                                                             RelationRow=RelationRow,
-                                                             significant_other_id=significant_other_id,
-                                                             Relation=Relation,
-                                                             startdate=startdate,
-                                                             enddate=enddate, **kwargs)
-
-        def SaveRelation_button(self, RelationColumn, RelationList, RelationRow, significant_other_id, Relation,
-                                startdate, enddate, **kwargs):
+                                                                 destination_id=self.destination_id,
+                                                                 screen_manager=self.screen_manager,
+                                                                 RelationColumn=RelationColumn,
+                                                                 RelationList=RelationList,
+                                                                 RelationRow=RelationRow,
+                                                                 significant_other_id=significant_other_id,
+                                                                 Relation=Relation,
+                                                                 startdate=startdate,
+                                                                 enddate=enddate, **kwargs)
+        def SaveRelation_button(self,RelationColumn,RelationList,RelationRow,significant_other_id,Relation,startdate,enddate, **kwargs):
             return Page.EditRelationsPage.SaveRelationButton(user_id=self.user_id,
-                                                             destination_id=self.destination_id,
-                                                             screen_manager=self.screen_manager,
-                                                             RelationColumn=RelationColumn,
-                                                             RelationList=RelationList,
-                                                             RelationRow=RelationRow,
-                                                             significant_other_id=significant_other_id,
-                                                             Relation=Relation,
-                                                             startdate=startdate,
-                                                             enddate=enddate, **kwargs)
+                                                                 destination_id=self.destination_id,
+                                                                 screen_manager=self.screen_manager,
+                                                                 RelationColumn=RelationColumn,
+                                                                 RelationList=RelationList,
+                                                                 RelationRow=RelationRow,
+                                                                 significant_other_id=significant_other_id,
+                                                                 Relation=Relation,
+                                                                 startdate=startdate,
+                                                                 enddate=enddate, **kwargs)
 
     class FriendsPage(BoxLayout):
         '''
@@ -3616,27 +3614,25 @@ class Page(BoxLayout):
         '''
 
         class RemoveFriendButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, FriendTable, FriendList, FriendRow,
-                         FriendnameWidget, FriendID, **kwargs):
+            def __init__(self,user_id, destination_id, screen_manager,FriendTable,FriendList,FriendRow,FriendnameWidget,FriendID,**kwargs):
                 super(Page.FriendsPage.RemoveFriendButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.FriendTable = FriendTable
-                self.FriendList = FriendList
+                self.FriendTable=FriendTable
+                self.FriendList=FriendList
                 self.FriendRow = FriendRow
                 self.FriendnameWidget = FriendnameWidget
-                self.FriendID = FriendID
+                self.FriendID=FriendID
                 self.size_hint_y = None
                 self.size_hint_x = 0.2
                 self.height = 50
                 self.text = 'Unfriend'
                 self.font_size = 20
-
             def on_release(self):
                 # friendid=self.FriendnameWidget.id
-                personal_docks.PersonalDock.remove_friend(amber.database[self.user_id], self.FriendID)
-                personal_docks.PersonalDock.remove_friend(amber.database[self.FriendID], self.user_id)
+                personal_docks.PersonalDock.remove_friend(amber.database[self.user_id],self.FriendID)
+                personal_docks.PersonalDock.remove_friend(amber.database[self.FriendID],self.user_id)
 
                 self.FriendTable.remove_widget(self.FriendRow)
 
@@ -3652,15 +3648,13 @@ class Page(BoxLayout):
             for friend in amber.database[self.destination_id].friends:
                 self.FriendList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
             for index, friend in enumerate(self.FriendList):
-                friendid = amber.database[self.destination_id].friends[index]
+                friendid =amber.database[self.destination_id].friends[index]
                 friend.friendwidget = Button(text=amber.database[friendid].name,
-                                             id=amber.database[self.destination_id].friends[index], size_hint_x=0.3,
-                                             size_hint_y=None, height=50)
+                                           id=amber.database[self.destination_id].friends[index], size_hint_x=0.3,
+                                           size_hint_y=None, height=50)
                 friend.add_widget(friend.friendwidget)
-                if self.user_id == self.destination_id:
-                    friend.add_widget(
-                        self.RemoveFriend_button(self.FriendTable, self.FriendList, friend, friend.friendwidget,
-                                                 friendid))
+                if self.user_id==self.destination_id:
+                    friend.add_widget(self.RemoveFriend_button(self.FriendTable, self.FriendList, friend,friend.friendwidget,friendid))
 
                 self.FriendTable.add_widget(friend)
             self.FriendTable.bind(minimum_height=self.FriendTable.setter('height'))
@@ -3668,40 +3662,39 @@ class Page(BoxLayout):
             self.FriendTableScrollView.add_widget(self.FriendTable)
             self.add_widget(self.FriendTableScrollView)
 
-        def RemoveFriend_button(self, FriendTable, FriendList, FriendRow, FriendnameWidget, FriendID, **kwargs):
-            return Page.FriendsPage.RemoveFriendButton(user_id=self.user_id,
-                                                       destination_id=self.destination_id,
-                                                       screen_manager=self.screen_manager,
-                                                       FriendTable=FriendTable,
-                                                       FriendList=FriendList,
-                                                       FriendRow=FriendRow,
-                                                       FriendnameWidget=FriendnameWidget,
-                                                       FriendID=FriendID, **kwargs)
+        def RemoveFriend_button(self, FriendTable,FriendList, FriendRow, FriendnameWidget,FriendID, **kwargs):
+             return Page.FriendsPage.RemoveFriendButton(user_id=self.user_id,
+                                                        destination_id=self.destination_id,
+                                                        screen_manager=self.screen_manager,
+                                                        FriendTable=FriendTable,
+                                                        FriendList=FriendList,
+                                                        FriendRow=FriendRow,
+                                                        FriendnameWidget=FriendnameWidget,
+                                                        FriendID=FriendID,**kwargs)
 
     class FollowersPage(BoxLayout):
 
         class RemoveFollowerButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, FollowerTable, FollowerRow, FollowernameWidget,
-                         FollowerID, **kwargs):
+            def __init__(self,user_id, destination_id, screen_manager,FollowerTable,FollowerRow,FollowernameWidget,FollowerID,**kwargs):
                 super(Page.FollowersPage.RemoveFollowerButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.FollowerTable = FollowerTable
+                self.FollowerTable=FollowerTable
                 self.FollowerRow = FollowerRow
                 self.FollowernameWidget = FollowernameWidget
-                self.FollowerID = FollowerID
+                self.FollowerID=FollowerID
                 self.size_hint_y = None
                 self.size_hint_x = 0.2
                 self.height = 50
                 self.text = 'UnFollow'
                 self.font_size = 20
-
             def on_release(self):
                 # Followerid=self.FollowernameWidget.id
-                personal_docks.PersonalDock.remove_follower(amber.database[self.user_id], self.FollowerID)
-                personal_docks.PersonalDock.remove_followee(amber.database[self.FollowerID], self.user_id)
+                personal_docks.PersonalDock.remove_follower(amber.database[self.user_id],self.FollowerID)
+                personal_docks.PersonalDock.remove_followee(amber.database[self.FollowerID],self.user_id)
                 self.FollowerTable.remove_widget(self.FollowerRow)
+
 
         def __init__(self, user_id, destination_id, screen_manager, **kwargs):
             super(Page.FollowersPage, self).__init__(**kwargs)
@@ -3717,14 +3710,13 @@ class Page(BoxLayout):
             for index, Follower in enumerate(self.FollowerList):
                 Followerid = amber.database[self.destination_id].followers[index]
                 Follower.Followerwidget = Button(text=amber.database[Followerid].name,
-                                                 id=amber.database[self.destination_id].followers[index],
-                                                 size_hint_x=0.3,
-                                                 size_hint_y=None, height=50)
+                                             id=amber.database[self.destination_id].followers[index], size_hint_x=0.3,
+                                             size_hint_y=None, height=50)
                 Follower.add_widget(Follower.Followerwidget)
                 if self.user_id == self.destination_id:
                     Follower.add_widget(
-                        self.RemoveFollower_button(self.FollowerTable, Follower, Follower.Followerwidget,
-                                                   Followerid))
+                    self.RemoveFollower_button(self.FollowerTable, Follower, Follower.Followerwidget,
+                                             Followerid))
                 self.FollowerTable.add_widget(Follower)
             self.FollowerTable.bind(minimum_height=self.FollowerTable.setter('height'))
             self.FollowerTableScrollView = ScrollView(size_hint=(1, None), size=(200, 450))
@@ -3733,37 +3725,36 @@ class Page(BoxLayout):
 
         def RemoveFollower_button(self, FollowerTable, FollowerRow, FollowernameWidget, FollowerID, **kwargs):
             return Page.FollowersPage.RemoveFollowerButton(user_id=self.user_id,
-                                                           destination_id=self.destination_id,
-                                                           screen_manager=self.screen_manager,
-                                                           FollowerTable=FollowerTable, FollowerRow=FollowerRow,
-                                                           FollowernameWidget=FollowernameWidget,
-                                                           FollowerID=FollowerID, **kwargs)
+                                                       destination_id=self.destination_id,
+                                                       screen_manager=self.screen_manager,
+                                                       FollowerTable=FollowerTable, FollowerRow=FollowerRow,
+                                                       FollowernameWidget=FollowernameWidget,
+                                                       FollowerID=FollowerID, **kwargs)
 
     class FolloweesPage(BoxLayout):
 
         class RemoveFolloweeButton(Button):
-            def __init__(self, user_id, destination_id, screen_manager, FolloweeTable, FolloweeList, FolloweeRow,
-                         FolloweenameWidget, FolloweeID, **kwargs):
+            def __init__(self,user_id, destination_id, screen_manager,FolloweeTable,FolloweeList,FolloweeRow,FolloweenameWidget,FolloweeID,**kwargs):
                 super(Page.FolloweesPage.RemoveFolloweeButton, self).__init__(**kwargs)
                 self.user_id = user_id
                 self.destination_id = destination_id
                 self.screen_manager = screen_manager
-                self.FolloweeTable = FolloweeTable
+                self.FolloweeTable=FolloweeTable
                 self.FolloweeRow = FolloweeRow
-                self.FolloweeList = FolloweeList
+                self.FolloweeList=FolloweeList
                 self.FolloweenameWidget = FolloweenameWidget
-                self.FolloweeID = FolloweeID
+                self.FolloweeID=FolloweeID
                 self.size_hint_y = None
                 self.size_hint_x = 0.2
                 self.height = 50
                 self.text = 'UnFollow'
                 self.font_size = 20
-
             def on_release(self):
                 # Followeeid=self.FolloweenameWidget.id
-                personal_docks.PersonalDock.remove_followee(amber.database[self.user_id], self.FolloweeID)
+                personal_docks.PersonalDock.remove_followee(amber.database[self.user_id],self.FolloweeID)
                 personal_docks.PersonalDock.remove_follower(amber.database[self.FolloweeID], self.user_id)
                 self.FolloweeTable.remove_widget(self.FolloweeRow)
+
 
         def __init__(self, user_id, destination_id, screen_manager, **kwargs):
             super(Page.FolloweesPage, self).__init__(**kwargs)
@@ -3779,31 +3770,428 @@ class Page(BoxLayout):
             for index, Followee in enumerate(self.FolloweeList):
                 Followeeid = amber.database[self.destination_id].followees[index]
                 Followee.Followeewidget = Button(text=amber.database[Followeeid].name,
-                                                 id=amber.database[self.destination_id].followees[index],
-                                                 size_hint_x=0.3,
-                                                 size_hint_y=None, height=50)
+                                             id=amber.database[self.destination_id].followees[index], size_hint_x=0.3,
+                                             size_hint_y=None, height=50)
                 Followee.add_widget(Followee.Followeewidget)
                 if self.user_id == self.destination_id:
                     Followee.add_widget(
-                        self.RemoveFollowee_button(self.FolloweeTable, self.FolloweeList, Followee,
-                                                   Followee.Followeewidget,
-                                                   Followeeid))
+                    self.RemoveFollowee_button(self.FolloweeTable, self.FolloweeList, Followee, Followee.Followeewidget,
+                                             Followeeid))
                 self.FolloweeTable.add_widget(Followee)
             self.FolloweeTable.bind(minimum_height=self.FolloweeTable.setter('height'))
             self.FolloweeTableScrollView = ScrollView(size_hint=(1, None), size=(200, 450))
             self.FolloweeTableScrollView.add_widget(self.FolloweeTable)
             self.add_widget(self.FolloweeTableScrollView)
 
-        def RemoveFollowee_button(self, FolloweeTable, FolloweeList, FolloweeRow, FolloweenameWidget, FolloweeID,
-                                  **kwargs):
+        def RemoveFollowee_button(self, FolloweeTable,FolloweeList, FolloweeRow, FolloweenameWidget, FolloweeID, **kwargs):
             return Page.FolloweesPage.RemoveFolloweeButton(user_id=self.user_id,
-                                                           destination_id=self.destination_id,
-                                                           screen_manager=self.screen_manager,
-                                                           FolloweeTable=FolloweeTable,
+                                                       destination_id=self.destination_id,
+                                                       screen_manager=self.screen_manager,
+                                                       FolloweeTable=FolloweeTable,
                                                            FolloweeList=FolloweeList,
                                                            FolloweeRow=FolloweeRow,
-                                                           FolloweenameWidget=FolloweenameWidget,
-                                                           FolloweeID=FolloweeID, **kwargs)
+                                                       FolloweenameWidget=FolloweenameWidget,
+                                                       FolloweeID=FolloweeID, **kwargs)
+
+    ############AboutPage######################
+    class AboutPage(BoxLayout):
+        class AboutButton(Button):
+            def __init__(self, user_id, destination_id, screen_manager, **kwargs):
+                super(Page.AboutPage.AboutButton, self).__init__(**kwargs)
+                self.user_id = user_id
+                self.destination_id = destination_id
+                self.screen_manager = screen_manager
+                self.text = 'About and BasicInfo'
+
+            def on_release(self):
+                About_screen = Screen(name='basicinfo')
+                About_screen.add_widget(
+                    Page.BasicAboutPage(user_id=self.user_id, destination_id=self.destination_id,
+                                        screen_manager=self.screen_manager))
+                self.screen_manager.add_widget(About_screen)
+                self.screen_manager.current = About_screen.name
+
+        class EducationAndPlacesButton(Button):
+            def __init__(self, user_id, destination_id, screen_manager, **kwargs):
+                super(Page.AboutPage.EducationAndPlacesButton, self).__init__(**kwargs)
+                self.user_id = user_id
+                self.destination_id = destination_id
+                self.screen_manager = screen_manager
+                self.text = 'Education & Living Places'
+
+            def on_release(self):
+                Education_Places_screen = Screen(name='EduAndPlacesinfo')
+                Education_Places_screen.add_widget(
+                    Page.EduPage(user_id=self.user_id, destination_id=self.destination_id,
+                                 screen_manager=self.screen_manager))
+                self.screen_manager.add_widget(Education_Places_screen)
+                self.screen_manager.current = Education_Places_screen.name
+
+        class ContactButton(Button):
+            def __init__(self, user_id, destination_id, screen_manager, **kwargs):
+                super(Page.AboutPage.ContactButton, self).__init__(**kwargs)
+                self.user_id = user_id
+                self.destination_id = destination_id
+                self.screen_manager = screen_manager
+                self.text = 'Contact Information'
+
+            def on_release(self):
+                Contact_screen = Screen(name='distenationcontactinfo')
+                Contact_screen.add_widget(Page.ContactPage(user_id=self.user_id, destination_id=self.destination_id,
+                                                           screen_manager=self.screen_manager))
+                self.screen_manager.add_widget(Contact_screen)
+                self.screen_manager.current = Contact_screen.name
+
+        class RelationshipsButton(Button):
+            def __init__(self, user_id, destination_id, screen_manager, **kwargs):
+                super(Page.AboutPage.RelationshipsButton, self).__init__(**kwargs)
+                self.user_id = user_id
+                self.destination_id = destination_id
+                self.screen_manager = screen_manager
+                self.text = 'Relationships and Family members'
+
+            def on_release(self):
+                Relashionships_screen = Screen(name='Relashionshipsinfo')
+                Relashionships_screen.add_widget(
+                    Page.RelationsPage(user_id=self.user_id, destination_id=self.destination_id,
+                                       screen_manager=self.screen_manager))
+                self.screen_manager.add_widget(Relashionships_screen)
+                self.screen_manager.current = Relashionships_screen.name
+
+        def __init__(self, user_id, destination_id, screen_manager, **kwargs):
+            super(Page.AboutPage, self).__init__(**kwargs)
+            self.user_id = user_id
+            self.destination_id = destination_id
+            self.screen_manager = screen_manager
+            self.orientation = 'vertical'
+            self.add_widget(Label(text='About', size_hint_y=.05))
+            self.buttons = GridLayout(cols=2, padding=30, spacing=10)
+            self.buttons.add_widget(self.About_button())
+            self.buttons.add_widget(self.EducationAndPlaces_button())
+            self.buttons.add_widget(self.Contact_button())
+            self.buttons.add_widget(self.Relationships_button())
+
+            self.add_widget(self.buttons)
+
+        def About_button(self, **kwargs):
+            return Page.AboutPage.AboutButton(user_id=self.user_id, destination_id=self.destination_id,
+                                              screen_manager=self.screen_manager, **kwargs)
+
+        def EducationAndPlaces_button(self, **kwargs):
+            return Page.AboutPage.EducationAndPlacesButton(user_id=self.user_id, destination_id=self.destination_id,
+                                                           screen_manager=self.screen_manager, **kwargs)
+
+        def Contact_button(self, **kwargs):
+            return Page.AboutPage.ContactButton(user_id=self.user_id, destination_id=self.destination_id,
+                                                screen_manager=self.screen_manager, **kwargs)
+
+        def Relationships_button(self, **kwargs):
+            return Page.AboutPage.RelationshipsButton(user_id=self.user_id, destination_id=self.destination_id,
+                                                      screen_manager=self.screen_manager, **kwargs)
+
+    class BasicAboutPage(BoxLayout):
+        def __init__(self, user_id, destination_id, screen_manager, **kwargs):
+            super(Page.BasicAboutPage, self).__init__(**kwargs)
+            self.user_id = user_id
+            self.destination_id = destination_id
+            self.screen_manager = screen_manager
+            self.orientation = 'vertical'
+            self.add_widget(Label(text='About and Basic Information', size_hint_y=0.05))
+            self.profileData = GridLayout(cols=2, padding=30, spacing=10)
+            self.profileData.height = 200
+            # activation
+            # self.profileData.add_widget(
+            #     Label(text='Deactivate account:', size_hint_y=None, size_hint_x=None, width=150, height=40))
+            # name
+            self.profileData.add_widget(
+                Label(text='Name:', size_hint_y=None, size_hint_x=None, width=150, height=40))
+            self.nameinput = Button(text=amber.database[destination_id].name, size_hint_y=None, height=40)
+            self.profileData.add_widget(self.nameinput)
+            ###Gender
+            self.profileData.add_widget(
+                Label(text='Gender:', size_hint_y=None, size_hint_x=None, width=150, height=40))
+            self.genderinput = Button(text=amber.database[destination_id].gender, size_hint_y=None,
+                                      height=40)
+            self.profileData.add_widget(self.genderinput)
+
+            ###birthday
+            Birthday = str(amber.database[destination_id].birthday).split(' ')
+            BirthdayValues = Birthday[0].split('-')
+            self.birthdayinputRow = BoxLayout(orientation='horizontal', size_hint_y=None, height=40)
+            self.profileData.add_widget(
+                Label(text='Birthday:', size_hint_y=None, size_hint_x=None, width=150, height=40))
+            self.birthdayinputyear = Button(text=str(BirthdayValues[0]),
+                                            size_hint_y=None, height=40)
+            self.birthdayinputmonth = Button(text=str(BirthdayValues[1]),
+                                             size_hint_y=None, height=40)
+            self.birthdayinputday = Button(text=str(BirthdayValues[2]),
+                                           size_hint_y=None, height=40)
+            self.birthdayinputRow.add_widget(self.birthdayinputyear)
+            self.birthdayinputRow.add_widget(self.birthdayinputmonth)
+            self.birthdayinputRow.add_widget(self.birthdayinputday)
+            self.profileData.add_widget(self.birthdayinputRow)
+
+            self.add_widget(self.profileData)
+
+    class EduPage(BoxLayout):
+        def __init__(self, user_id, destination_id, screen_manager, **kwargs):
+            super(Page.EduPage, self).__init__(**kwargs)
+            self.user_id = user_id
+            self.destination_id = destination_id
+            self.screen_manager = screen_manager
+            self.orientation = 'vertical'
+            self.clear_widgets()
+            ###Education information
+            self.edulabel = Label(text='Education', size_hint_y=None, height=40)
+            self.eduheader = BoxLayout(orientation='horizontal', size_hint_y=None, height=40, padding=10,
+                                       spacing=10)
+            self.eduheader.add_widget(
+                Button(text='Major', size_hint_x=0.4, size_hint_y=None, height=30, disabled=True))
+            self.eduheader.add_widget(
+                Button(text='university', size_hint_x=0.4, size_hint_y=None, height=30, disabled=True))
+            self.eduheader.add_widget(
+                Button(text='Start\ndate', size_hint_x=0.1, size_hint_y=None, height=30, disabled=True))
+            self.eduheader.add_widget(
+                Button(text='Finish\ndate', size_hint_x=0.1, size_hint_y=None, height=30, disabled=True))
+            self.add_widget(self.eduheader)
+
+            self.EducationBoxes = []
+            # edu is tuple of four elements (major, place of education, starting date, finishing date)
+            for edu in amber.database[destination_id].education:
+                self.EducationBoxes.append(
+                    BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
+
+            self.EduBox = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=None)
+            for index, edu in enumerate(self.EducationBoxes):
+                edu.majorinput = Button(text=amber.database[destination_id].education[index][0], size_hint_x=0.4,
+                                        size_hint_y=None, height=30)
+                edu.add_widget(edu.majorinput)
+                edu.placeinput = Button(text=amber.database[destination_id].education[index][1], size_hint_x=0.4,
+                                        size_hint_y=None, height=30)
+                edu.add_widget(edu.placeinput)
+                edu.startdateinput = Button(text=amber.database[destination_id].education[index][2],
+                                            size_hint_x=0.1,
+                                            size_hint_y=None, height=30)
+                edu.add_widget(edu.startdateinput)
+                edu.finishdateinput = Button(text=amber.database[destination_id].education[index][3],
+                                             size_hint_x=0.1,
+                                             size_hint_y=None, height=30)
+                edu.add_widget(edu.finishdateinput)
+                # edu.RemoveButton.on_release(print('pressed'))
+                self.EduBox.add_widget(edu)
+            self.EduBox.bind(minimum_height=self.EduBox.setter('height'))
+            self.EduBoxScrollView = ScrollView(size_hint=(1, None), size=(200, 200))
+            self.EduBoxScrollView.add_widget(self.EduBox)
+            self.add_widget(self.EduBoxScrollView)
+
+            ###places information
+            self.placelabel = Label(text='Places', size_hint_y=0.05, height=30, width=2000, pos=(0, 250))
+            self.add_widget(self.placelabel)
+            self.placesheader = BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5,
+                                          spacing=10)
+            self.placesheader.add_widget(Label(text='Location', size_hint_x=0.3, size_hint_y=None, height=50))
+            self.placesheader.add_widget(
+                Label(text='From(start date)', size_hint_x=0.3, size_hint_y=None, height=50))
+            self.placesheader.add_widget(Label(text='to(end date)', size_hint_x=0.3, size_hint_y=None, height=50))
+            self.add_widget(self.placesheader)
+            self.PlacesBoxes = []
+            # edu is tuple of four elements (major, place of education, starting date, finishing date)
+            for place in amber.database[destination_id].living_in:
+                self.PlacesBoxes.append(
+                    BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
+
+            self.placesBox = BoxLayout(orientation='vertical', height=50, padding=5, spacing=10, size_hint_y=None)
+            for index, place in enumerate(self.PlacesBoxes):
+                place.placeinput = Button(text=amber.database[destination_id].living_in[index][0], size_hint_x=0.3,
+                                          size_hint_y=None, height=30)
+                place.add_widget(place.placeinput)
+                place.startdateinput = Button(text=amber.database[destination_id].living_in[index][1],
+                                              size_hint_x=0.3,
+                                              size_hint_y=None, height=30)
+                place.add_widget(place.startdateinput)
+                place.finishdateinput = Button(text=amber.database[destination_id].living_in[index][2],
+                                               size_hint_x=0.3,
+                                               size_hint_y=None, height=30)
+                place.add_widget(place.finishdateinput)
+
+                self.placesBox.add_widget(place)
+            self.placesBox.bind(minimum_height=self.placesBox.setter('height'))
+            self.placesBoxScrollView = ScrollView(size_hint=(1, None), size=(200, 200))
+            self.placesBoxScrollView.add_widget(self.placesBox)
+            self.add_widget(self.placesBoxScrollView)
+
+    class ContactPage(BoxLayout):
+        def __init__(self, user_id, destination_id, screen_manager, **kwargs):
+            super(Page.ContactPage, self).__init__(**kwargs)
+            self.user_id = user_id
+            self.destination_id = destination_id
+            self.screen_manager = screen_manager
+            self.orientation = 'vertical'
+            size_hint_y = 3
+            self.add_widget(Label(text='', size_hint_y=1, height=50))
+            self.Phonecolumn = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=1)
+            self.Emailcolumn = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=1)
+            self.LinksRow = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=1)
+            # self.contactheader = BoxLayout(orientation='horizontal', size_hint_y=None,height=40, padding=5, spacing=10)
+            ###master phone and master mail
+            self.MasterPhoneheader = Label(text='Master Mobile Phone', size_hint_x=1, size_hint_y=3, height=50)
+            self.MasterEmailheader = Label(text='Master Email', size_hint_x=1, size_hint_y=3, height=50)
+            self.Phonecolumn.add_widget(self.MasterPhoneheader)
+            self.Emailcolumn.add_widget(self.MasterEmailheader)
+
+            self.MasterPhoneBox = BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5,
+                                            spacing=10)
+            self.MasterPhoneButton = Button(text=str(amber.database[destination_id].master_phone_number),
+                                            size_hint_x=0.3,
+                                            size_hint_y=None, height=30)
+            self.MasterPhoneBox.add_widget(self.MasterPhoneButton)
+
+            self.Phonecolumn.add_widget(self.MasterPhoneBox)
+
+            self.MasterMailBox = BoxLayout(orientation='horizontal', size_hint_y=None, height=50, padding=5,
+                                           spacing=10)
+            self.MasterMailButton = Button(text=str(amber.database[destination_id].master_email), size_hint_x=0.3,
+                                           size_hint_y=None, height=30)
+            self.MasterMailBox.add_widget(self.MasterMailButton)
+
+            self.Emailcolumn.add_widget(self.MasterMailBox)
+
+            self.Phoneheader = Label(text='Mobile Numbers', size_hint_x=1, size_hint_y=1, height=50)
+            self.Emailheader = Label(text='Emails', size_hint_x=1, size_hint_y=1, height=50)
+            self.Linksheader = Label(text='Links(Subject & URL)', size_hint_x=1, size_hint_y=1, height=50)
+
+            self.Phonecolumn.add_widget(self.Phoneheader)
+            self.Emailcolumn.add_widget(self.Emailheader)
+            self.LinksRow.add_widget(self.Linksheader)
+
+            ###Phone Information
+            self.PhoneBox = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=None)
+            self.PhoneList = []
+            for index, Number in enumerate(amber.database[destination_id].phone_numbers):
+                # if index != 0:
+                self.PhoneList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+            for index, Number in enumerate(self.PhoneList):
+                if index != 0:
+                    Number.Phoneinput = Button(text=amber.database[destination_id].phone_numbers[index],
+                                               size_hint_x=0.3,
+                                               size_hint_y=None, height=30)
+                    Number.add_widget(Number.Phoneinput)
+
+                    self.PhoneBox.add_widget(Number)
+            self.PhoneBox.bind(minimum_height=self.PhoneBox.setter('height'))
+            self.PhoneBoxScrollView = ScrollView(size_hint=(1, None), size=(200, 200))
+            self.PhoneBoxScrollView.add_widget(self.PhoneBox)
+            self.Phonecolumn.add_widget(self.PhoneBoxScrollView)
+
+            ###Emails Information
+            self.EmailBox = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=None)
+            self.EmailList = []
+            for index, mail in enumerate(amber.database[destination_id].emails):
+                # if index != 0:
+                self.EmailList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+            for index, mail in enumerate(self.EmailList):
+                if index != 0:
+                    mail.mailinput = Button(text=amber.database[destination_id].emails[index], size_hint_x=0.3,
+                                            size_hint_y=None, height=30)
+                    mail.add_widget(mail.mailinput)
+                    self.EmailBox.add_widget(mail)
+            self.EmailBox.bind(minimum_height=self.EmailBox.setter('height'))
+            self.EmailBoxScrollView = ScrollView(size_hint=(1, None), size=(200, 200))
+            self.EmailBoxScrollView.add_widget(self.EmailBox)
+            self.Emailcolumn.add_widget(self.EmailBoxScrollView)
+
+            ###Links Information
+            self.LinksBox = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=None)
+            self.LinksList = []
+            for link in amber.database[destination_id].links:
+                # if index != 0:
+                self.LinksList.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
+            for index, link in enumerate(self.LinksList):
+                link.linkstrwidget = Button(text=amber.database[destination_id].links[index][0], size_hint_x=0.3,
+                                            size_hint_y=None, height=30)
+                link.linkURLwidget = Button(text=amber.database[destination_id].links[index][1], size_hint_x=0.3,
+                                            size_hint_y=None, height=30)
+                link.add_widget(link.linkstrwidget)
+                link.add_widget(link.linkURLwidget)
+
+                self.LinksBox.add_widget(link)
+            self.LinksBox.bind(minimum_height=self.LinksBox.setter('height'))
+            self.LinksBoxScrollView = ScrollView(size_hint=(1, None), size=(200, 200))
+            self.LinksBoxScrollView.add_widget(self.LinksBox)
+            self.LinksRow.add_widget(self.LinksBoxScrollView)
+            self.PhoneAndMailRow = BoxLayout(orientation='horizontal', padding=10, spacing=10, size_hint_y=None)
+            self.PhoneAndMailRow.add_widget(self.Phonecolumn)
+            self.PhoneAndMailRow.add_widget(self.Emailcolumn)
+            self.add_widget(self.PhoneAndMailRow)
+            self.add_widget(self.LinksRow)
+
+    class RelationsPage(BoxLayout):
+        def __init__(self, user_id, destination_id, screen_manager, **kwargs):
+            super(Page.RelationsPage, self).__init__(**kwargs)
+            self.user_id = user_id
+            self.destination_id = destination_id
+            self.screen_manager = screen_manager
+            self.orientation = 'vertical'
+            # self.add_widget(Label(text='EditRelationsPage'))
+            self.FamilyPart = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=1)
+            self.RelationsPart = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=1)
+            self.Familyheader = Label(text='Family Members', size_hint_x=1, size_hint_y=1, height=50)
+            self.Relationheader = Label(text='Relationships', size_hint_x=1, size_hint_y=1, height=50)
+
+            self.FamilyPart.add_widget(self.Familyheader)
+            self.RelationsPart.add_widget(self.Relationheader)
+
+            ###Family Information
+            self.FamilyBoxs = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=None)
+            self.FamilyList = []
+            for Family in amber.database[destination_id].family:
+                # if index != 0:
+                self.FamilyList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+            for index, Family in enumerate(self.FamilyList):
+                familyid = amber.database[destination_id].family[index][0]
+                Family.name = Button(text=amber.database[familyid].name, size_hint_x=0.3,
+                                     size_hint_y=None, height=30)
+                Family.Relation = Button(text=amber.database[destination_id].family[index][1], size_hint_x=0.3,
+                                         size_hint_y=None, height=30)
+                Family.add_widget(Family.name)
+                Family.add_widget(Family.Relation)
+                self.FamilyBoxs.add_widget(Family)
+            self.FamilyBoxs.bind(minimum_height=self.FamilyBoxs.setter('height'))
+            self.FamilyBoxScrollView = ScrollView(size_hint=(1, None), size=(200, 200))
+            self.FamilyBoxScrollView.add_widget(self.FamilyBoxs)
+            self.FamilyPart.add_widget(self.FamilyBoxScrollView)
+            self.add_widget(self.FamilyPart)
+
+            ###Relations Information
+            self.RelationBoxs = BoxLayout(orientation='vertical', padding=10, spacing=10, size_hint_y=None)
+            self.RelationList = []
+            for Relation in amber.database[destination_id].relationships:
+                # if index != 0:
+                self.RelationList.append(
+                    BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+            for index, Relation in enumerate(self.RelationList):
+                Relationid = amber.database[destination_id].relationships[index][0]
+                Relation.name = Button(text=amber.database[Relationid].name, size_hint_x=0.3,
+                                       size_hint_y=None, height=30)
+                Relation.type = Button(text=amber.database[destination_id].relationships[index][1], size_hint_x=0.3,
+                                       size_hint_y=None, height=30)
+                Relation.startdateinput = Button(text=amber.database[destination_id].relationships[index][2],
+                                                 size_hint_x=0.1,
+                                                 size_hint_y=None, height=30)
+                Relation.finishdateinput = Button(text=amber.database[destination_id].relationships[index][3],
+                                                  size_hint_x=0.1,
+                                                  size_hint_y=None, height=30)
+                Relation.add_widget(Relation.name)
+                Relation.add_widget(Relation.type)
+                Relation.add_widget(Relation.startdateinput)
+                Relation.add_widget(Relation.finishdateinput)
+
+                self.RelationBoxs.add_widget(Relation)
+            self.RelationBoxs.bind(minimum_height=self.RelationBoxs.setter('height'))
+            self.RelationBoxScrollView = ScrollView(size_hint=(1, None), size=(200, 200))
+            self.RelationBoxScrollView.add_widget(self.RelationBoxs)
+            self.RelationsPart.add_widget(self.RelationBoxScrollView)
+            self.add_widget(self.RelationsPart)
 
     class SearchButton(Button):
 
@@ -3865,8 +4253,9 @@ class AmberOcean(App):
         self.user_id = user_id
 
     def run(self):
+        super(AmberOcean, self).run()
         try:
-           super(AmberOcean, self).run()
+            pass
         except:
             import sys
             print(sys.exc_info())
@@ -3884,6 +4273,16 @@ if __name__ == "__main__":
     # main_t = Thread(target=AmberOcean(user_id=user_id_for_login).run)
     # main_t.start()
     # main_t.join()
+    # import sys
+    # if len(sys.argv) is 1 and sys.argv[0].lower() is "admin":
+    #     import hashlib
+    #     password = "88362c80f2ac5ba94bb93ded68608147c9656e340672d37b86f219c6"
+    #     pw = input()
+    #     if password == str(hashlib.sha224(pw.encode('utf-8')).hexdigest()):
+    #
+    #     else:
+    #         print('Your password is wrong!')
+    # else:
     amber.import_database()
     AmberOcean(user_id=user_id_for_login).run()
     amber.export_database()

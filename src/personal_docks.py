@@ -92,6 +92,12 @@ class PersonalDock(amber.AmberObject):
         self.sailed_ships = []  # Tuples of two elements (ship id, initial sailing date)
         self.join_date = dt.datetime.utcnow().replace(microsecond=0)
 
+    def __repr__(self):
+        result = ""
+        for attr, val in vars(self).items():
+            result = result + "| " + str(attr) + " " + str(val)
+        return result
+
     def check_password(self, password):
         password = hashlib.sha224(password.encode('utf-8')).hexdigest()
         return self.password == password
@@ -326,9 +332,7 @@ class PersonalDock(amber.AmberObject):
         max_reactions = 0
         max_reactions_id = -1
         for ship in self.generate_ships():
-            reactions = 0
-            for key, dict_list in database[ship].reactions.items():
-                reactions += len(dict_list)
+            reactions = len(database[ship].reactions)
             if reactions > max_reactions:
                 max_reactions = reactions
                 max_reactions_id = ship
@@ -405,11 +409,18 @@ class PersonalDock(amber.AmberObject):
                 newest_post_id = group_posts[no_of_posts - 1][0]
                 posts.append((newest_post_id, no_of_posts - 1))
         sorted_posts = sortedcontainers.SortedListWithKey(posts, key=lambda tup: database[tup[0]].creation_date)
-        for post_id, post_no in sorted_posts:
+
+        while True:
+            if len(sorted_posts) != 0:
+                post_id, post_no = sorted_posts[len(sorted_posts) - 1]
+            else:
+                break
             yield post_id
+            sorted_posts.remove((post_id, post_no))
             if post_no != 0:
-                post_creator_id=database[post_id].creator_id
+                post_creator_id = database[post_id].where_is_it_created_id
                 posts = database[post_creator_id].sailed_ships
+                print(post_no-1, posts)
                 new_post_id = posts[post_no-1][0]
                 sorted_posts.add((new_post_id, post_no-1))
 
@@ -434,32 +445,49 @@ class PersonalDock(amber.AmberObject):
             attribute = line[0:line.find("\t")]
             if not attribute == 'attribute' and not attribute == "":
                 attributeValue = line[line.find("\t") + 1:line.find("\n")]
-                if attributeValue == "True":
-                    loadedDock.attribute = True
-                elif attributeValue == "False":
-                    loadedDock.attribute = False
-                elif not (attributeValue.find("(") == -1):
-                    tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in attributeValue.split('),(')]
-                    for i in range(len(tuplesvalue)):
-                        for j in range(len(tuplesvalue[i])):
-                            if  "datetime.datetime" in tuplesvalue[i][j]:
-                                tupvalue=tuplesvalue[i][j].replace('datetime.datetime','')
-                                date=dt.datetime.strptime(tupvalue, f)
-                                tuplesvalue[i]=list(tuplesvalue[i])
-                                tuplesvalue[i][j]=date
-                                tuplesvalue[i]=tuple(tuplesvalue[i])
-                    setattr(loadedDock, attribute, tuplesvalue)
-                elif not (attributeValue.find(",") == -1):
-                    listvalue = attributeValue.split(',')
-                    setattr(loadedDock, attribute, listvalue)
+                if (attributeValue.find("\"") == -1):
+                    if attributeValue == "True":
+                        loadedDock.attribute = True
+                    elif attributeValue == "False":
+                        loadedDock.attribute = False
+                    elif not (attributeValue.find("(") == -1):
+                        tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in attributeValue.split('),(')]
+                        for i in range(len(tuplesvalue)):
+                            for j in range(len(tuplesvalue[i])):
+                                tuplesvalue[i] = list(tuplesvalue[i])
+                                tuplesvalue[i][j] = tuplesvalue[i][j].replace(')', '')
+                                tuplesvalue[i] = tuple(tuplesvalue[i])
+                                if  "datetime.datetime" in tuplesvalue[i][j]:
+                                    tupvalue=tuplesvalue[i][j].replace('datetime.datetime','')
+                                    date=dt.datetime.strptime(tupvalue, f)
+                                    tuplesvalue[i]=list(tuplesvalue[i])
+                                    tuplesvalue[i][j]=date
 
-                else:
-                    if "datetime.datetime" in attributeValue:
-                        attributeValue=attributeValue.replace('datetime.datetime','')
-                        date = dt.datetime.strptime(attributeValue, f)
-                        setattr(loadedDock, attribute, date)
+                            if tuplesvalue[i][len(tuplesvalue[i]) - 1] == '':
+                                tuplesvalue[i] = list(tuplesvalue[i])
+                                tuplesvalue[i].pop()
+                                tuplesvalue[i] = tuple(tuplesvalue[i])
+                            tuplesvalue[i]=tuple(tuplesvalue[i])
+                        # loadedDock.sailed_ships=[1,2]
+                        # print(attribute, tuplesvalue)
+                        #vars(loadedDock)[attribute] = tuplesvalue
+                        setattr(loadedDock, attribute, tuplesvalue)
+                    elif not (attributeValue.find(",") == -1):
+                        listvalue = attributeValue.split(',')
+                        if listvalue[len(listvalue)-1]=='':
+                            listvalue.pop()
+                        setattr(loadedDock, attribute, listvalue)
+
                     else:
-                        setattr(loadedDock, attribute, attributeValue)
+                        if "datetime.datetime" in attributeValue:
+                            attributeValue=attributeValue.replace('datetime.datetime','')
+                            date = dt.datetime.strptime(attributeValue, f)
+                            setattr(loadedDock, attribute, date)
+                        else:
+                            setattr(loadedDock, attribute, attributeValue)
+                else:
+                    attributeValue=attributeValue.replace('\"','')
+                    setattr(loadedDock, attribute, attributeValue)
 
         if 'attribute' in vars(loadedDock):
             del vars(loadedDock)['attribute']
@@ -493,15 +521,18 @@ class PersonalDock(amber.AmberObject):
                             line += "),"
                         else:
                             line += str(value) + ","
-                    if line[len(line) - 1] == ",":
-                        line = line[:-1]  # to remove the last "," in the line
+                    '''if line[len(line) - 1] == ",":
+                        line = line[:-1]  # to remove the last "," in the line'''
                 else:
                     attrstring=str(attributeValue)
                     if isinstance(attributeValue, dt.datetime):
                         attrstring="datetime.datetime"+attrstring
+                    elif not isinstance(attributeValue, bool):
+                        attrstring = '\"' + attrstring + '\"'
                     line += attrstring
 
                 line += "\n" + "</" + attribute + ">" + "\n"
+
         return line
 
     @staticmethod

@@ -1,103 +1,253 @@
-4++|++0+|+<name>
-	Boula
+8++|++0+|+<name>
+	"Beshoy Anwar"
 </name>
 <gender>
-	Male
+	"Male"
 </gender>
 <birthday>
-	datetime.datetime1996-09-28 00:00:00
+	datetime.datetime1996-09-25 00:00:00
 </birthday>
 <password>
-	78d8045d684abd2eece923758f3cd781489df3a48e1278982466017f
+	"16383865bbad3918ad08ba3b847944cbb15aa90c6a9b76e9074f9209"
 </password>
 <master_email>
-	boulaza5@yahoo.com
+	"beshoy@gmail.com"
 </master_email>
 <emails>
-	boulaza5@yahoo.com
+	beshoy@gmail.com,rrrr@llll.com,lll@ooo.com,
 </emails>
 <master_phone_number>
-	98
+	"43"
 </master_phone_number>
 <phone_numbers>
-	98
+	43,
 </phone_numbers>
 <active>
 	True
 </active>
-<seas>
-	1
-</seas>
+<friends>
+	2,
+</friends>
+<education>
+	(com,puter,2003,2004),(puter,com,1998,2002),
+</education>
+<living_in>
+	(dfgh,2006,2012),
+</living_in>
 <relationship_status>
-	single
+	"single"
 </relationship_status>
+<links>
+	(fb,fb.com/besho),(twitter,twitter.com\beshoy),(twitter,twitter.com\beshoy),(twitter,twitter.com\beshoy),(twitter,twitter.com\beshoy),(twitter,twitter.com\beshoy),
+</links>
 <sailed_ships>
-	(3,datetime.datetime2018-05-04 20:37:20)
+	(1,datetime.datetime2018-05-05 11:10:08),
 </sailed_ships>
 <join_date>
-	datetime.datetime2018-05-04 20:35:20
+	datetime.datetime2018-05-05 11:09:58
 </join_date>
-+|+<class 'personal_docks.PersonalDock'>++|++1+|+<creator>
-	0
++|+<class 'personal_docks.PersonalDock'>++|++1+|+<creator_id>
+	"0"
+</creator_id>
+<where_is_it_created_id>
+	"0"
+</where_is_it_created_id>
+<content_type>
+	"text"
+</content_type>
+<txt_content>
+	"hi,hello"
+</txt_content>
+<privacy>
+	"everyone"
+</privacy>
+<reactions>
+	0:love
+</reactions>
+<creation_date>
+	datetime.datetime2018-05-05 11:10:08
+</creation_date>
++|+<class 'ships.Ship'>++|++2+|+<name>
+	"Mina"
+</name>
+<gender>
+	"Male"
+</gender>
+<birthday>
+	datetime.datetime1996-06-21 00:00:00
+</birthday>
+<password>
+	"78d8045d684abd2eece923758f3cd781489df3a48e1278982466017f"
+</password>
+<master_email>
+	"minamourice2@gmail.com"
+</master_email>
+<emails>
+	minamourice2@gmail.com,
+</emails>
+<master_phone_number>
+	"12321"
+</master_phone_number>
+<phone_numbers>
+	12321,
+</phone_numbers>
+<active>
+	True
+</active>
+<friends>
+	0,3,
+</friends>
+<followees>
+	3,
+</followees>
+<seas>
+	4,
+</seas>
+<relationship_status>
+	"single"
+</relationship_status>
+<links>
+	(fghj,weui.com),(wr42345,setey56.org),(fghj,weui.com.eg),
+</links>
+<sailed_ships>
+	(7,datetime.datetime2018-05-05 15:06:42),
+</sailed_ships>
+<join_date>
+	datetime.datetime2018-05-05 11:20:37
+</join_date>
++|+<class 'personal_docks.PersonalDock'>++|++3+|+<name>
+	"Menna"
+</name>
+<gender>
+	"Female"
+</gender>
+<birthday>
+	datetime.datetime1995-05-07 00:00:00
+</birthday>
+<password>
+	"7fc2ed4284075f3c821d6087995584fcb6f75a20ddcc421558c50b10"
+</password>
+<master_email>
+	"menna.eid.95@gmail.com"
+</master_email>
+<emails>
+	menna.eid.95@gmail.com,
+</emails>
+<master_phone_number>
+	"12345"
+</master_phone_number>
+<phone_numbers>
+	12345,
+</phone_numbers>
+<active>
+	True
+</active>
+<friends>
+	2,
+</friends>
+<followers>
+	2,
+</followers>
+<relationship_status>
+	"single"
+</relationship_status>
+<join_date>
+	datetime.datetime2018-05-05 11:21:14
+</join_date>
++|+<class 'personal_docks.PersonalDock'>++|++4+|+<creator>
+	"2"
 </creator>
 <name>
-	Plasma Lovers
+	"foo"
 </name>
+<description>
+	"ghjkl"
+</description>
 <visibility_privacy>
-	everyone
+	"everyone"
 </visibility_privacy>
 <sailing_privacy>
-	everyone
+	"everyone"
 </sailing_privacy>
 <active>
 	True
 </active>
 <administrators>
-	0
+	2,
 </administrators>
 <members>
-	0
+	2,
 </members>
 <sailed_ships>
-	(2,datetime.datetime2018-05-04 20:35:53)
+	(5,datetime.datetime2018-05-05 15:05:03),
 </sailed_ships>
 <creation_date>
-	datetime.datetime2018-05-04 20:35:36
+	datetime.datetime2018-05-05 15:04:48
 </creation_date>
-+|+<class 'seas.Sea'>++|++2+|+<creator_id>
-	0
++|+<class 'seas.Sea'>++|++5+|+<creator_id>
+	"2"
 </creator_id>
 <where_is_it_created_id>
-	1
+	"4"
 </where_is_it_created_id>
 <content_type>
-	text
+	"text"
 </content_type>
 <txt_content>
-	Welcome everybody, hope you like it!
+	"hello world!"
 </txt_content>
 <privacy>
-	everyone
+	"everyone"
 </privacy>
+<reactions>
+	2:like
+</reactions>
 <creation_date>
-	datetime.datetime2018-05-04 20:35:53
+	datetime.datetime2018-05-05 15:05:03
 </creation_date>
-+|+<class 'ships.Ship'>++|++3+|+<creator_id>
-	0
+<child_ships>
+	6,
+</child_ships>
++|+<class 'ships.Ship'>++|++6+|+<creator_id>
+	"2"
 </creator_id>
 <where_is_it_created_id>
-	0
+	"4"
 </where_is_it_created_id>
 <content_type>
-	text
+	"text"
 </content_type>
 <txt_content>
-	Dada!!
+	"toz"
 </txt_content>
 <privacy>
-	everyone
+	"everyone"
+</privacy>
+<reactions>
+	2:haha
+</reactions>
+<parent_ship_id>
+	"5"
+</parent_ship_id>
+<creation_date>
+	datetime.datetime2018-05-05 15:05:26
+</creation_date>
++|+<class 'ships.Ship'>++|++7+|+<creator_id>
+	"2"
+</creator_id>
+<where_is_it_created_id>
+	"2"
+</where_is_it_created_id>
+<content_type>
+	"text"
+</content_type>
+<txt_content>
+	"hjgjhhgjghj"
+</txt_content>
+<privacy>
+	"everyone"
 </privacy>
 <creation_date>
-	datetime.datetime2018-05-04 20:37:20
+	datetime.datetime2018-05-05 15:06:42
 </creation_date>
 +|+<class 'ships.Ship'>++|++
