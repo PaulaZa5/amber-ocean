@@ -80,6 +80,11 @@ class Ship(amber.AmberObject):
                 result = result + 1
         return result
 
+    def generate_reactions(self, reaction):
+        for user_id, saved_reaction in self.reactions.items():
+            if saved_reaction == reaction:
+                yield user_id
+
     def commit_edit(self, edit_text, edit_image=None, edit_video=None):
         self.edit_history.append((self.txt_content, self.image_content, self.video_content, self.creation_date))
         self.txt_content = edit_text
@@ -127,40 +132,54 @@ class Ship(amber.AmberObject):
         for line in lines:
             attribute = line[0:line.find("\t")]
             attributeValue = line[line.find("\t") + 1:line.find("\n")]
-            if attributeValue == "True":
-                loadedShip.attribute = True
-            elif attributeValue == "False":
-                loadedShip.attribute = False
-            elif  (attributeValue.find(":") != -1) and attribute=='reactions':
-                line = line.replace("reactions\t", "")
-                dictlines = line.split(";")
-                for dictline in dictlines:
-                    dictlist = dictline.split(":")
-                    valueslist = dictlist[1].split(",")
-                    if not (valueslist[0] == '\n'):
-                        loadedShip.reactions[dictlist[0]] = valueslist
-            elif not (attributeValue.find("(") == -1):
-                tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in
-                               attributeValue.split('),(')]
-                for i in range(len(tuplesvalue)):
-                    for j in range(len(tuplesvalue[i])):
-                        if "datetime.datetime" in tuplesvalue[i][j]:
-                            tupvalue = tuplesvalue[i][j].replace('datetime.datetime', '')
-                            date = dt.datetime.strptime(tupvalue, f)
-                            tuplesvalue[i] = list(tuplesvalue[i])
-                            tuplesvalue[i][j] = date
-                            tuplesvalue[i] = tuple(tuplesvalue[i])
-                setattr(loadedShip, attribute, tuplesvalue)
-            elif not (attributeValue.find(",") == -1):
-                listvalue = attributeValue.split(',')
-                setattr(loadedShip, attribute, listvalue)
-            else:
-                if "datetime.datetime" in attributeValue:
-                    attributeValue=attributeValue.replace('datetime.datetime','')
-                    date = dt.datetime.strptime(attributeValue, f)
-                    setattr(loadedShip, attribute, date)
+            if not attribute == 'attribute' and not attribute == "":
+                if (attributeValue.find("\"") == -1):
+                    if attributeValue == "True":
+                        loadedShip.attribute = True
+                    elif attributeValue == "False":
+                        loadedShip.attribute = False
+                    elif  (attributeValue.find(":") != -1) and attribute=='reactions':
+                        line = line.replace("reactions\t", "")
+                        dictlines = line.split(";")
+                        for dictline in dictlines:
+                            dictlist = dictline.split(":")
+                            if dictlist[1].find("\n") != -1:
+                                dictlist[1]=dictlist[1].replace('\n','')
+                            loadedShip.reactions[dictlist[0]] = dictlist[1]
+                    elif not (attributeValue.find("(") == -1):
+                        tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in
+                                       attributeValue.split('),(')]
+                        for i in range(len(tuplesvalue)):
+                            for j in range(len(tuplesvalue[i])):
+                                if "datetime.datetime" in tuplesvalue[i][j]:
+                                    tupvalue = tuplesvalue[i][j].replace('datetime.datetime', '')
+                                    tupvalue = tupvalue.replace(')', '')
+                                    date = dt.datetime.strptime(tupvalue, f)
+                                    tuplesvalue[i] = list(tuplesvalue[i])
+                                    tuplesvalue[i][j] = date
+                            if tuplesvalue[i][len(tuplesvalue[i]) - 1] == '':
+                                tuplesvalue[i].pop()
+                            tuplesvalue[i]=tuple(tuplesvalue[i])
+                        setattr(loadedShip, attribute, tuplesvalue)
+                    elif not (attributeValue.find(",") == -1):
+                        listvalue = attributeValue.split(',')
+                        if listvalue[len(listvalue) - 1] == '':
+                            listvalue.pop()
+                        setattr(loadedShip, attribute, listvalue)
+                    else:
+                        if "datetime.datetime" in attributeValue:
+                            attributeValue=attributeValue.replace('datetime.datetime','')
+                            date = dt.datetime.strptime(attributeValue, f)
+                            setattr(loadedShip, attribute, date)
+                        else:
+                            setattr(loadedShip, attribute, attributeValue)
+
                 else:
+                    attributeValue = attributeValue.replace('\"', '')
                     setattr(loadedShip, attribute, attributeValue)
+
+        if 'attribute' in vars(loadedShip):
+            del vars(loadedShip)['attribute']
 
         return loadedShip
 
@@ -176,13 +195,9 @@ class Ship(amber.AmberObject):
 
             if type(attributeValue) is dict:
                 line += "\n" + "\t"
-                for key, dictlist in attributeValue.items():
-
+                for key, value in attributeValue.items():
                     line += key + ":"
-                    for value in dictlist:
-                        line += str(value) + ","
-                    if line[len(line) - 1] == ",":
-                        line = line[:-1]  # to remove the last "," in the line
+                    line += str(value)
                     line += ";"
                 if line[len(line) - 1] == ";":
                     line = line[:-1]  # to remove the last ";" in the line
@@ -202,12 +217,14 @@ class Ship(amber.AmberObject):
                         line += "),"
                     else:
                         line += str(value) + ","
-                if line[len(line) - 1] == ",":
-                    line = line[:-1]  # to remove the last "," in the line
+                '''if line[len(line) - 1] == ",":
+                    line = line[:-1]  # to remove the last "," in the line'''
             else:
                 attrstring = str(attributeValue)
                 if isinstance(attributeValue, dt.datetime):
                     attrstring = "datetime.datetime" + attrstring
+                elif not isinstance(attributeValue, bool):
+                    attrstring = '\"' + attrstring + '\"'
                 line += "\n" + "\t" + attrstring
 
             line += "\n" + "</" + attribute + ">" + "\n"
@@ -252,19 +269,24 @@ class Ship(amber.AmberObject):
             img.text = self.image_content
         react = et.SubElement(data, 'Reactions')
         angry = et.SubElement(react, 'Angry')
-        for id in self.reactions[Reactions.Angry]:
+        angry.text = ''
+        for id in self.generate_reactions(Reactions.Angry):
             angry.text = angry.text + ", " + amber.database[id].name
         dislike = et.SubElement(react, 'Dislike')
-        for id in self.reactions[Reactions.Dislike]:
+        dislike.text = ''
+        for id in self.generate_reactions(Reactions.Dislike):
             dislike.text = dislike.text + ", " + amber.database[id].name
         haha = et.SubElement(react, 'Haha')
-        for id in self.reactions[Reactions.Haha]:
+        haha.text = ''
+        for id in self.generate_reactions(Reactions.Haha):
             haha.text = haha.text + ", " + amber.database[id].name
         like = et.SubElement(react, 'Like')
-        for id in self.reactions[Reactions.Like]:
+        like.text = ''
+        for id in self.generate_reactions(Reactions.Like):
             like.text = like.text + ", " + amber.database[id].name
         love = et.SubElement(react, 'Love')
-        for id in self.reactions[Reactions.Love]:
+        love.text = ''
+        for id in self.generate_reactions(Reactions.Love):
             love.text = love.text + ", " + amber.database[id].name
         txt = et.SubElement(data, 'Text')
         txt.text = self.txt_content

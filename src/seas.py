@@ -122,9 +122,7 @@ class Sea(amber.AmberObject):
         max_reactions = 0
         max_reactions_id = -1
         for ship in self.generate_ships():
-            reactions = 0
-            for key, dict_list in database[ship].reactions.items():
-                reactions += len(dict_list)
+            reactions = len(database[ship].reactions)
             if reactions > max_reactions:
                 max_reactions = reactions
                 max_reactions_id = ship
@@ -158,35 +156,45 @@ class Sea(amber.AmberObject):
         loadedSea = Sea("", "", "", new_object=False)
         for line in lines:
             attribute = line[0:line.find("\t")]
+            attributeValue = line[line.find("\t") + 1:line.find("\n")]
             if not attribute == 'attribute' and not attribute == "":
-                attributeValue = line[line.find("\t") + 1:line.find("\n")]
-                if attributeValue == "True":
-                    loadedSea.attribute = True
-                elif attributeValue == "False":
-                    loadedSea.attribute = False
-                elif not (attributeValue.find("(") == -1):
-                    tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in
-                                   attributeValue.split('),(')]
-                    for i in range(len(tuplesvalue)):
-                        for j in range(len(tuplesvalue[i])):
-                            if "datetime.datetime" in tuplesvalue[i][j]:
-                                tupvalue = tuplesvalue[i][j].replace('datetime.datetime', '')
-                                date = dt.datetime.strptime(tupvalue, f)
-                                tuplesvalue[i] = list(tuplesvalue[i])
-                                tuplesvalue[i][j] = date
-                                tuplesvalue[i] = tuple(tuplesvalue[i])
-                    setattr(loadedSea, attribute, tuplesvalue)
-                elif not (attributeValue.find(",") == -1):
-                    listvalue = attributeValue.split(',')
-                    setattr(loadedSea, attribute, listvalue)
+                if (attributeValue.find("\"") == -1):
+                    if attributeValue == "True":
+                        loadedSea.attribute = True
+                    elif attributeValue == "False":
+                        loadedSea.attribute = False
+                    elif not (attributeValue.find("(") == -1):
+                        tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in
+                                       attributeValue.split('),(')]
+                        for i in range(len(tuplesvalue)):
+                            for j in range(len(tuplesvalue[i])):
+                                if "datetime.datetime" in tuplesvalue[i][j]:
+                                    tupvalue = tuplesvalue[i][j].replace('datetime.datetime', '')
+                                    tupvalue = tupvalue.replace(')', '')
+                                    date = dt.datetime.strptime(tupvalue, f)
+                                    tuplesvalue[i] = list(tuplesvalue[i])
+                                    tuplesvalue[i][j] = date
+                            if tuplesvalue[i][len(tuplesvalue[i]) - 1] == '':
+                                tuplesvalue[i].pop()
+                            tuplesvalue[i] = tuple(tuplesvalue[i])
+                        setattr(loadedSea, attribute, tuplesvalue)
+                    elif not (attributeValue.find(",") == -1):
+                        listvalue = attributeValue.split(',')
+                        if listvalue[len(listvalue) - 1] == '':
+                            listvalue.pop()
+                        setattr(loadedSea, attribute, listvalue)
 
-                else:
-                    if "datetime.datetime" in attributeValue:
-                        attributeValue=attributeValue.replace('datetime.datetime','')
-                        date = dt.datetime.strptime(attributeValue, f)
-                        setattr(loadedSea, attribute, date)
                     else:
-                        setattr(loadedSea, attribute, attributeValue)
+                        if "datetime.datetime" in attributeValue:
+                            attributeValue=attributeValue.replace('datetime.datetime','')
+                            date = dt.datetime.strptime(attributeValue, f)
+                            setattr(loadedSea, attribute, date)
+                        else:
+                            setattr(loadedSea, attribute, attributeValue)
+                else:
+                    attributeValue = attributeValue.replace('\"', '')
+                    setattr(loadedSea, attribute, attributeValue)
+
 
         if 'attribute' in vars(loadedSea):
             del vars(loadedSea)['attribute']
@@ -196,38 +204,39 @@ class Sea(amber.AmberObject):
     def export_to_database(self):
         line = str()
         for attribute, attributeValue in vars(self).items():
-            if not attribute == 'attribute':
-                if attribute == "id" or attributeValue == None:
+            if attribute == "id" or attributeValue == None:
+                continue
+            if not (isinstance(attributeValue, bool)) and not (isinstance(attributeValue, dt.date)):
+                if len(attributeValue) == 0:
                     continue
-                if not (isinstance(attributeValue, bool)) and not (isinstance(attributeValue, dt.date)):
-                    if len(attributeValue) == 0:
-                        continue
-                line += "<" + attribute + ">"
-                line += "\n" + "\t"
-                if type(attributeValue) is list:
-                    for value in attributeValue:
-                        if type(value) is tuple:
-                            line += "("
+            line += "<" + attribute + ">"
+            line += "\n" + "\t"
+            if type(attributeValue) is list:
+                for value in attributeValue:
+                    if type(value) is tuple:
+                        line += "("
 
-                            for x in value:
-                                attrstring = str(x)
-                                if isinstance(x, dt.datetime):
-                                    attrstring = "datetime.datetime" + attrstring
-                                line += attrstring +","
+                        for x in value:
+                            attrstring = str(x)
+                            if isinstance(x, dt.datetime):
+                                attrstring = "datetime.datetime" + attrstring
+                            line += attrstring +","
 
-                            line = line[:-1]  # to remove the last "," in the line
-                            line += "),"
-                        else:
-                            line += str(value) + ","
-                    if line[len(line) - 1] == ",":
                         line = line[:-1]  # to remove the last "," in the line
-                else:
-                    attrstring = str(attributeValue)
-                    if isinstance(attributeValue, dt.datetime):
-                        attrstring = "datetime.datetime" + attrstring
-                    line += attrstring
+                        line += "),"
+                    else:
+                        line += str(value) + ","
+                '''if line[len(line) - 1] == ",":
+                    line = line[:-1]  # to remove the last "," in the line'''
+            else:
+                attrstring = str(attributeValue)
+                if isinstance(attributeValue, dt.datetime):
+                    attrstring = "datetime.datetime" + attrstring
+                elif not isinstance(attributeValue, bool):
+                    attrstring = '\"' + attrstring + '\"'
+                line += attrstring
 
-                line += "\n" + "</" + attribute + ">" + "\n"
+            line += "\n" + "</" + attribute + ">" + "\n"
         return line
 
     @staticmethod

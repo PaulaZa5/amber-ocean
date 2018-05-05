@@ -2,7 +2,14 @@
 This file contains all general operations
 """
 
-database = {}
+import pdb
+class db(dict):
+
+    def __getitem__(self, item):
+        pdb.set_trace()
+        return super().__getitem__(item)
+
+database ={}
 
 
 class AmberObject(object):
