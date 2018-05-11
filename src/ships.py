@@ -135,9 +135,9 @@ class Ship(amber.AmberObject):
             if not attribute == 'attribute' and not attribute == "":
                 if (attributeValue.find("\"") == -1):
                     if attributeValue == "True":
-                        loadedShip.attribute = True
+                        setattr(loadedShip, attribute, True)
                     elif attributeValue == "False":
-                        loadedShip.attribute = False
+                        setattr(loadedShip, attribute, False)
                     elif  (attributeValue.find(":") != -1) and attribute=='reactions':
                         line = line.replace("reactions\t", "")
                         dictlines = line.split(";")

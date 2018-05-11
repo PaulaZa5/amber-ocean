@@ -4281,6 +4281,7 @@ if __name__ == "__main__":
         password = "58acb7acccce58ffa8b953b12b5a7702bd42dae441c1ad85057fa70b"  #admin
         pw = input()
         if password == str(hashlib.sha224(pw.encode('utf-8')).hexdigest()):
+            import timeit
             amber.import_database()
             functions = {
                 'print_members_have_max_friends': amber.print_members_have_max_friends,
@@ -4297,9 +4298,27 @@ if __name__ == "__main__":
             while command != 'exit':
                 command = input()
                 try:
-                    functions[command]()
+                    if command.split()[0].lower() == 'database':
+                        print(amber.database)
+                    elif command.split()[0].lower() == 'export':
+                        if len(command.split()) == 3:
+                            amber.database[command.split()[1]].export_to_xml(command.split()[1][2])
+                        else:
+                            amber.database[command.split()[1]].export_to_xml()
+                    elif command.split()[0].lower() == 'import':
+                        if command.split()[1].lower() == "personaldock":
+                            personal_docks.PersonalDock.load_from_xml(command.split()[2])
+                        elif command.split()[1].lower() == "ship":
+                            ships.Ship.load_from_xml(command.split()[2])
+                        elif command.split()[1].lower() == "sea":
+                            seas.Sea.load_from_xml(command.split()[2])
+                    else:
+                        functions[command]()
                 except:
-                    pass
+                    try:
+                        timeit.timeit(command, number=1)
+                    except:
+                        pass
             amber.export_database()
         else:
             print('Your password is wrong!')

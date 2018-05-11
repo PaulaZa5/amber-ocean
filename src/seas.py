@@ -160,9 +160,9 @@ class Sea(amber.AmberObject):
             if not attribute == 'attribute' and not attribute == "":
                 if (attributeValue.find("\"") == -1):
                     if attributeValue == "True":
-                        loadedSea.attribute = True
+                        setattr(loadedSea, attribute, True)
                     elif attributeValue == "False":
-                        loadedSea.attribute = False
+                        setattr(loadedSea, attribute, False)
                     elif not (attributeValue.find("(") == -1):
                         tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in
                                        attributeValue.split('),(')]

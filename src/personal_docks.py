@@ -447,9 +447,9 @@ class PersonalDock(amber.AmberObject):
                 attributeValue = line[line.find("\t") + 1:line.find("\n")]
                 if (attributeValue.find("\"") == -1):
                     if attributeValue == "True":
-                        loadedDock.attribute = True
+                        setattr(loadedDock, attribute, True)
                     elif attributeValue == "False":
-                        loadedDock.attribute = False
+                        setattr(loadedDock, attribute, False)
                     elif not (attributeValue.find("(") == -1):
                         tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in attributeValue.split('),(')]
                         for i in range(len(tuplesvalue)):
