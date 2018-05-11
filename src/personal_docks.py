@@ -268,8 +268,16 @@ class PersonalDock(amber.AmberObject):
         self.links.append((link_string, link_url))
         return True
 
+    '''
+        def edit_link_url(self, link_string, new_link_url):
+            exist = self.remove_link(new_link_url)
+            if exist:
+                self.add_link(link_string, new_link_url)
+            return exist
+    '''
+
     def edit_link_url(self, link_string, new_link_url):
-        exist = self.remove_link(new_link_url)
+        exist = self.remove_link(link_string)
         if exist:
             self.add_link(link_string, new_link_url)
         return exist

@@ -20,7 +20,7 @@
 	"43"
 </master_phone_number>
 <phone_numbers>
-	43,
+	43,1243567,0123456789,012012012012,
 </phone_numbers>
 <active>
 	True
@@ -29,23 +29,38 @@
 	2,
 </friends>
 <education>
-	(com,puter,2003,2004),(puter,com,1998,2002),
+	(com,puter,2003,2004),(ay7aga,hsfhjlgd,1997,2001),(puter,com,1998,2007),
 </education>
 <living_in>
-	(dfgh,2006,2012),
+	(cairo,2000,2005),(alex,1997,1999),(dfgh,1996,1999),
 </living_in>
 <relationship_status>
 	"single"
 </relationship_status>
 <links>
-	(fb,fb.com/besho),(twitter,twitter.com\beshoy),(twitter,twitter.com\beshoy),(twitter,twitter.com\beshoy),(twitter,twitter.com\beshoy),(twitter,twitter.com\beshoy),
+	(fb,fb.com/besho),(ttt,tttt.com/besho),
 </links>
 <sailed_ships>
 	(1,datetime.datetime2018-05-05 11:10:08),
 </sailed_ships>
 <join_date>
-	datetime.datetime2018-05-05 11:09:58
+	datetime.datetime2018-05-11 17:33:09
 </join_date>
+<ah>
+	"ah"
+</ah>
+<<<</<sailed_ships<join_date>
+	datetime.datetime2018-05-05 11:09:58
+</<<</<sailed_ships<join_date>
+<</<</<sailed_ships<join_date<</</<sailed_ships<join_date<</join_dat>
+	"</join_dat"
+</</<</<sailed_ships<join_date<</</<sailed_ships<join_date<</join_dat>
+<</</</<sailed_ships<join_date<</join_dat<</</join_da>
+	"</</join_da"
+</</</</<sailed_ships<join_date<</join_dat<</</join_da>
+<</</</join_d>
+	"</</</join_d"
+</</</</join_d>
 +|+<class 'personal_docks.PersonalDock'>++|++1+|+<creator_id>
 	"0"
 </creator_id>
@@ -83,13 +98,13 @@
 	"minamourice2@gmail.com"
 </master_email>
 <emails>
-	minamourice2@gmail.com,
+	minamourice2@gmail.com,mail1@email.com,mail2@email.eg,mail3@sdfg.eg,
 </emails>
 <master_phone_number>
 	"12321"
 </master_phone_number>
 <phone_numbers>
-	12321,
+	12321,1234,5678,90123,
 </phone_numbers>
 <active>
 	True
@@ -103,11 +118,17 @@
 <seas>
 	4,
 </seas>
+<family>
+	(0,brother),(3,sister),
+</family>
 <relationship_status>
 	"single"
 </relationship_status>
+<relationships>
+	(0,Complicated,1996,1999),(3,Complicated,1998,2005),
+</relationships>
 <links>
-	(fghj,weui.com),(wr42345,setey56.org),(fghj,weui.com.eg),
+	(link1,url1),(link2,ul2),(link2,url2),(link3,url3),
 </links>
 <sailed_ships>
 	(7,datetime.datetime2018-05-05 15:06:42),
