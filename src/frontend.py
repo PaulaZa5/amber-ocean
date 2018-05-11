@@ -116,9 +116,9 @@ class Registeration(Widget):
            flag=1
         elif not self.year.text.isdigit() or not self.month.text.isdigit() or not self.day.text.isdigit():
             l = Label(text='Please enter a valid Birthday', color=(1, 0, 0, 1), markup=True)
+            flag=1
             self.ids.error.add_widget(l)
             Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
-            flag=1
         elif self.year.text.isdigit() and self.month.text.isdigit() and self.day.text.isdigit():
             if int(self.day.text) > 31 or int(self.day.text) < 0:
                 l = Label(text='Please enter a valid Birth Day', color=(1, 0, 0, 1), markup=True)
@@ -2729,7 +2729,7 @@ class Page(BoxLayout):
                 # self.LinkBox.remove_widget(self.LinkStrWidget)
                 # self.LinkBox.remove_widget(self.LinkURLWidget)
                 self.LinkBox.clear_widgets()
-                self.LinkStrInput = TextInput(text=self.LinkStrWidget.text,
+                self.LinkStrInput = Button(text=self.LinkStrWidget.text,
                                               size_hint_x=0.3, size_hint_y=None, height=30)
                 self.LinkURLInput = TextInput(text=self.LinkURLWidget.text,
                                               size_hint_x=0.3, size_hint_y=None, height=30)
@@ -2833,7 +2833,7 @@ class Page(BoxLayout):
             self.PhoneList =[]
             for index, Number in enumerate(amber.database[user_id].phone_numbers):
                 # if index != 0:
-                self.PhoneList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+                self.PhoneList.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
             for index, Number in enumerate(self.PhoneList):
                 if index != 0 :
                     Number.Phoneinput = Button(text=amber.database[user_id].phone_numbers[index], size_hint_x=0.3,
@@ -2854,7 +2854,7 @@ class Page(BoxLayout):
             self.EmailList=[]
             for index, mail in enumerate(amber.database[user_id].emails):
                 # if index != 0:
-                self.EmailList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+                self.EmailList.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
             for index, mail in enumerate(self.EmailList):
                 if index != 0 :
                     mail.mailinput = Button(text=amber.database[user_id].emails[index], size_hint_x=0.3,
@@ -3255,7 +3255,7 @@ class Page(BoxLayout):
                 self.RelationList.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
                 # self.RelationList[index].significant_other_id = TextInput( size_hint_x=0.4,
                 #                            size_hint_y=None, height=30)
-                self.RelationList[index].significant_other_id =Spinner(size_hint_x=0.3,
+                self.RelationList[index].significant_other_id =Spinner(size_hint_x=0.4,
                         size_hint_y=None, height=30)
                 for frd in amber.database[self.user_id].friends:
                     self.RelationList[index].significant_other_id.values.append(amber.database[frd].name)
@@ -3506,9 +3506,9 @@ class Page(BoxLayout):
                 self.RelationList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
             for index, Relation in enumerate(self.RelationList):
                 Relationid = amber.database[user_id].relationships[index][0]
-                Relation.name = Button(text=amber.database[Relationid].name, size_hint_x=0.3,
+                Relation.name = Button(text=amber.database[Relationid].name, size_hint_x=0.4,
                                        size_hint_y=None, height=30)
-                Relation.type = Button(text=amber.database[user_id].relationships[index][1], size_hint_x=0.3,
+                Relation.type = Button(text=amber.database[user_id].relationships[index][1], size_hint_x=0.4,
                                        size_hint_y=None, height=30)
                 Relation.startdateinput = Button(text=amber.database[user_id].relationships[index][2], size_hint_x=0.1,
                                                  size_hint_y=None, height=30)
@@ -4076,7 +4076,7 @@ class Page(BoxLayout):
             self.PhoneList = []
             for index, Number in enumerate(amber.database[destination_id].phone_numbers):
                 # if index != 0:
-                self.PhoneList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+                self.PhoneList.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
             for index, Number in enumerate(self.PhoneList):
                 if index != 0:
                     Number.Phoneinput = Button(text=amber.database[destination_id].phone_numbers[index],
@@ -4095,7 +4095,7 @@ class Page(BoxLayout):
             self.EmailList = []
             for index, mail in enumerate(amber.database[destination_id].emails):
                 # if index != 0:
-                self.EmailList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+                self.EmailList.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
             for index, mail in enumerate(self.EmailList):
                 if index != 0:
                     mail.mailinput = Button(text=amber.database[destination_id].emails[index], size_hint_x=0.3,
@@ -4153,7 +4153,7 @@ class Page(BoxLayout):
             self.FamilyList = []
             for Family in amber.database[destination_id].family:
                 # if index != 0:
-                self.FamilyList.append(BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+                self.FamilyList.append(BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
             for index, Family in enumerate(self.FamilyList):
                 familyid = amber.database[destination_id].family[index][0]
                 Family.name = Button(text=amber.database[familyid].name, size_hint_x=0.3,
@@ -4175,7 +4175,7 @@ class Page(BoxLayout):
             for Relation in amber.database[destination_id].relationships:
                 # if index != 0:
                 self.RelationList.append(
-                    BoxLayout(orientation='horizontal', size_hint_y=None, padding=5, spacing=10))
+                    BoxLayout(orientation='horizontal', size_hint_y=None,height=50, padding=5, spacing=10))
             for index, Relation in enumerate(self.RelationList):
                 Relationid = amber.database[destination_id].relationships[index][0]
                 Relation.name = Button(text=amber.database[Relationid].name, size_hint_x=0.3,
