@@ -569,7 +569,7 @@ class Page(BoxLayout):
                 self.size_hint_x = 0
                 self.users = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
                 self.users.bind(minimum_height=self.users.setter('height'))
-                for user in user.docks_you_may_know():
+                for user, mutual_friends in user.docks_you_may_know():
                     self.size_hint_x = 1
                     self.users.add_widget(screen_manager.profile_button(destination_id=user, size_hint_y=None))
                 self.add_widget(self.users)
@@ -582,7 +582,7 @@ class Page(BoxLayout):
                 self.size_hint_x = 0
                 self.groups = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
                 self.groups.bind(minimum_height=self.groups.setter('height'))
-                for group in user.seas_you_might_join():
+                for group, joined_friends in user.seas_you_might_join():
                     self.size_hint_x = 1
                     self.groups.add_widget(screen_manager.group_button(group_id=group, size_hint_y=None))
                 self.add_widget(self.groups)
@@ -596,7 +596,7 @@ class Page(BoxLayout):
                 self.group = group
                 self.posts = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
                 self.posts.bind(minimum_height=self.posts.setter('height'))
-                if self.group.sailing_privacy == seas.SeaSailingPrivacy.Everyone or self.group.is_administrator(user_id) or (self.group.sailing_privacy == seas.SeaSailingPrivacy.Only_editors and self.group.is_editor(user_id)):
+                if self.group.is_administrator(user_id) or (self.group.sailing_privacy == seas.SeaSailingPrivacy.Everyone and self.group.is_member(user_id))or (self.group.sailing_privacy == seas.SeaSailingPrivacy.Only_editors and self.group.is_editor(user_id)):
                     self.posts.add_widget(screen_manager.post_input(where_is_it_created=group.id))
                 for post, date in group.sailed_ships:
                     self.posts.add_widget(self.screen_manager.post(post_id=post, destination_id=self.group.id))
@@ -606,7 +606,9 @@ class Page(BoxLayout):
             super(Page.GroupPage, self).__init__(**kwargs)
             self.user = amber.database[user_id]
             self.group = amber.database[group_id]
-            if (self.group.visibility_privacy == seas.SeaVisibilityPrivacy.Only_Members and user_id in self.group.members) or self.group.visibility_privacy == seas.SeaVisibilityPrivacy.Everyone:
+            if self.group.is_administrator(user_id) and not self.group.active:
+                self.group.active = True
+            if ((self.group.visibility_privacy == seas.SeaVisibilityPrivacy.Only_Members and user_id in self.group.members) or self.group.visibility_privacy == seas.SeaVisibilityPrivacy.Everyone) and self.group.active:
                 self.screen_manager = screen_manager
                 self.orientation = 'vertical'
                 self.padding = 10
@@ -620,7 +622,12 @@ class Page(BoxLayout):
                 grp_page.add_widget(Page.GroupPage.SuggestedGroups(user=self.user, screen_manager=screen_manager))
                 self.add_widget(grp_page)
             else:
-                self.size_hint = (0, 0)
+                self.orientation = 'vertical'
+                self.padding = 10
+                self.spacing = 5
+                self.add_widget(Label(text="You either don't have permissions to view this sea or the group is deactivated.",
+                                      size_hint_y=5))
+                self.add_widget(screen_manager.back_button(text='Return'))
 
     class HomePage(BoxLayout):
         def __init__(self, user_id, screen_manager, **kwargs):
@@ -652,7 +659,7 @@ class Page(BoxLayout):
                 self.groups.bind(minimum_height=self.groups.setter('height'))
                 for num, group in enumerate(user.seas):
                     if num == 0:
-                        self.groups.add_widget(Label(text='Groups', size_hint_y=None))
+                        self.groups.add_widget(Label(text='Seas', size_hint_y=None))
                         self.size_hint_x = 1
                     self.groups.add_widget(screen_manager.group_button(group_id=group, size_hint_y=None))
                 self.add_widget(self.groups)
@@ -728,7 +735,7 @@ class Page(BoxLayout):
                 new = user.seas_you_might_join()
                 for num, group in enumerate(new):
                     if num == 0:
-                        self.suggested_groups.add_widget(Label(text='Suggested Groups', size_hint_y=None))
+                        self.suggested_groups.add_widget(Label(text='Suggested Seas', size_hint_y=None))
                         self.size_hint_x = 1
                     self.suggested_groups.add_widget(screen_manager.group_button(group_id=group[0], size_hint_y=None))
                 self.add_widget(self.suggested_groups)
@@ -906,6 +913,7 @@ class Page(BoxLayout):
                 self.add_widget(Label(text=self.reply.txt_content, size_hint_x=4))
 
                 self.prev_reaction = 'React'
+
                 def update_reactions(instance, touch):
 
                     if 'Like' in instance.text and not self.prev_reaction == 'Like':
@@ -946,7 +954,7 @@ class Page(BoxLayout):
 
                 reactions = Spinner(text="React", values=(
                     'Like - ' + str(amber.database[reply_id].count_of_reaction(ships.Reactions.Like)),
-                    'Haha - ' +  str(amber.database[reply_id].count_of_reaction(ships.Reactions.Haha)),
+                    'Haha - ' + str(amber.database[reply_id].count_of_reaction(ships.Reactions.Haha)),
                     'Love - ' + str(amber.database[reply_id].count_of_reaction(ships.Reactions.Love)),
                     'Dislike - ' + str(amber.database[reply_id].count_of_reaction(ships.Reactions.Dislike)),
                     'Angry - ' + str(amber.database[reply_id].count_of_reaction(ships.Reactions.Angry))
@@ -986,8 +994,7 @@ class Page(BoxLayout):
                 elif user_id == amber.database[ship_id].creator_id:
                     is_able_to_see = True
             else:
-                if amber.database[amber.database[
-                    ship_id].where_is_it_created_id].visibility_privacy == seas.SeaVisibilityPrivacy.Everyone:
+                if amber.database[amber.database[ship_id].where_is_it_created_id].visibility_privacy == seas.SeaVisibilityPrivacy.Everyone:
                     is_able_to_see = True
                 elif user_id in amber.database[amber.database[ship_id].where_is_it_created_id].members:
                     is_able_to_see = True
@@ -1035,8 +1042,6 @@ class Page(BoxLayout):
                 self.size_hint = (1, None)
                 self.height = 600
 
-
-
                 Header = BoxLayout(orientation='vertical', spacing=0, padding=20, size_hint=(1, 1))
                 Delete = BoxLayout(orientation='horizontal', size_hint=(1, 1), spacing=0, padding=20)
                 Center = BoxLayout(orientation='vertical', spacing=10, padding=20, size_hint=(1, 2))
@@ -1061,6 +1066,9 @@ class Page(BoxLayout):
                               bold=True
                               )
                 Delete.add_widget(name)
+                if amber.database[ship_id].where_is_it_created_id != destination_id and amber.is_sea(amber.database[amber.database[ship_id].where_is_it_created_id]):
+                    Delete.add_widget(Label(text=' posted in '))
+                    Delete.add_widget(screen_manager.group_button(group_id=amber.database[ship_id].where_is_it_created_id))
                 Delete.add_widget(Label(size_hint_x=3))
 
                 def delete_ship(instance):
@@ -1510,7 +1518,6 @@ class Page(BoxLayout):
             return Page.ProfilePage.FollowersButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
         def Followees_button(self, **kwargs):
             return Page.ProfilePage.FolloweesButton(user_id=self.user_id,destination_id=self.destination_id, screen_manager=self.screen_manager, **kwargs)
-
 
     class EditProfilePage(BoxLayout):
         class EditAboutButton(Button):
@@ -4232,25 +4239,25 @@ class Page(BoxLayout):
         self.add_widget(self.top_bar)
         self.add_widget(self.content)
 
+
 ################### Screen Manager ######################
 users_manager = ScreenManager(transition=SwapTransition())
 users_manager.add_widget(RegisterationScreen(name='Registeration'))
 login = Screen(name='login')
 login.add_widget(LoginScreen(users_manager=users_manager))
 users_manager.add_widget(login)
-
-users_manager.current='login'
-
+users_manager.current = 'login'
 ######################### Main App
+
+
 class AmberOcean(App):
 
     """
     Test App
     """
 
-    def __init__(self, user_id, **kwargs):
+    def __init__(self, **kwargs):
         super(AmberOcean, self).__init__(**kwargs)
-        self.user_id = user_id
 
     def run(self):
         super(AmberOcean, self).run()
@@ -4261,7 +4268,6 @@ class AmberOcean(App):
             print(sys.exc_info())
 
     def build(self):
-    #users_manager.current = users_manager.next()
         return users_manager
 
     def on_pause(self):
@@ -4269,20 +4275,35 @@ class AmberOcean(App):
 
 
 if __name__ == "__main__":
-    # from threading import Thread
-    # main_t = Thread(target=AmberOcean(user_id=user_id_for_login).run)
-    # main_t.start()
-    # main_t.join()
-    # import sys
-    # if len(sys.argv) is 1 and sys.argv[0].lower() is "admin":
-    #     import hashlib
-    #     password = "88362c80f2ac5ba94bb93ded68608147c9656e340672d37b86f219c6"
-    #     pw = input()
-    #     if password == str(hashlib.sha224(pw.encode('utf-8')).hexdigest()):
-    #
-    #     else:
-    #         print('Your password is wrong!')
-    # else:
-    amber.import_database()
-    AmberOcean(user_id=user_id_for_login).run()
-    amber.export_database()
+    import sys
+    if len(sys.argv) is 2 and sys.argv[1].lower() == "admin":
+        import hashlib
+        password = "58acb7acccce58ffa8b953b12b5a7702bd42dae441c1ad85057fa70b"  #admin
+        pw = input()
+        if password == str(hashlib.sha224(pw.encode('utf-8')).hexdigest()):
+            amber.import_database()
+            functions = {
+                'print_members_have_max_friends': amber.print_members_have_max_friends,
+                'print_members_have_max_followers': amber.print_members_have_max_followers,
+                'print_members_have_max_ships': amber.print_members_have_max_ships,
+                'print_ship_have_max_reactions_for_each_member': amber.print_ship_have_max_reactions_for_each_member,
+                'print_ship_have_max_comments_for_each_member': amber.print_ship_have_max_comments_for_each_member,
+                'print_seas_have_max_members': amber.print_seas_have_max_members,
+                'print_seas_have_max_ships': amber.print_seas_have_max_ships,
+                'print_ship_have_max_reactions_for_each_sea': amber.print_ship_have_max_reactions_for_each_sea,
+                'print_ship_have_max_comments_for_each_sea': amber.print_ship_have_max_comments_for_each_sea
+            }
+            command = ''
+            while command != 'exit':
+                command = input()
+                try:
+                    functions[command]()
+                except:
+                    pass
+            amber.export_database()
+        else:
+            print('Your password is wrong!')
+    else:
+        amber.import_database()
+        AmberOcean().run()
+        amber.export_database()

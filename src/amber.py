@@ -9,7 +9,8 @@ class db(dict):
         pdb.set_trace()
         return super().__getitem__(item)
 
-database ={}
+
+database = {}
 
 
 class AmberObject(object):
@@ -131,6 +132,70 @@ def generate_ships():
     for ship_id, ship in database.items():
         if is_ship(ship):
             yield ship_id
+
+
+def print_members_have_max_friends():
+    members=most_friends_members_generator()
+    for memberid,friends_no in members:
+        if friends_no!=0:
+            print(database[memberid].name+" have "+str(friends_no)+" friend")
+
+
+def print_members_have_max_followers():
+    members=most_followers_members_generator()
+    for memberid,followers_no in members:
+        if followers_no!=0:
+            print(database[memberid].name+" have "+str(followers_no)+" follower")
+
+
+def print_members_have_max_ships():
+    members=most_posts_members_generator()
+    for memberid,ships_no in members:
+        if ships_no !=0:
+            print(database[memberid].name+" have "+str(ships_no) +" ship")
+
+
+def print_ship_have_max_reactions_for_each_member():
+    members=max_reactions_ship_for_each_member_generator()
+    for memberid,ship in members:
+        if ship[1] !=0:
+            print(database[memberid].name+" sailed "+"\" "+database[ship[0]].txt_content+" \" and get "+str(ship[1]) +" reaction")
+
+
+def print_ship_have_max_comments_for_each_member():
+    members=max_comments_ship_for_each_member_generator()
+    for memberid,ship in members:
+        if ship[1] !=0:
+            print(database[memberid].name+" sailed "+"\" "+database[ship[0]].txt_content+" \" and get "+str(ship[1]) +" comment")
+
+
+def print_seas_have_max_members():
+    members=most_members_seas_generator()
+    for seaid,members_no in members:
+        if members_no!=0:
+            print(database[seaid].name+" have "+str(members_no)+" member")
+
+
+def print_seas_have_max_ships():
+    members=most_posts_seas_generator()
+    for seaid,ships_no in members:
+        if ships_no!=0:
+            print(database[seaid].name+" have "+str(ships_no)+" ship")
+
+
+def print_ship_have_max_reactions_for_each_sea():
+    members=max_reactions_ship_for_each_sea_generator()
+    for memberid,ship in members:
+        if ship[1] !=0:
+            print(database[database[ship[0]].creator_id].name+" sailed "+"\" "+database[str(ship[0])].txt_content+" \" and get "+str(ship[1]) +" reaction")
+
+
+def print_ship_have_max_comments_for_each_sea():
+    members=max_comments_ship_for_each_sea_generator()
+    for memberid,ship in members:
+        if ship[1] !=0:
+            print(database[database[ship[0]].creator_id].name+" sailed "+"\" "+database[str(ship[0])].txt_content+" \" and get "+str(ship[1]) +" comment")
+
 
 
 def export_database():
