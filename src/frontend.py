@@ -72,7 +72,7 @@ class Login(Widget):
             l = Label(text='Wrong Username or password', color=(1, 0, 0, 1), markup=True)
             self.ids.end.add_widget(l)
             Clock.schedule_once(lambda dt: self.ids.end.remove_widget(l), 1)
-            print("error")
+            # print("error")
 
 
 
@@ -97,6 +97,7 @@ class Registeration(Widget):
     def registerAccount(self):
         global returned_id
         flag=0
+        flag2=0
         # check input data
         for c in self.name.text:
             if not (c.isalpha() or c.isspace()):
@@ -104,77 +105,81 @@ class Registeration(Widget):
                 self.ids.error.add_widget(l)
                 Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
                 flag=1
-        if self.name.text == "" :
-            l = Label(text='Please enter a valid name', color=(1, 0, 0, 1), markup=True)
-            self.ids.error.add_widget(l)
-            Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
-            flag=1
-        elif self.gender.text =="Gender" :
-           l = Label(text='Please enter your gender', color=(1, 0, 0, 1), markup=True)
-           self.ids.error.add_widget(l)
-           Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
-           flag=1
-        elif not self.year.text.isdigit() or not self.month.text.isdigit() or not self.day.text.isdigit():
-            l = Label(text='Please enter a valid Birthday', color=(1, 0, 0, 1), markup=True)
-            flag=1
-            self.ids.error.add_widget(l)
-            Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
-        elif self.year.text.isdigit() and self.month.text.isdigit() and self.day.text.isdigit():
-            if int(self.day.text) > 31 or int(self.day.text) < 0:
-                l = Label(text='Please enter a valid Birth Day', color=(1, 0, 0, 1), markup=True)
+                flag2=1
+                break
+        if flag2==0:
+            if self.name.text == "" :
+                l = Label(text='Please enter a valid name', color=(1, 0, 0, 1), markup=True)
                 self.ids.error.add_widget(l)
                 Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
                 flag=1
-            elif int(self.month.text) > 12 or int(self.day.text) < 0:
-                l = Label(text='Please enter a valid Birth Month', color=(1, 0, 0, 1), markup=True)
+            elif self.gender.text =="Gender" :
+               l = Label(text='Please enter your gender', color=(1, 0, 0, 1), markup=True)
+               self.ids.error.add_widget(l)
+               Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+               flag=1
+            elif not self.year.text.isdigit() or not self.month.text.isdigit() or not self.day.text.isdigit():
+                l = Label(text='Please enter a valid Birthday', color=(1, 0, 0, 1), markup=True)
+                flag=1
                 self.ids.error.add_widget(l)
                 Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
-                flag=1
-            elif int(self.year.text) > 2018 or int(self.year.text) < 1900:
-                l = Label(text='Please enter a valid Birth Year', color=(1, 0, 0, 1), markup=True)
-                self.ids.error.add_widget(l)
-                Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
-                flag=1
-            elif not '@' in self.email.text or self.email.text == "":
-                l = Label(text='Please enter a valid email', color=(1, 0, 0, 1), markup=True)
-                self.ids.error.add_widget(l)
-                Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
-                flag=1
-            elif self.password.text == "":
-                l = Label(text='Please enter your Password', color=(1, 0, 0, 1), markup=True)
-                self.ids.error.add_widget(l)
-                Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
-                flag=1
-            elif self.phone.text == "":
-                l = Label(text='Please enter your Phone', color=(1, 0, 0, 1), markup=True)
-                self.ids.error.add_widget(l)
-                Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
-                flag=1
-            else:
-                docks=generate_personal_docks()
-                for id in docks:
-                    if self.email.text == database[id].master_email:
-                        l = Label(text='Please, Choose another email', color=(1, 0, 0, 1), markup=True)
-                        self.ids.error.add_widget(l)
-                        Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
-                        flag=1
-        if flag==0 :
-                date = datetime.datetime(int(self.year.text), int(self.month.text), int(self.day.text))
+            elif self.year.text.isdigit() and self.month.text.isdigit() and self.day.text.isdigit():
+                if int(self.day.text) > 31 or int(self.day.text) < 0:
+                    l = Label(text='Please enter a valid Birth Day', color=(1, 0, 0, 1), markup=True)
+                    self.ids.error.add_widget(l)
+                    Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+                    flag=1
+                elif int(self.month.text) > 12 or int(self.day.text) < 0:
+                    l = Label(text='Please enter a valid Birth Month', color=(1, 0, 0, 1), markup=True)
+                    self.ids.error.add_widget(l)
+                    Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+                    flag=1
+                elif int(self.year.text) > 2018 or int(self.year.text) < 1900:
+                    l = Label(text='Please enter a valid Birth Year', color=(1, 0, 0, 1), markup=True)
+                    self.ids.error.add_widget(l)
+                    Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+                    flag=1
+                elif not '@' in self.email.text or self.email.text == "":
+                    l = Label(text='Please enter a valid email', color=(1, 0, 0, 1), markup=True)
+                    self.ids.error.add_widget(l)
+                    Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+                    flag=1
+                elif self.password.text == "":
+                    l = Label(text='Please enter your Password', color=(1, 0, 0, 1), markup=True)
+                    self.ids.error.add_widget(l)
+                    Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+                    flag=1
+                elif self.phone.text == "":
+                    l = Label(text='Please enter your Phone', color=(1, 0, 0, 1), markup=True)
+                    self.ids.error.add_widget(l)
+                    Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+                    flag=1
+                else:
+                    docks=generate_personal_docks()
+                    for id in docks:
+                        if self.email.text == database[id].master_email:
+                            l = Label(text='Please, Choose another email', color=(1, 0, 0, 1), markup=True)
+                            self.ids.error.add_widget(l)
+                            Clock.schedule_once(lambda dt: self.ids.error.remove_widget(l), 1)
+                            flag=1
+            if flag==0 :
+                    date = datetime.datetime(int(self.year.text), int(self.month.text), int(self.day.text))
 
-                returned_id = personal_docks.PersonalDock.RegisterAccount(self.name.text, self.gender.text, date,
-                                                                          self.password.text,self.email.text,self.phone.text)
-                home = Screen(name='home2')
-                home.add_widget(Page(users_manager=users_manager, user_id=returned_id))
-                users_manager.add_widget(home)
-                users_manager.current = 'home2'
-                self.name.text=""
-                self.gender.text ="Gender"
-                self.day.text = ""
-                self.month.text = ""
-                self.year.text=""
-                self.password.text=""
-                self.email.text=""
-                self.phone.text=""
+                    returned_id = personal_docks.PersonalDock.RegisterAccount(self.name.text, self.gender.text, date,
+                                                                              self.password.text,self.email.text,self.phone.text)
+                    home = Screen(name='home2')
+                    home.add_widget(Page(users_manager=users_manager, user_id=returned_id))
+                    users_manager.add_widget(home)
+                    users_manager.current = 'home2'
+                    self.name.text=""
+                    self.gender.text ="Gender"
+                    self.day.text = ""
+                    self.month.text = ""
+                    self.year.text=""
+                    self.password.text=""
+                    self.email.text=""
+                    self.phone.text=""
+            flag2=0
     # check valid date
 
     # else:
@@ -598,7 +603,7 @@ class Page(BoxLayout):
                 self.posts.bind(minimum_height=self.posts.setter('height'))
                 if self.group.is_administrator(user_id) or (self.group.sailing_privacy == seas.SeaSailingPrivacy.Everyone and self.group.is_member(user_id))or (self.group.sailing_privacy == seas.SeaSailingPrivacy.Only_editors and self.group.is_editor(user_id)):
                     self.posts.add_widget(screen_manager.post_input(where_is_it_created=group.id))
-                for post, date in group.sailed_ships:
+                for post in group.generate_ships():
                     self.posts.add_widget(self.screen_manager.post(post_id=post, destination_id=self.group.id))
                 self.add_widget(self.posts)
 
@@ -868,7 +873,7 @@ class Page(BoxLayout):
             spin_privacy.bind(text=show_selected_value)
 
             share = Button(
-                text="Share",
+                text="Sail",
                 size_hint=(0.1, 1),
                 disabled=True,
                 on_release=post
@@ -1252,7 +1257,7 @@ class Page(BoxLayout):
 
                     comment_btn.disabled = True
 
-                    post = Button(text="Post", size_hint_x=0.2, size_hint_y=None, height=40,
+                    post = Button(text="Sail", size_hint_x=0.2, size_hint_y=None, height=40,
                                   on_release=create_comment, disabled=True, on_press=comment_clicked)
 
                     box_l.add_widget(new_post)
@@ -1474,7 +1479,7 @@ class Page(BoxLayout):
             self.Profileships = BoxLayout(size_hint_y=None, orientation='vertical', padding=10, spacing=5)
             self.Profileships.bind(minimum_height=self.Profileships.setter('height'))
 
-            for post, date in amber.database[self.destination_id].sailed_ships:
+            for post in amber.database[self.destination_id].generate_ships():
                 self.Profileships.add_widget(self.screen_manager.post(post_id=post, destination_id=self.destination_id))
 
             Profileshipsview.add_widget(self.Profileships)
@@ -4279,7 +4284,7 @@ if __name__ == "__main__":
     if len(sys.argv) is 2 and sys.argv[1].lower() == "admin":
         import hashlib
         password = "58acb7acccce58ffa8b953b12b5a7702bd42dae441c1ad85057fa70b"  #admin
-        pw = input()
+        pw = input('Password: ')
         if password == str(hashlib.sha224(pw.encode('utf-8')).hexdigest()):
             import timeit
             amber.import_database()
@@ -4296,7 +4301,7 @@ if __name__ == "__main__":
             }
             command = ''
             while command != 'exit':
-                command = input()
+                command = input("What do you want to do now?\n")
                 try:
                     if command.split()[0].lower() == 'database':
                         print(amber.database)

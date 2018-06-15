@@ -312,7 +312,7 @@ class PersonalDock(amber.AmberObject):
         Starts yielding posts shared to this dock chronologically
         """
 
-        for ship_id, ship_date in self.sailed_ships:
+        for ship_id, ship_date in self.sailed_ships.__reversed__():
             yield ship_id
 
     def sail_ship_to_this_dock(self, ship_id):
@@ -410,6 +410,12 @@ class PersonalDock(amber.AmberObject):
             if no_of_posts != 0:
                 newest_post_id=friend_posts[no_of_posts-1][0]
                 posts.append((newest_post_id, no_of_posts-1))
+        for followee in self.followees:
+            followee_posts = database[followee].sailed_ships
+            no_of_posts = len(followee_posts)
+            if no_of_posts != 0:
+                newest_post_id = followee_posts[no_of_posts - 1][0]
+                posts.append((newest_post_id, no_of_posts - 1))
         for group in self.seas:
             group_posts = database[group].sailed_ships
             no_of_posts = len(group_posts)
@@ -428,7 +434,7 @@ class PersonalDock(amber.AmberObject):
             if post_no != 0:
                 post_creator_id = database[post_id].where_is_it_created_id
                 posts = database[post_creator_id].sailed_ships
-                print(post_no-1, posts)
+                # print(post_no-1, posts)
                 new_post_id = posts[post_no-1][0]
                 sorted_posts.add((new_post_id, post_no-1))
 
@@ -494,7 +500,7 @@ class PersonalDock(amber.AmberObject):
                         else:
                             setattr(loadedDock, attribute, attributeValue)
                 else:
-                    attributeValue=attributeValue.replace('\"','')
+                    attributeValue=attributeValue.replace('\"','').replace('\\n', '\n')
                     setattr(loadedDock, attribute, attributeValue)
 
         if 'attribute' in vars(loadedDock):
@@ -536,7 +542,7 @@ class PersonalDock(amber.AmberObject):
                     if isinstance(attributeValue, dt.datetime):
                         attrstring="datetime.datetime"+attrstring
                     elif not isinstance(attributeValue, bool):
-                        attrstring = '\"' + attrstring + '\"'
+                        attrstring = '\"' + attrstring.replace("\n", '\\n') + '\"'
                     line += attrstring
 
                 line += "\n" + "</" + attribute + ">" + "\n"

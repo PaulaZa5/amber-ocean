@@ -1,6 +1,9 @@
-creator_id	"2"
-where_is_it_created_id	"2"
-content_type	"text"
-txt_content	"hjgjhhgjghj"
-privacy	"everyone"
-creation_date	datetime.datetime2018-05-05 15:06:42
+creator	"0"
+name	"NEW PLASMA SEA"
+description	"This is the best description\nWe don't have rules\nrespect yourself!"
+visibility_privacy	"everyone"
+sailing_privacy	"everyone"
+active	True
+administrators	0,
+members	0,
+creation_date	datetime.datetime2018-05-13 18:00:10

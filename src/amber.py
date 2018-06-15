@@ -187,14 +187,14 @@ def print_ship_have_max_reactions_for_each_sea():
     members=max_reactions_ship_for_each_sea_generator()
     for memberid,ship in members:
         if ship[1] !=0:
-            print(database[database[ship[0]].creator_id].name+" sailed "+"\" "+database[str(ship[0])].txt_content+" \" and get "+str(ship[1]) +" reaction")
+            print(database[database[ship[0]].where_is_it_created_id].name+" : "+database[database[ship[0]].creator_id].name+" sailed "+"\" "+database[str(ship[0])].txt_content+" \" and get "+str(ship[1]) +" reaction")
 
 
 def print_ship_have_max_comments_for_each_sea():
     members=max_comments_ship_for_each_sea_generator()
     for memberid,ship in members:
         if ship[1] !=0:
-            print(database[database[ship[0]].creator_id].name+" sailed "+"\" "+database[str(ship[0])].txt_content+" \" and get "+str(ship[1]) +" comment")
+            print(database[database[ship[0]].where_is_it_created_id].name+" : "+database[database[ship[0]].creator_id].name+" sailed "+"\" "+database[str(ship[0])].txt_content+" \" and get "+str(ship[1]) +" comment")
 
 
 

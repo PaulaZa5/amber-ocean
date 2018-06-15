@@ -105,7 +105,7 @@ class Sea(amber.AmberObject):
         Starts yielding posts shared to this sea chronologically
         """
 
-        for ship_id, ship_date in self.sailed_ships:
+        for ship_id, ship_date in self.sailed_ships.__reversed__():
             yield ship_id
 
     def sail_ship_to_this_sea(self, ship_id):
@@ -192,7 +192,7 @@ class Sea(amber.AmberObject):
                         else:
                             setattr(loadedSea, attribute, attributeValue)
                 else:
-                    attributeValue = attributeValue.replace('\"', '')
+                    attributeValue = attributeValue.replace('\"', '').replace('\\n', '\n')
                     setattr(loadedSea, attribute, attributeValue)
 
 
@@ -233,7 +233,7 @@ class Sea(amber.AmberObject):
                 if isinstance(attributeValue, dt.datetime):
                     attrstring = "datetime.datetime" + attrstring
                 elif not isinstance(attributeValue, bool):
-                    attrstring = '\"' + attrstring + '\"'
+                    attrstring = '\"' + attrstring.replace("\n", '\\n') + '\"'
                 line += attrstring
 
             line += "\n" + "</" + attribute + ">" + "\n"

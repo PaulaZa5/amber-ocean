@@ -175,7 +175,7 @@ class Ship(amber.AmberObject):
                             setattr(loadedShip, attribute, attributeValue)
 
                 else:
-                    attributeValue = attributeValue.replace('\"', '')
+                    attributeValue = attributeValue.replace('\"', '').replace('\\n', '\n')
                     setattr(loadedShip, attribute, attributeValue)
 
         if 'attribute' in vars(loadedShip):
@@ -224,7 +224,7 @@ class Ship(amber.AmberObject):
                 if isinstance(attributeValue, dt.datetime):
                     attrstring = "datetime.datetime" + attrstring
                 elif not isinstance(attributeValue, bool):
-                    attrstring = '\"' + attrstring + '\"'
+                    attrstring = '\"' + attrstring.replace("\n", '\\n') + '\"'
                 line += "\n" + "\t" + attrstring
 
             line += "\n" + "</" + attribute + ">" + "\n"
