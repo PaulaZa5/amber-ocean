@@ -137,6 +137,16 @@ class Sea(amber.AmberObject):
                 max_comments_id = ship
         return max_comments_id, max_comments
 
+    def max_friends_members(self):
+        sorted_members = sorted(self.members, key=lambda id: len(database[id].friends), reverse=True)
+        for member_id in sorted_members:
+            yield member_id, len(database[member_id].friends)
+
+    def max_followers_members(self):
+        sorted_members = sorted(self.members, key=lambda id: len(database[id].followers), reverse=True)
+        for member_id in sorted_members:
+            yield member_id, len(database[member_id].followers)
+
     @staticmethod
     def import_from_database(inData):
         f = "%Y-%m-%d %H:%M:%S"

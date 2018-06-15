@@ -7,7 +7,7 @@ from amber import database
 import datetime as dt
 import hashlib
 import sortedcontainers
-
+from prioDict import priorityDictionary
 
 class FamilyRelationship(enumerate):
     Brother = 'brother'
@@ -78,7 +78,7 @@ class PersonalDock(amber.AmberObject):
         self.master_phone_number = phone_number
         self.phone_numbers = [phone_number]
         self.active = True
-        self.friends = []
+        self.friends = {}
         self.followers = []
         self.followees = []
         self.seas = []
@@ -165,12 +165,20 @@ class PersonalDock(amber.AmberObject):
             return False
 
     def add_friend(self, friend_id):
-        self.friends.append(friend_id)
+        self.friends[friend_id] = 50 - len(set(self.friends.keys()).intersection(database[friend_id].friends.keys()))
+        for friend in database[friend_id].friends.keys():
+            if friend in self.friends.keys():
+                self.friends[friend] = self.friends[friend] - 1
+                database[friend].friends[self.id]=database[friend].friends[self.id]-1
         return True
 
     def remove_friend(self, friend_id):
         if friend_id in self.friends:
-            self.friends.remove(friend_id)
+            del self.friends[friend_id]
+            for friend in database[friend_id].friends.keys():
+                if friend in self.friends.keys():
+                    self.friends[friend] = self.friends[friend] + 1
+                    database[friend].friends[self.id] = database[friend].friends[self.id] + 1
             return True
         return False
 
@@ -267,14 +275,6 @@ class PersonalDock(amber.AmberObject):
     def add_link(self, link_string, link_url):
         self.links.append((link_string, link_url))
         return True
-
-    '''
-        def edit_link_url(self, link_string, new_link_url):
-            exist = self.remove_link(new_link_url)
-            if exist:
-                self.add_link(link_string, new_link_url)
-            return exist
-    '''
 
     def edit_link_url(self, link_string, new_link_url):
         exist = self.remove_link(link_string)
@@ -438,6 +438,109 @@ class PersonalDock(amber.AmberObject):
                 new_post_id = posts[post_no-1][0]
                 sorted_posts.add((new_post_id, post_no-1))
 
+    def bfs(start,end):
+        visited, queue, parents = set(), [], {}
+        visited.add(start)
+        queue.append(start)
+        parents[start]=-1
+        while queue:
+            parent = queue.pop(0)
+            for child in database[parent].friends:
+                if child not in visited:
+                    if child==end:
+                         parents[end]=parent
+                         return True,parents
+                    visited.add(child)
+                    parents[child]=parent
+                    queue.append(child)
+        return False,parents
+
+    def is_there_a_path_from_source_to_destination(source,destination):
+        result,paths=PersonalDock.bfs(source, destination)
+        thepath=[]
+        if result:
+            thepath.append(destination)
+            parent=paths[destination]
+            while parent!=-1:
+                thepath.append(parent)
+                parent = paths[parent]
+            pathstr=str()
+            while len(thepath)!=1:
+                pathstr+=database[thepath.pop()].name+'=>'
+            print(pathstr+database[thepath.pop()].name)
+
+    def Dijkstra( start, end=None):
+        """
+        Find shortest paths from the start vertex to all
+        vertices nearer than or equal to the end.
+
+        The input graph database is assumed to have the following
+        representation: A vertex can be any object that can
+        be used as an index into a dictionary.  database is a
+        dictionary, indexed by vertices.  For any vertex v,
+        database[v].friends is itself a dictionary, indexed by the neighbors
+        of v.  For any edge v->w, database[v].friends[w] is the length of
+        the edge.
+
+        The output is a pair (D,P) where D[v] is the distance
+        from start to v and P[v] is the predecessor of v along
+        the shortest path from s to v.
+
+        """
+
+        D = {}  # dictionary of final distances
+        P = {}  # dictionary of predecessors
+        Q = priorityDictionary()  # estimated distances of non-final vertices
+        Q[start] = 0
+
+        for v in Q:
+            D[v] = Q[v]
+            if v == end:
+                break
+
+            for w in database[v].friends:
+                vwLength = D[v] + database[v].friends[w]
+                if w in D:
+                    if vwLength < D[w]:
+                        raise ValueError("Dijkstra: found better path to already-final vertex")
+                elif w not in Q or vwLength < Q[w]:
+                    Q[w] = vwLength
+                    P[w] = v
+
+        return (D, P)
+
+    def shortestPath(start, end):
+        """
+        Find a single shortest path from the given start vertex
+        to the given end vertex.
+        The input has the same conventions as Dijkstra().
+        The output is a list of the vertices in order along
+        the shortest path.
+        """
+
+        D, P = PersonalDock.Dijkstra( start, end)
+        value = D[end]
+        Path = []
+        while 1:
+            Path.append(end)
+            if end == start: break
+            end = P[end]
+        Path.reverse()
+        return Path, value
+
+    def is_there_a_path_from_to(source,destination):
+        result, path = PersonalDock.bfs(source, destination)
+        if not(result):
+            print("No path from"+source +"to"+destination)
+        else:
+            path, value = PersonalDock.shortestPath(source, destination)
+            pathstr=str()
+            while len(path)!=1:
+                pathstr+=database[path.pop(0)].name+'=>'
+            print()
+            print("The shortest path from " + database[source].name + " to " + database[destination].name+" : "+pathstr+database[path.pop()].name+
+                  " and its cost = "+str(value))
+
     @staticmethod
     def import_from_database(inData):
         f = "%Y-%m-%d %H:%M:%S"
@@ -464,6 +567,14 @@ class PersonalDock(amber.AmberObject):
                         setattr(loadedDock, attribute, True)
                     elif attributeValue == "False":
                         setattr(loadedDock, attribute, False)
+                    elif  (attributeValue.find(":") != -1) and attribute=='friends':
+                        line = line.replace("friends\t", "")
+                        dictlines = line.split(";")
+                        for dictline in dictlines:
+                            dictlist = dictline.split(":")
+                            if dictlist[1].find("\n") != -1:
+                                dictlist[1]=dictlist[1].replace('\n','')
+                            loadedDock.friends[dictlist[0]] = int(dictlist[1])
                     elif not (attributeValue.find("(") == -1):
                         tuplesvalue = [tuple(i for i in element.strip('()').split(',')) for element in attributeValue.split('),(')]
                         for i in range(len(tuplesvalue)):
@@ -520,7 +631,14 @@ class PersonalDock(amber.AmberObject):
                         continue
                 line += "<" + attribute + ">"
                 line += "\n" + "\t"
-                if type(attributeValue) is list:
+                if type(attributeValue) is dict:
+                    for key, value in attributeValue.items():
+                        line += key + ":"
+                        line += str(value)
+                        line += ";"
+                    if line[len(line) - 1] == ";":
+                        line = line[:-1]  # to remove the last ";" in the line
+                elif type(attributeValue) is list:
                     for value in attributeValue:
                         if type(value) is tuple:
                             line += "("

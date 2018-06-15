@@ -147,6 +147,24 @@ def print_members_have_max_followers():
         if followers_no!=0:
             print(database[memberid].name+" have "+str(followers_no)+" follower")
 
+def print_members_have_max_friends_per_group():
+    groups=generate_seas()
+    for group in groups:
+        print("for sea " +database[group].name+" : ")
+        members=database[group].max_friends_members()
+        for memberid,friends_no in members:
+            if friends_no!=0:
+                 print(database[memberid].name+" have "+str(friends_no)+" friend")
+
+
+def print_members_have_max_followers_per_group():
+    groups = generate_seas()
+    for group in groups:
+        print("for sea " + database[group].name + " : ")
+        members = database[group].max_followers_members()
+        for memberid, friends_no in members:
+            if friends_no != 0:
+                print(database[memberid].name + " have " + str(friends_no) + " follower")
 
 def print_members_have_max_ships():
     members=most_posts_members_generator()
