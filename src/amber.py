@@ -59,6 +59,36 @@ def generate_personal_docks():
             yield member_id
 
 
+def x2_plot(fn, ylabel="", title="", up_to=None, names=True):
+    import numpy as np
+    import matplotlib.pyplot as plt
+    x = []
+    y = []
+    if up_to:
+        for num, tup in enumerate(fn()):
+            id, count = tup
+            if num < up_to:
+                x.append(id)
+                y.append(count)
+            else:
+                break
+    else:
+        for id, count in fn():
+                x.append(id)
+                y.append(count)
+    if names:
+        x = tuple(map(database.get, x))
+        x = tuple(d.name for d in x)
+    ind = np.arange(len(x))
+    p = plt.bar(ind, y)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.xticks(ind, x)
+    plt.yticks(np.arange(0, y[0]+1, 1))
+    plt.legend(p)
+    plt.show()
+
+
 def most_friends_members_generator():
     members_id = generate_personal_docks()
     sorted_members = sorted(members_id, key=lambda id: len(database[id].friends), reverse=True)
@@ -147,6 +177,7 @@ def print_members_have_max_followers():
         if followers_no!=0:
             print(database[memberid].name+" have "+str(followers_no)+" follower")
 
+
 def print_members_have_max_friends_per_group():
     groups=generate_seas()
     for group in groups:
@@ -165,6 +196,7 @@ def print_members_have_max_followers_per_group():
         for memberid, friends_no in members:
             if friends_no != 0:
                 print(database[memberid].name + " have " + str(friends_no) + " follower")
+
 
 def print_members_have_max_ships():
     members=most_posts_members_generator()
@@ -213,7 +245,6 @@ def print_ship_have_max_comments_for_each_sea():
     for memberid,ship in members:
         if ship[1] !=0:
             print(database[database[ship[0]].where_is_it_created_id].name+" : "+database[database[ship[0]].creator_id].name+" sailed "+"\" "+database[str(ship[0])].txt_content+" \" and get "+str(ship[1]) +" comment")
-
 
 
 def export_database():

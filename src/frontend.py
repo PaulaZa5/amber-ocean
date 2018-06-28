@@ -75,7 +75,6 @@ class Login(Widget):
             # print("error")
 
 
-
 ###################  Registeration
 class Registeration(Widget):
     date = StringProperty(None)
@@ -4299,6 +4298,17 @@ if __name__ == "__main__":
                 'print_ship_have_max_reactions_for_each_sea': amber.print_ship_have_max_reactions_for_each_sea,
                 'print_ship_have_max_comments_for_each_sea': amber.print_ship_have_max_comments_for_each_sea
             }
+            plots = {
+                'members_have_max_friends': amber.most_friends_members_generator,
+                'members_have_max_followers': amber.most_followers_members_generator,
+                'members_have_max_ships': amber.most_posts_members_generator,
+                'ship_have_max_reactions_for_each_member': amber.max_reactions_ship_for_each_member_generator,
+                'ship_have_max_comments_for_each_member': amber.max_comments_ship_for_each_member_generator,
+                'seas_have_max_members': amber.most_members_seas_generator,
+                'seas_have_max_ships': amber.most_posts_seas_generator,
+                'ship_have_max_reactions_for_each_sea': amber.max_reactions_ship_for_each_sea_generator,
+                'ship_have_max_comments_for_each_sea': amber.max_comments_ship_for_each_sea_generator
+            }
             command = ''
             while command != 'exit':
                 command = input("What do you want to do now?\n")
@@ -4317,6 +4327,11 @@ if __name__ == "__main__":
                             ships.Ship.load_from_xml(command.split()[2])
                         elif command.split()[1].lower() == "sea":
                             seas.Sea.load_from_xml(command.split()[2])
+                    elif command.split()[0].lower() == 'plot':
+                        if len(command.split()) == 2:
+                            amber.x2_plot(fn=plots[command.split()[1]])
+                        else:
+                            amber.x2_plot(fn=plots[command.split()[1]], up_to=int(command.split()[2]))
                     else:
                         functions[command]()
                 except:
