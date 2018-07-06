@@ -4296,7 +4296,9 @@ if __name__ == "__main__":
                 'print_seas_have_max_members': amber.print_seas_have_max_members,
                 'print_seas_have_max_ships': amber.print_seas_have_max_ships,
                 'print_ship_have_max_reactions_for_each_sea': amber.print_ship_have_max_reactions_for_each_sea,
-                'print_ship_have_max_comments_for_each_sea': amber.print_ship_have_max_comments_for_each_sea
+                'print_ship_have_max_comments_for_each_sea': amber.print_ship_have_max_comments_for_each_sea,
+                'print_members_have_max_friends_per_sea':amber.print_members_have_max_friends_per_sea,
+                'print_members_have_max_followers_per_sea':amber.print_members_have_max_followers_per_sea
             }
             plots = {
                 'members_have_max_friends': amber.most_friends_members_generator,
@@ -4315,6 +4317,8 @@ if __name__ == "__main__":
                 try:
                     if command.split()[0].lower() == 'database':
                         print(amber.database)
+                    elif command.split()[0].lower() == 'shortest_path':
+                        PersonalDock.is_there_a_path_from_to(command.split()[1], command.split()[2])
                     elif command.split()[0].lower() == 'export':
                         if len(command.split()) == 3:
                             amber.database[command.split()[1]].export_to_xml(command.split()[1][2])
