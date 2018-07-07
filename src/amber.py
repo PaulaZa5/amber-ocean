@@ -178,7 +178,7 @@ def print_members_have_max_followers():
             print(database[memberid].name+" have "+str(followers_no)+" follower")
 
 
-def print_members_have_max_friends_per_group():
+def print_members_have_max_friends_per_sea():
     groups=generate_seas()
     for group in groups:
         print("for sea " +database[group].name+" : ")
@@ -188,7 +188,7 @@ def print_members_have_max_friends_per_group():
                  print(database[memberid].name+" have "+str(friends_no)+" friend")
 
 
-def print_members_have_max_followers_per_group():
+def print_members_have_max_followers_per_sea():
     groups = generate_seas()
     for group in groups:
         print("for sea " + database[group].name + " : ")
